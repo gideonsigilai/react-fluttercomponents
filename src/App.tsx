@@ -1,37 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { Container } from "./components/ui/container";
-import { Card } from "./components/ui/card";
-import { Checkbox } from "./components/ui/checkbox";
-import { CheckboxListTile } from "./components/ui/checkbox-list-tile";
-import { Switch } from "./components/ui/switch";
-import { Slider } from "./components/ui/slider";
-import { CircularProgressIndicator } from "./components/ui/circular-progress-indicator";
-import { Badge } from "./components/ui/badge";
-import { Gap } from "./components/ui/gap";
-import { Skeleton } from "./components/ui/skeleton";
-import { Tooltip } from "./components/ui/tooltip";
-import { Row } from "./components/ui/row";
-import { Column } from "./components/ui/column";
-import { Center } from "./components/ui/center";
-import { Text } from "./components/ui/text";
-import { MainAxisAlignment, CrossAxisAlignment } from "./components/ui/layout-types";
 import { 
-  Layout, 
-  ToggleLeft, 
-  Info, 
-  Moon, 
+  SHOWCASE_CATEGORIES, 
+  SHOWCASE_COMPONENTS, 
+  ShowcaseComponent 
+} from "./showcaseData";
+import { 
   Sun, 
-  ExternalLink,
-  Code,
-  Layers,
+  Moon, 
+  Search, 
+  ChevronDown, 
+  ChevronRight, 
+  Copy, 
+  Check, 
+  Sliders, 
+  Code, 
   Sparkles,
-  HelpCircle,
-  Sliders
+  Info,
+  ExternalLink,
+  Laptop
 } from "lucide-react";
 
+import { Row } from "./components/ui/row";
+import { Column } from "./components/ui/column";
+import { Text } from "./components/ui/text";
+import { MainAxisAlignment, CrossAxisAlignment } from "./components/ui/layout-types";
+
+const ActivePreview = React.memo(({ 
+  component, 
+  states, 
+  setStates 
+}: { 
+  component: ShowcaseComponent; 
+  states: Record<string, any>; 
+  setStates: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+}) => {
+  return <>{component.renderPreview(states, setStates)}</>;
+});
+ActivePreview.displayName = "ActivePreview";
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState("container");
+  const [activeComponentId, setActiveComponentId] = useState("container");
   const [isDark, setIsDark] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [copied, setCopied] = useState(false);
 
   // Toggle Theme
   useEffect(() => {
@@ -45,61 +56,104 @@ export default function App() {
     }
   }, [isDark]);
 
-  // Widget States for Controls
-  // 1. Container controls
-  const [containerColor, setContainerColor] = useState("#8b5cf6");
-  const [containerWidth, setContainerWidth] = useState(250);
-  const [containerHeight, setContainerHeight] = useState(150);
-  const [containerRadius, setContainerRadius] = useState(12);
-  const [containerPadding, setContainerPadding] = useState(16);
+  // Find active component configuration
+  const activeComponent = SHOWCASE_COMPONENTS.find(c => c.id === activeComponentId) || SHOWCASE_COMPONENTS[0];
 
-  // 2. Card controls
-  const [cardElevation, setCardElevation] = useState(4);
-  const [cardMargin, setCardMargin] = useState(12);
+  // Component controller states
+  const [widgetStates, setWidgetStates] = useState<Record<string, any>>({});
 
-  // 3. Inputs & Toggles controls
-  const [checkboxVal, setCheckboxVal] = useState(true);
-  const [switchVal, setSwitchVal] = useState(false);
-  const [sliderVal, setSliderVal] = useState(50);
-  
-  // 4. Progress indicator
-  const [progressVal, setProgressVal] = useState(70);
-  const [progressIndeterminate, setProgressIndeterminate] = useState(false);
+  // Initialize control states when active component changes
+  useEffect(() => {
+    if (activeComponent) {
+      const defaults: Record<string, any> = {};
+      activeComponent.controls.forEach(ctrl => {
+        defaults[ctrl.name] = ctrl.defaultValue;
+      });
+      setWidgetStates(defaults);
+    }
+    setCopied(false);
+  }, [activeComponentId]);
 
-  // 5. Layout Alignment controls
-  const [rowAlignment, setRowAlignment] = useState(MainAxisAlignment.spaceEvenly);
-  const [rowCrossAlignment, setRowCrossAlignment] = useState(CrossAxisAlignment.center);
+  // Handle control inputs mutations
+  const handleControlChange = (name: string, value: any) => {
+    setWidgetStates(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  // 6. Tooltip controls
-  const [tooltipMessage, setTooltipMessage] = useState("Flutter tooltips help users understand actions!");
+  // Expandable category folders state
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    layout: true,
+    flex: true
+  });
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
+  // Filter components in category matching search
+  const getFilteredComponents = (categoryId: string) => {
+    return SHOWCASE_COMPONENTS.filter(comp => 
+      comp.category === categoryId && 
+      (comp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+       comp.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  };
+
+  // Auto-expand folder groups when search query matches elements inside
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      const autoExpand: Record<string, boolean> = {};
+      SHOWCASE_CATEGORIES.forEach(cat => {
+        const matches = getFilteredComponents(cat.id);
+        if (matches.length > 0) {
+          autoExpand[cat.id] = true;
+        }
+      });
+      setExpandedCategories(prev => ({ ...prev, ...autoExpand }));
+    }
+  }, [searchQuery]);
+
+  // Copy react code implementation
+  const handleCopyCode = () => {
+    if (!activeComponent) return;
+    const code = activeComponent.generateCode(widgetStates);
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background text-foreground transition-colors duration-200">
       
       {/* HEADER */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+      <header className="border-b border-border bg-card/50 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="bg-primary/20 text-primary p-2 rounded-lg font-bold text-xl flex items-center justify-center">
+          <div className="bg-primary/20 text-primary p-2 rounded-xl font-bold text-xl flex items-center justify-center shadow-inner hover:scale-105 transition-all">
             ⚡
           </div>
           <div>
-            <h1 className="font-outfit font-extrabold text-xl tracking-tight flex items-center gap-2">
-              React-Flutter <span className="text-primary text-sm font-medium px-2 py-0.5 rounded-full bg-primary/10">Tailwind Sandbox</span>
+            <h1 className="font-outfit font-extrabold text-lg tracking-tight flex items-center gap-2 leading-none">
+              React-Flutter <span className="text-primary text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-primary/10 tracking-wider">Tailwind Sandbox</span>
             </h1>
-            <p className="text-xs text-muted-foreground">Preview 64 High-fidelity Flutter Widgets Replicated in React</p>
+            <p className="text-[10px] text-muted-foreground mt-1">High-fidelity replication of Flutter widgets and layout APIs in React</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setIsDark(!isDark)}
-            className="p-2.5 rounded-lg border border-border bg-card hover:bg-accent text-foreground hover:text-accent-foreground transition-all duration-200"
-            title="Toggle Theme"
+            className="p-2 rounded-lg border border-border bg-card hover:bg-accent text-foreground transition-all duration-150"
+            title="Toggle Dark/Light Theme"
           >
-            {isDark ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-indigo-600" />}
+            {isDark ? <Sun size={16} className="text-yellow-400" /> : <Moon size={16} className="text-indigo-600" />}
           </button>
 
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-md bg-accent text-accent-foreground border border-border">
+          <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md bg-accent text-accent-foreground border border-border">
             v1.0.0 Stable
           </span>
         </div>
@@ -109,115 +163,95 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden">
         
         {/* SIDEBAR NAVIGATION */}
-        <aside className="w-80 border-r border-border bg-card/30 p-5 flex flex-col gap-6 overflow-y-auto">
+        <aside className="w-80 border-r border-border bg-card/10 flex flex-col overflow-hidden">
           
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-              <Layers size={14} /> Widget categories
-            </h3>
-            
-            <nav className="flex flex-col gap-1.5">
-              <p className="text-xs font-medium text-muted-foreground/60 px-3 mt-3 mb-1">Structural & Layout</p>
-              
-              <button
-                onClick={() => setActiveTab("container")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "container" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><Layout size={16} /> Container</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Layout</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("card")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "card" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><Layers size={16} /> Card</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Material</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("row-column")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "row-column" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><Sliders size={16} /> Row & Column</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Flexbox</span>
-              </button>
-
-              <p className="text-xs font-medium text-muted-foreground/60 px-3 mt-4 mb-1">Inputs & Controls</p>
-
-              <button
-                onClick={() => setActiveTab("checkboxes")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "checkboxes" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><ToggleLeft size={16} /> Checkbox & ListTile</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Form</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("switch-slider")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "switch-slider" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><Sliders size={16} /> Switch & Slider</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Control</span>
-              </button>
-
-              <p className="text-xs font-medium text-muted-foreground/60 px-3 mt-4 mb-1">Information & Indicators</p>
-
-              <button
-                onClick={() => setActiveTab("progress-indicator")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "progress-indicator" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><Sparkles size={16} /> Progress & Skeleton</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Status</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("tooltips")}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                  activeTab === "tooltips" 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-medium" 
-                    : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5"><HelpCircle size={16} /> Tooltip & Badge</span>
-                <span className="text-[10px] uppercase font-bold tracking-tight opacity-75">Utility</span>
-              </button>
-            </nav>
+          {/* SEARCH BAR */}
+          <div className="p-4 border-b border-border bg-card/5 select-none">
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
+                <Search size={14} />
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search widgets (e.g. Scaffold, Column)..."
+                className="w-full pl-9 pr-4 py-2 border border-border rounded-lg bg-card text-xs focus:ring-1 focus:ring-primary focus:border-primary outline-none placeholder-muted-foreground/60 transition-all"
+              />
+            </div>
           </div>
 
-          <div className="mt-auto border-t border-border/80 pt-4 flex flex-col gap-2.5">
-            <div className="bg-primary/5 rounded-xl p-3.5 border border-primary/10">
-              <h4 className="text-xs font-bold text-primary mb-1 flex items-center gap-1.5">
+          {/* ACCORDION CATEGORY NAVIGATION */}
+          <nav className="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll-bar select-none">
+            {SHOWCASE_CATEGORIES.map(category => {
+              const matchedComponents = getFilteredComponents(category.id);
+              const isExpanded = !!expandedCategories[category.id];
+
+              if (matchedComponents.length === 0) return null;
+
+              return (
+                <div key={category.id} className="border border-border/60 bg-card/30 rounded-xl overflow-hidden transition-all duration-200">
+                  {/* Category Header */}
+                  <button
+                    onClick={() => toggleCategory(category.id)}
+                    className="w-full px-3.5 py-3 flex items-center justify-between text-left hover:bg-accent/40 transition-colors"
+                  >
+                    <Row className="items-center gap-2.5">
+                      <span className="text-primary/80">{category.icon}</span>
+                      <span className="text-xs font-bold tracking-tight text-foreground/90">{category.name}</span>
+                    </Row>
+                    
+                    <Row className="items-center gap-2">
+                      <span className="text-[9px] font-mono px-2 py-0.5 bg-accent rounded-full border border-border/80 font-bold opacity-75">
+                        {matchedComponents.length}
+                      </span>
+                      {isExpanded ? <ChevronDown size={14} className="opacity-60" /> : <ChevronRight size={14} className="opacity-60" />}
+                    </Row>
+                  </button>
+
+                  {/* Collapsible widgets list */}
+                  {isExpanded && (
+                    <div className="border-t border-border/40 p-1.5 space-y-0.5 bg-card/10">
+                      {matchedComponents.map(comp => {
+                        const isActive = comp.id === activeComponentId;
+                        return (
+                          <button
+                            key={comp.id}
+                            onClick={() => setActiveComponentId(comp.id)}
+                            className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center justify-between ${
+                              isActive 
+                                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-semibold" 
+                                : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            <span>{comp.name}</span>
+                            <span className={`text-[8px] uppercase tracking-wide px-1.5 py-0.5 rounded font-bold ${
+                              isActive 
+                                ? "bg-white/20 text-white" 
+                                : "bg-accent text-muted-foreground/80 border border-border"
+                            }`}>
+                              WIDGET
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+
+          {/* SIDEBAR FOOTER */}
+          <div className="p-4 border-t border-border bg-card/25 select-none">
+            <div className="bg-primary/5 rounded-xl p-3 border border-primary/10">
+              <h4 className="text-[11px] font-bold text-primary mb-1 flex items-center gap-1.5">
                 💡 Local CLI Available
               </h4>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
                 Add any of these widgets straight to your codebase recursively using:
               </p>
-              <code className="block mt-2 bg-card p-1.5 rounded text-[10px] font-mono border border-border text-foreground">
+              <code className="block mt-2 bg-card p-1.5 rounded text-[9px] font-mono border border-border text-foreground select-all text-center">
                 npx flutter-components add
               </code>
             </div>
@@ -225,272 +259,75 @@ export default function App() {
         </aside>
 
         {/* WORKSPACE PREVIEW & CONTROLS */}
-        <main className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-card/10">
+        <main className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-card/5">
           
           {/* PREVIEW SPACE */}
           <section className="flex-1 p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto border-b lg:border-b-0 lg:border-r border-border">
             
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <div>
-                <h2 className="font-outfit font-bold text-2xl capitalize tracking-tight flex items-center gap-2">
-                  {activeTab.replace("-", " ")} Showcase
+                <h2 className="font-outfit font-extrabold text-2xl tracking-tight flex items-center gap-2">
+                  {activeComponent.name} Showcase
                 </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {activeTab === "container" && "A versatile container box model mirroring Flutter's Container()."}
-                  {activeTab === "card" && "A tactile card with shadow depth, padding, and corner radius settings."}
-                  {activeTab === "row-column" && "Flex layouts aligning child items along main and cross axes."}
-                  {activeTab === "checkboxes" && "Clean toggle forms with list tiles mapping tap actions to states."}
-                  {activeTab === "switch-slider" && "A sliding thumb controller and toggle switches."}
-                  {activeTab === "progress-indicator" && "Sleek loading widgets, customizable values, and skeletal visualizers."}
-                  {activeTab === "tooltips" && "Informational descriptive hover bubbles and count overlays."}
+                <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+                  {activeComponent.description}
                 </p>
               </div>
             </div>
 
             {/* LIVE PREVIEW BOX */}
-            <div className="flex-1 min-h-[350px] border border-border rounded-xl bg-card/45 relative flex items-center justify-center p-8 overflow-hidden shadow-sm backdrop-blur-sm">
-              
+            <div className="flex-1 min-h-[350px] border border-border rounded-2xl bg-card/45 relative flex items-center justify-center p-8 overflow-hidden shadow-sm backdrop-blur-sm">
               {/* Subtle Grid Background */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-40 pointer-events-none" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
 
               {/* RENDER ACTIVE PREVIEW */}
               <div className="z-10 w-full flex justify-center items-center">
-                
-                {activeTab === "container" && (
-                  <Container
-                    width={containerWidth}
-                    height={containerHeight}
-                    borderRadius={containerRadius}
-                    padding={containerPadding}
-                    color={containerColor}
-                    className="flex items-center justify-center text-center shadow-lg shadow-purple-500/10"
-                  >
-                    <Text variant="bodyLarge" className="text-white font-bold tracking-wide">
-                      Container Box<br/>
-                      <span className="text-[10px] font-normal opacity-85">{containerWidth}x{containerHeight}px</span>
-                    </Text>
-                  </Container>
-                )}
-
-                {activeTab === "card" && (
-                  <Card
-                    elevation={cardElevation}
-                    margin={cardMargin}
-                    className="w-80 p-6 bg-card border border-border shadow-xl"
-                  >
-                    <Column crossAxisAlignment={CrossAxisAlignment.start} className="gap-3">
-                      <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full">
-                        <Badge color="#3b82f6" className="text-[10px] text-white">Flutter style</Badge>
-                        <Text variant="bodySmall" className="text-muted-foreground">Elevated Card</Text>
-                      </Row>
-                      
-                      <Text variant="titleLarge" className="font-outfit font-semibold">
-                        tactile depth widgets
-                      </Text>
-                      
-                      <Text variant="bodyMedium" className="text-muted-foreground leading-relaxed">
-                        Cards mimic physical sheets of paper with an elevation class determining drop shadow sizes.
-                      </Text>
-
-                      <div className="w-full flex justify-end gap-2 mt-2">
-                        <button className="px-3.5 py-1.5 text-xs font-semibold rounded bg-primary text-primary-foreground hover:bg-primary/95 transition">
-                          Okay
-                        </button>
-                      </div>
-                    </Column>
-                  </Card>
-                )}
-
-                {activeTab === "row-column" && (
-                  <div className="w-full max-w-md p-4 border border-border rounded-xl bg-card/60">
-                    <Row 
-                      mainAxisAlignment={rowAlignment} 
-                      crossAxisAlignment={rowCrossAlignment}
-                      className="min-h-[140px] border border-dashed border-border/80 rounded-lg p-3 bg-card/10 gap-3"
-                    >
-                      <Container width={50} height={50} color="#ec4899" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">1</Container>
-                      <Container width={50} height={60} color="#3b82f6" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">2</Container>
-                      <Container width={50} height={40} color="#10b981" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">3</Container>
-                    </Row>
-                    <p className="text-center text-xs text-muted-foreground mt-3 font-mono">
-                      Row Flex Direction | alignment: {rowAlignment}
-                    </p>
+                {activeComponent && (activeComponent.controls.length === 0 || Object.keys(widgetStates).length > 0) ? (
+                  <ActivePreview 
+                    key={activeComponent.id}
+                    component={activeComponent} 
+                    states={widgetStates} 
+                    setStates={setWidgetStates} 
+                  />
+                ) : (
+                  <div className="text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
+                    <Sparkles className="animate-spin text-primary" size={24} />
+                    Initializing widget canvas...
                   </div>
                 )}
-
-                {activeTab === "checkboxes" && (
-                  <div className="w-80 bg-card rounded-xl border border-border shadow-md divide-y divide-border overflow-hidden">
-                    <CheckboxListTile
-                      title="Enable Push Notifications"
-                      subtitle="Get live hot-reload triggers"
-                      value={checkboxVal}
-                      onChanged={setCheckboxVal}
-                      dense={true}
-                    />
-                    <div className="p-4 flex items-center justify-between text-sm bg-accent/25">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Checkbox value={checkboxVal} onChanged={setCheckboxVal} /> Standard Checkbox
-                      </span>
-                      <span className="text-xs font-semibold font-mono">
-                        {checkboxVal ? "CHECKED" : "UNCHECKED"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === "switch-slider" && (
-                  <Column className="w-80 gap-6 p-6 border border-border rounded-xl bg-card shadow-md">
-                    <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full">
-                      <span className="text-sm font-medium">Toggle Sandbox Features</span>
-                      <Switch value={switchVal} onChanged={setSwitchVal} />
-                    </Row>
-                    
-                    <div className="space-y-2.5">
-                      <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full text-xs font-mono text-muted-foreground">
-                        <span>Slider Widget</span>
-                        <span>{Math.round(sliderVal)}%</span>
-                      </Row>
-                      <Slider 
-                        value={sliderVal} 
-                        onChanged={setSliderVal} 
-                        min={0} 
-                        max={100}
-                        activeColor="#a78bfa"
-                      />
-                    </div>
-                  </Column>
-                )}
-
-                {activeTab === "progress-indicator" && (
-                  <Column className="w-80 gap-6 p-6 border border-border rounded-xl bg-card shadow-md">
-                    <Row mainAxisAlignment={MainAxisAlignment.spaceAround} className="w-full items-center">
-                      <CircularProgressIndicator 
-                        size={52} 
-                        strokeWidth={5}
-                        color="#ef4444"
-                      />
-                      
-                      <div className="space-y-1.5 flex flex-col items-center">
-                        <span className="text-xs font-mono text-muted-foreground">Circular Loader</span>
-                        <span className="text-xs font-semibold">{progressIndeterminate ? "Spinning..." : `${Math.round(progressVal)}%`}</span>
-                      </div>
-                    </Row>
-
-                    <div className="space-y-3 pt-2 border-t border-border">
-                      <span className="text-xs font-mono text-muted-foreground">Skeleton Placeholder:</span>
-                      <Row className="gap-3 items-center">
-                        <Skeleton borderRadius={9999} width={40} height={40} />
-                        <Column className="flex-1 gap-2">
-                          <Skeleton width="80%" height={10} />
-                          <Skeleton width="50%" height={8} />
-                        </Column>
-                      </Row>
-                    </div>
-                  </Column>
-                )}
-
-                {activeTab === "tooltips" && (
-                  <Column className="w-80 gap-5 items-center p-6 border border-border rounded-xl bg-card shadow-md">
-                    
-                    <Tooltip message={tooltipMessage} side="top">
-                      <button className="px-5 py-2.5 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition shadow-md">
-                        Hover Me!
-                      </button>
-                    </Tooltip>
-
-                    <div className="flex items-center gap-4 mt-2">
-                      <Row className="items-center gap-1.5">
-                        <Badge color="#ec4899" className="text-[10px] text-white">active</Badge>
-                        <span className="text-xs text-muted-foreground">Standard badge</span>
-                      </Row>
-                    </div>
-                  </Column>
-                )}
-
               </div>
             </div>
 
             {/* REAL-TIME GENERATED JSX INVOKER CODE */}
-            <div className="border border-border rounded-xl bg-card/30 p-5 overflow-hidden">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3.5 flex items-center gap-2">
-                <Code size={14} /> React-Flutter Code Invocation
-              </h3>
+            <div className="border border-border bg-card/30 p-5 rounded-2xl overflow-hidden relative">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 select-none">
+                  <Code size={14} className="text-primary" /> React-Flutter Code Invocation
+                </h3>
+                
+                <button
+                  onClick={handleCopyCode}
+                  className="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-accent text-xs font-semibold flex items-center gap-1.5 hover:text-foreground transition-all"
+                  title="Copy JSX implementation code to clipboard"
+                >
+                  {copied ? (
+                    <>
+                      <Check size={13} className="text-emerald-500" />
+                      <span className="text-emerald-500 font-bold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={13} />
+                      <span>Copy Code</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
               <div className="relative">
-                <pre className="bg-card/70 border border-border p-4 rounded-lg text-xs font-mono overflow-x-auto text-primary-foreground/90 max-h-[160px] custom-scroll-bar">
-{activeTab === "container" && `import { Container } from "@/components/ui/container";
-
-<Container
-  width={${containerWidth}}
-  height={${containerHeight}}
-  borderRadius={${containerRadius}}
-  padding={${containerPadding}}
-  color="${containerColor}"
-  className="flex items-center justify-center"
->
-  <span>Box Widget</span>
-</Container>`}
-
-{activeTab === "card" && `import { Card } from "@/components/ui/card";
-
-<Card
-  elevation={${cardElevation}}
-  margin={${cardMargin}}
-  className="p-6 bg-card"
->
-  <h4>Material Tactile Card</h4>
-</Card>`}
-
-{activeTab === "row-column" && `import { Row } from "@/components/ui/row";
-import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-types";
-
-<Row 
-  mainAxisAlignment={MainAxisAlignment.${Object.keys(MainAxisAlignment).find(k => MainAxisAlignment[k] === rowAlignment)}} 
-  crossAxisAlignment={CrossAxisAlignment.${Object.keys(CrossAxisAlignment).find(k => CrossAxisAlignment[k] === rowCrossAlignment)}}
-  className="gap-3"
->
-  <div>1</div>
-  <div>2</div>
-</Row>`}
-
-{activeTab === "checkboxes" && `import { CheckboxListTile } from "@/components/ui/checkbox-list-tile";
-
-<CheckboxListTile
-  title="Enable Notifications"
-  subtitle="Get live alerts"
-  value={${checkboxVal}}
-  onChanged={(val) => setCheckboxVal(val)}
-  dense={true}
-/>`}
-
-{activeTab === "switch-slider" && `import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-
-// Switch
-<Switch value={${switchVal}} onChanged={setSwitchVal} />
-
-// Slider
-<Slider 
-  value={${sliderVal}} 
-  onChanged={setSliderVal} 
-  min={0} 
-  max={100} 
-/>`}
-
-{activeTab === "progress-indicator" && `import { CircularProgressIndicator } from "@/components/ui/circular-progress-indicator";
-
-<CircularProgressIndicator 
-  value={${progressIndeterminate ? "undefined" : progressVal}} 
-  size={52} 
-  strokeWidth={5} 
-/>`}
-
-{activeTab === "tooltips" && `import { Tooltip } from "@/components/ui/tooltip";
-
-<Tooltip message="${tooltipMessage}" position="top">
-  <button>Hover Me!</button>
-</Tooltip>`}
+                <pre className="bg-card/70 border border-border p-4 rounded-xl text-xs font-mono overflow-x-auto text-primary-foreground/90 max-h-[180px] custom-scroll-bar select-all">
+                  {activeComponent ? activeComponent.generateCode(widgetStates) : ""}
                 </pre>
               </div>
             </div>
@@ -498,248 +335,147 @@ import { Slider } from "@/components/ui/slider";
           </section>
 
           {/* DYNAMIC INTERACTIVE CONTROLS PANE */}
-          <section className="w-full lg:w-96 p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto bg-card/10">
-            <div>
+          <section className="w-full lg:w-96 p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto bg-card/10 select-none">
+            <div className="border-b border-border/80 pb-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-1.5">
                 <Sliders size={14} className="text-primary" /> Widget Attributes
               </h3>
-              <p className="text-xs text-muted-foreground">Adjust attributes dynamically to update the component styles in real-time.</p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                Adjust controller variables dynamically to update the component properties in real-time.
+              </p>
             </div>
 
             <div className="flex-1 flex flex-col gap-5">
-              
-              {/* CONTAINER CONTROLS */}
-              {activeTab === "container" && (
-                <>
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                      <span>Width:</span> <span className="font-mono text-foreground font-medium">{containerWidth}px</span>
-                    </label>
-                    <input
-                      type="range" min="100" max="320" value={containerWidth}
-                      onChange={(e) => setContainerWidth(Number(e.target.value))}
-                      className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                    />
-                  </div>
+              {activeComponent && activeComponent.controls.length > 0 ? (
+                activeComponent.controls.map((control) => {
+                  const currentValue = widgetStates[control.name] !== undefined ? widgetStates[control.name] : control.defaultValue;
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                      <span>Height:</span> <span className="font-mono text-foreground font-medium">{containerHeight}px</span>
-                    </label>
-                    <input
-                      type="range" min="80" max="220" value={containerHeight}
-                      onChange={(e) => setContainerHeight(Number(e.target.value))}
-                      className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                      <span>Corner Radius:</span> <span className="font-mono text-foreground font-medium">{containerRadius}px</span>
-                    </label>
-                    <input
-                      type="range" min="0" max="32" value={containerRadius}
-                      onChange={(e) => setContainerRadius(Number(e.target.value))}
-                      className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                      <span>Padding:</span> <span className="font-mono text-foreground font-medium">{containerPadding}px</span>
-                    </label>
-                    <input
-                      type="range" min="0" max="32" value={containerPadding}
-                      onChange={(e) => setContainerPadding(Number(e.target.value))}
-                      className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground">Background Color:</label>
-                    <div className="flex gap-2.5 flex-wrap pt-1">
-                      {["#8b5cf6", "#3b82f6", "#10b981", "#ef4444", "#f59e0b", "#ec4899"].map((color) => (
-                        <button
-                          key={color}
-                          onClick={() => setContainerColor(color)}
-                          className={`w-8 h-8 rounded-full border transition-all ${
-                            containerColor === color ? "border-foreground ring-2 ring-primary/45 scale-110 shadow" : "border-transparent"
-                          }`}
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* CARD CONTROLS */}
-              {activeTab === "card" && (
-                <>
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                      <span>Elevation Depth:</span> <span className="font-mono text-foreground font-medium">{cardElevation}dp</span>
-                    </label>
-                    <div className="flex gap-1.5">
-                      {[1, 2, 4, 8, 12, 16].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setCardElevation(num)}
-                          className={`flex-1 py-2 text-xs font-mono font-bold rounded-lg border transition ${
-                            cardElevation === num 
-                              ? "bg-primary text-primary-foreground border-primary" 
-                              : "bg-card border-border hover:bg-accent"
-                          }`}
-                        >
-                          {num}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                      <span>Outer Margin:</span> <span className="font-mono text-foreground font-medium">{cardMargin}px</span>
-                    </label>
-                    <input
-                      type="range" min="0" max="24" value={cardMargin}
-                      onChange={(e) => setCardMargin(Number(e.target.value))}
-                      className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* ROW / COLUMN LAYOUT ALIGNMENTS */}
-              {activeTab === "row-column" && (
-                <>
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-muted-foreground">Main Axis Alignment</label>
-                    <div className="flex flex-col gap-1.5">
-                      {[
-                        { label: "start (Pack start)", val: MainAxisAlignment.start },
-                        { label: "end (Pack end)", val: MainAxisAlignment.end },
-                        { label: "center (Pack center)", val: MainAxisAlignment.center },
-                        { label: "spaceAround", val: MainAxisAlignment.spaceAround },
-                        { label: "spaceEvenly", val: MainAxisAlignment.spaceEvenly },
-                        { label: "spaceBetween", val: MainAxisAlignment.spaceBetween },
-                      ].map((item) => (
-                        <button
-                          key={item.label}
-                          onClick={() => setRowAlignment(item.val)}
-                          className={`w-full text-left px-3 py-2 text-xs rounded-lg border transition ${
-                            rowAlignment === item.val
-                              ? "bg-primary text-primary-foreground border-primary font-semibold"
-                              : "bg-card border-border hover:bg-accent"
-                          }`}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 border-t border-border pt-4">
-                    <label className="text-xs font-bold text-muted-foreground">Cross Axis Alignment</label>
-                    <div className="flex flex-col gap-1.5">
-                      {[
-                        { label: "start", val: CrossAxisAlignment.start },
-                        { label: "center", val: CrossAxisAlignment.center },
-                        { label: "end", val: CrossAxisAlignment.end },
-                        { label: "stretch", val: CrossAxisAlignment.stretch },
-                      ].map((item) => (
-                        <button
-                          key={item.label}
-                          onClick={() => setRowCrossAlignment(item.val)}
-                          className={`w-full text-left px-3 py-2 text-xs rounded-lg border transition ${
-                            rowCrossAlignment === item.val
-                              ? "bg-primary text-primary-foreground border-primary font-semibold"
-                              : "bg-card border-border hover:bg-accent"
-                          }`}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* INPUT CONTROLS */}
-              {activeTab === "checkboxes" && (
-                <>
-                  <div className="bg-card/50 p-4 border border-border rounded-xl space-y-3.5">
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">Controller bindings</span>
-                    
-                    <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full">
-                      <span className="text-xs font-semibold">Checkbox Checked:</span>
-                      <Checkbox value={checkboxVal} onChanged={setCheckboxVal} />
-                    </Row>
-                  </div>
-                </>
-              )}
-
-              {/* SWITCH & SLIDER CONTROLS */}
-              {activeTab === "switch-slider" && (
-                <>
-                  <div className="space-y-3.5 bg-card/50 p-4 border border-border rounded-xl">
-                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">Real-time binding:</span>
-                    
-                    <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full">
-                      <span className="text-xs font-semibold">Toggle switch value:</span>
-                      <Switch value={switchVal} onChanged={setSwitchVal} />
-                    </Row>
-
-                    <div className="space-y-1.5 pt-2 border-t border-border">
-                      <label className="text-xs font-semibold text-muted-foreground">Adjust Slider Value:</label>
-                      <input
-                        type="range" min="0" max="100" value={sliderVal}
-                        onChange={(e) => setSliderVal(Number(e.target.value))}
-                        className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* PROGRESS & LOADING CONTROLS */}
-              {activeTab === "progress-indicator" && (
-                <>
-                  <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full bg-accent/25 border border-border p-3 rounded-lg items-center">
-                    <span className="text-xs font-semibold">Indeterminate Spinner:</span>
-                    <Switch value={progressIndeterminate} onChanged={setProgressIndeterminate} />
-                  </Row>
-
-                  {!progressIndeterminate && (
-                    <div className="space-y-2">
+                  return (
+                    <div key={control.name} className="space-y-2 border-b border-border/30 pb-3 last:border-b-0">
+                      
+                      {/* Control Label */}
                       <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                        <span>Progress Value:</span> <span className="font-mono text-foreground font-medium">{progressVal}%</span>
+                        <span>{control.label}:</span> 
+                        {control.type !== "color" && control.type !== "toggle" && (
+                          <span className="font-mono text-foreground font-bold px-1.5 py-0.5 rounded bg-accent text-[10px] border border-border">
+                            {typeof currentValue === "boolean" ? (currentValue ? "TRUE" : "FALSE") : String(currentValue)}
+                          </span>
+                        )}
                       </label>
-                      <input
-                        type="range" min="0" max="100" value={progressVal}
-                        onChange={(e) => setProgressVal(Number(e.target.value))}
-                        className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5"
-                      />
+
+                      {/* Control Range Slider */}
+                      {control.type === "range" && (
+                        <input
+                          type="range"
+                          min={control.min ?? 0}
+                          max={control.max ?? 100}
+                          step={control.step ?? 1}
+                          value={currentValue}
+                          onChange={(e) => handleControlChange(control.name, Number(e.target.value))}
+                          className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5 outline-none"
+                        />
+                      )}
+
+                      {/* Control Select Box */}
+                      {control.type === "select" && (
+                        <select
+                          value={currentValue}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            // Check if option value should be a number or string
+                            const opt = control.options?.find(o => typeof o === "object" ? String(o.value) === val : String(o) === val);
+                            const parsedVal = opt && typeof opt === "object" ? opt.value : (isNaN(Number(val)) ? val : Number(val));
+                            handleControlChange(control.name, parsedVal);
+                          }}
+                          className="w-full px-2.5 py-2 border border-border rounded-lg bg-card text-xs outline-none focus:ring-1 focus:ring-primary"
+                        >
+                          {control.options?.map((opt, oIdx) => {
+                            const isObj = typeof opt === "object";
+                            const label = isObj ? opt.label : String(opt);
+                            const value = isObj ? opt.value : String(opt);
+                            return (
+                              <option key={oIdx} value={String(value)}>
+                                {label}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      )}
+
+                      {/* Control Switch / Toggle */}
+                      {control.type === "toggle" && (
+                        <button
+                          type="button"
+                          onClick={() => handleControlChange(control.name, !currentValue)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold w-full justify-between transition ${
+                            currentValue 
+                              ? "bg-primary/10 border-primary text-primary" 
+                              : "bg-card border-border hover:bg-accent text-muted-foreground"
+                          }`}
+                        >
+                          <span>{currentValue ? "Enabled (ON)" : "Disabled (OFF)"}</span>
+                          <span className={`w-2 h-2 rounded-full ${currentValue ? "bg-primary animate-pulse" : "bg-muted"}`} />
+                        </button>
+                      )}
+
+                      {/* Control Color Picker */}
+                      {control.type === "color" && (
+                        <div className="space-y-2 pt-1">
+                          {/* Selected Color Text Input */}
+                          <div className="flex gap-2 items-center">
+                            <input 
+                              type="color" 
+                              value={currentValue} 
+                              onChange={(e) => handleControlChange(control.name, e.target.value)}
+                              className="w-8 h-8 rounded border border-border cursor-pointer flex-shrink-0"
+                            />
+                            <input 
+                              type="text" 
+                              value={currentValue} 
+                              onChange={(e) => handleControlChange(control.name, e.target.value)}
+                              placeholder="#000000"
+                              className="flex-1 px-2.5 py-1.5 border border-border rounded-lg bg-card text-xs font-mono outline-none focus:ring-1 focus:ring-primary"
+                            />
+                          </div>
+                          
+                          {/* Palette Presets */}
+                          <div className="flex gap-1.5 flex-wrap pt-0.5">
+                            {["#8b5cf6", "#3b82f6", "#10b981", "#ef4444", "#f59e0b", "#ec4899", "#1e3a8a", "#111827"].map((color) => (
+                              <button
+                                key={color}
+                                type="button"
+                                onClick={() => handleControlChange(control.name, color)}
+                                className={`w-6 h-6 rounded-full border transition-all ${
+                                  currentValue === color ? "border-foreground ring-2 ring-primary/45 scale-110 shadow" : "border-transparent hover:scale-105"
+                                }`}
+                                style={{ backgroundColor: color }}
+                                title={color}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Control Textbox Input */}
+                      {control.type === "text" && (
+                        <input
+                          type="text"
+                          value={currentValue}
+                          onChange={(e) => handleControlChange(control.name, e.target.value)}
+                          className="w-full px-2.5 py-2 border border-border rounded-lg bg-card text-xs outline-none focus:ring-1 focus:ring-primary"
+                          placeholder={`Enter custom ${control.name}...`}
+                        />
+                      )}
+
                     </div>
-                  )}
-                </>
+                  );
+                })
+              ) : (
+                <div className="h-44 border border-dashed border-border/80 rounded-xl bg-card/20 flex flex-col items-center justify-center text-center p-5 text-muted-foreground text-xs">
+                  <Info size={20} className="mb-2 text-muted-foreground/60" />
+                  This component has no configurable inputs. It renders as a static visualizer standard.
+                </div>
               )}
-
-              {/* TOOLTIP & UTILITY CONTROLS */}
-              {activeTab === "tooltips" && (
-                <>
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground">Tooltip Message:</label>
-                    <textarea
-                      value={tooltipMessage}
-                      onChange={(e) => setTooltipMessage(e.target.value)}
-                      className="w-full p-2.5 rounded-lg border border-border bg-card text-xs focus:ring-1 focus:ring-primary outline-none"
-                      rows={3}
-                    />
-                  </div>
-                </>
-              )}
-
             </div>
           </section>
 

@@ -301,19 +301,19 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
           {isMultiline ? (
             <textarea
               id={inputId}
-              ref={ref as React.Ref<HTMLTextAreaElement>}
+              ref={ref as any}
               placeholder={hintText}
               readOnly={readOnly}
               disabled={!enabled}
               autoFocus={autofocus}
               maxLength={maxLength}
               rows={minLines ?? 3}
-              {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+              {...(props as any)}
               onChange={(e) => {
                 onChanged?.(e.target.value);
                 (
-                  props as React.TextareaHTMLAttributes<HTMLTextAreaElement>
-                ).onChange?.(e);
+                  props as any
+                ).onChange?.(e as any);
               }}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}

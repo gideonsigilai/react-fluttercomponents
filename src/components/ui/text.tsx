@@ -246,8 +246,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
 
     return (
       <Tag
-        // @ts-expect-error — dynamic tag ref
-        ref={ref}
+        ref={ref as any}
         className={cn("text-foreground", variantClasses[variant], className)}
         style={inlineStyle}
         {...props}
