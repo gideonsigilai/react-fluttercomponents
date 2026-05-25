@@ -1,0 +1,15 @@
+{
+  "name": "my-custom-ui",
+  "components": {
+    "button": {
+      "name": "button",
+      "dependencies": ["lucide-react", "clsx"],
+      "files": [
+        {
+          "path": "components/Button.tsx",
+          "contentUrl": "https://raw.githubusercontent.com/your-username/my-component-library/main/src/components/Button.tsx"
+        }
+      ]
+    }
+  }
+}
