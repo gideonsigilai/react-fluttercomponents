@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface ListViewProps extends React.HTMLAttributes<HTMLDivElement> {
   scrollDirection?: "vertical" | "horizontal";
@@ -41,7 +41,7 @@ export const ListView = React.forwardRef<HTMLDivElement, ListViewProps>(
       onEndReachedThreshold = 250,
       ...props
     },
-    ref
+    ref,
   ) => {
     const sentinelRef = React.useRef<HTMLDivElement>(null);
     const internalRef = React.useRef<HTMLDivElement>(null);
@@ -52,26 +52,41 @@ export const ListView = React.forwardRef<HTMLDivElement, ListViewProps>(
         if (typeof ref === "function") ref(node);
         else if (ref) ref.current = node;
       },
-      [ref]
+      [ref],
     );
 
     React.useEffect(() => {
-      if (!onEndReached || !sentinelRef.current || hasMore === false || !internalRef.current) return;
+      if (
+        !onEndReached ||
+        !sentinelRef.current ||
+        hasMore === false ||
+        !internalRef.current
+      )
+        return;
 
       const observer = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting && !isLoadingMore) onEndReached(); },
+        ([entry]) => {
+          if (entry.isIntersecting && !isLoadingMore) onEndReached();
+        },
         {
           root: internalRef.current,
           threshold: 0.1,
-          rootMargin: scrollDirection === "vertical"
-            ? `0px 0px ${onEndReachedThreshold}px 0px`
-            : `0px ${onEndReachedThreshold}px 0px 0px`,
-        }
+          rootMargin:
+            scrollDirection === "vertical"
+              ? `0px 0px ${onEndReachedThreshold}px 0px`
+              : `0px ${onEndReachedThreshold}px 0px 0px`,
+        },
       );
 
       observer.observe(sentinelRef.current);
       return () => observer.disconnect();
-    }, [onEndReached, isLoadingMore, hasMore, onEndReachedThreshold, scrollDirection]);
+    }, [
+      onEndReached,
+      isLoadingMore,
+      hasMore,
+      onEndReachedThreshold,
+      scrollDirection,
+    ]);
 
     // Memoize built items to avoid re-creating the array on every render
     const content = React.useMemo(
@@ -81,7 +96,7 @@ export const ListView = React.forwardRef<HTMLDivElement, ListViewProps>(
               <React.Fragment key={i}>{itemBuilder(i)}</React.Fragment>
             ))
           : children,
-      [itemBuilder, itemCount, children]
+      [itemBuilder, itemCount, children],
     );
 
     return (
@@ -89,9 +104,11 @@ export const ListView = React.forwardRef<HTMLDivElement, ListViewProps>(
         ref={setRefs}
         className={cn(
           "flex",
-          scrollDirection === "vertical" ? "flex-col overflow-y-auto" : "flex-row overflow-x-auto",
+          scrollDirection === "vertical"
+            ? "flex-col overflow-y-auto"
+            : "flex-row overflow-x-auto",
           shrinkWrap ? "flex-none" : "flex-1",
-          className
+          className,
         )}
         style={{
           padding: typeof padding === "number" ? `${padding}px` : padding,
@@ -103,7 +120,10 @@ export const ListView = React.forwardRef<HTMLDivElement, ListViewProps>(
         {content}
 
         {onEndReached && hasMore !== false && (
-          <div ref={sentinelRef} className="flex justify-center items-center py-4">
+          <div
+            ref={sentinelRef}
+            className="flex justify-center items-center py-4"
+          >
             {isLoadingMore && (
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent opacity-60" />
             )}
@@ -111,7 +131,7 @@ export const ListView = React.forwardRef<HTMLDivElement, ListViewProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 ListView.displayName = "ListView";

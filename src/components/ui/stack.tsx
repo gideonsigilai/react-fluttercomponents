@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { Alignment } from "./layout-types";
 import { sizePropsToStyle, type SizeProps } from "./flutter-style";
 import { POSITIONED_DISPLAY_NAME } from "./positioned";
@@ -16,7 +16,8 @@ export enum StackFit {
   passthrough = "passthrough",
 }
 
-export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
+export interface StackProps
+  extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
   /**
    * Where non-positioned children are placed inside the stack.
    * Only meaningful when fit is "loose" / "passthrough".
@@ -36,15 +37,33 @@ export interface StackProps extends React.HTMLAttributes<HTMLDivElement>, SizePr
 // Maps our Alignment enum values (which are Tailwind class strings) to
 // plain CSS so we can apply them inline without needing Tailwind at runtime.
 const alignToCss: Record<Alignment, React.CSSProperties> = {
-  [Alignment.topLeft]: { alignItems: "flex-start", justifyContent: "flex-start" },
+  [Alignment.topLeft]: {
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+  },
   [Alignment.topCenter]: { alignItems: "flex-start", justifyContent: "center" },
-  [Alignment.topRight]: { alignItems: "flex-start", justifyContent: "flex-end" },
-  [Alignment.centerLeft]: { alignItems: "center", justifyContent: "flex-start" },
+  [Alignment.topRight]: {
+    alignItems: "flex-start",
+    justifyContent: "flex-end",
+  },
+  [Alignment.centerLeft]: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
   [Alignment.center]: { alignItems: "center", justifyContent: "center" },
   [Alignment.centerRight]: { alignItems: "center", justifyContent: "flex-end" },
-  [Alignment.bottomLeft]: { alignItems: "flex-end", justifyContent: "flex-start" },
-  [Alignment.bottomCenter]: { alignItems: "flex-end", justifyContent: "center" },
-  [Alignment.bottomRight]: { alignItems: "flex-end", justifyContent: "flex-end" },
+  [Alignment.bottomLeft]: {
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+  },
+  [Alignment.bottomCenter]: {
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  [Alignment.bottomRight]: {
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+  },
 };
 
 /**
@@ -85,7 +104,14 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
           className,
         )}
         style={{
-          ...sizePropsToStyle({ width, height, minWidth, maxWidth, minHeight, maxHeight }),
+          ...sizePropsToStyle({
+            width,
+            height,
+            minWidth,
+            maxWidth,
+            minHeight,
+            maxHeight,
+          }),
           ...style,
         }}
         {...props}
@@ -111,16 +137,22 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
             // own layer using a flex wrapper that honours the alignment.
             React.Children.map(children, (child, i) => {
               // Skip null / undefined / boolean children
-              if (child === null || child === undefined || typeof child === "boolean") {
+              if (
+                child === null ||
+                child === undefined ||
+                typeof child === "boolean"
+              ) {
                 return child;
               }
 
               // Detect <Positioned> via its displayName — it manages its own placement.
               const isPositioned =
                 React.isValidElement(child) &&
-                (child.type as { displayName?: string }).displayName === POSITIONED_DISPLAY_NAME;
+                (child.type as { displayName?: string }).displayName ===
+                  POSITIONED_DISPLAY_NAME;
 
-              if (isPositioned) return <React.Fragment key={i}>{child}</React.Fragment>;
+              if (isPositioned)
+                return <React.Fragment key={i}>{child}</React.Fragment>;
 
               // Non-positioned children: wrap in an absolute fill + flex div
               // that aligns the child according to the stack's alignment.

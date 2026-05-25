@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 const STYLE_ID = "__skeletonizer_styles__";
 
@@ -152,7 +152,7 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
       className,
       style,
     },
-    ref
+    ref,
   ) => {
     React.useLayoutEffect(() => {
       ensureStyles();
@@ -238,7 +238,7 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Skeleton.displayName = "Skeleton";

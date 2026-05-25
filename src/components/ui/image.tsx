@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { BoxFit } from "./layout-types";
 
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -24,7 +24,7 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 Image.displayName = "Image";

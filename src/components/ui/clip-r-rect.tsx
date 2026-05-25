@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import {
   borderRadiusToStyle,
   type BorderRadiusInput,
@@ -20,7 +20,10 @@ export interface ClipRRectProps extends React.HTMLAttributes<HTMLDivElement> {
  * Equivalent to Flutter's ClipRRect() widget.
  */
 export const ClipRRect = React.forwardRef<HTMLDivElement, ClipRRectProps>(
-  ({ borderRadius = 8, width, height, children, className, style, ...props }, ref) => {
+  (
+    { borderRadius = 8, width, height, children, className, style, ...props },
+    ref,
+  ) => {
     return (
       <div
         ref={ref}
@@ -36,7 +39,7 @@ export const ClipRRect = React.forwardRef<HTMLDivElement, ClipRRectProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 ClipRRect.displayName = "ClipRRect";

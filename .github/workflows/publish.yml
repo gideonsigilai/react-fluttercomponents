@@ -1,0 +1,68 @@
+name: Publish to NPM & Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Component Registry
+        run: npm run build-registry
+
+      - name: Check if Version Changed
+        id: check-version
+        uses: EndBug/version-check@v2
+        with:
+          file-name: package.json
+
+      - name: Publish to NPM
+        if: steps.check-version.outputs.changed == 'true'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Git Tag and GitHub Release
+        if: steps.check-version.outputs.changed == 'true'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ steps.check-version.outputs.version }}
+          name: Release v${{ steps.check-version.outputs.version }}
+          body: |
+            ## React-Flutter Component CLI Release v${{ steps.check-version.outputs.version }} ⚡
+
+            We are excited to release the new version of React-Flutter Components!
+
+            ### 📦 Installation
+            Install this new version inside any project:
+            ```bash
+            npx @gideonsigilai/react-fluttercomponents@${{ steps.check-version.outputs.version }} init
+            ```
+
+            ### ✨ Key Features
+            * High-fidelity Flutter replica widgets (`Container`, `Card`, `Row`, `Column`, `CheckboxListTile`).
+            * Automated custom alias resolution for standard components and helper utilities.
+            * Dynamic npm peer package installation on adding components.
+          token: ${{ secrets.GITHUB_TOKEN }}

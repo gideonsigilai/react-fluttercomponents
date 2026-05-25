@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
@@ -34,9 +34,14 @@ export const Sidebar = ({
     };
   }, [isOpen]);
 
-  const transformClass = position === "left" 
-    ? (isOpen ? "translate-x-0" : "-translate-x-full")
-    : (isOpen ? "translate-x-0" : "translate-x-full");
+  const transformClass =
+    position === "left"
+      ? isOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+      : isOpen
+        ? "translate-x-0"
+        : "translate-x-full";
 
   return (
     <>
@@ -44,19 +49,21 @@ export const Sidebar = ({
       <div
         className={cn(
           "fixed inset-0 z-[100] bg-black/50 transition-opacity duration-300",
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         onClick={onClose}
         aria-hidden="true"
       />
-      
+
       {/* Sidebar Panel */}
       <div
         className={cn(
           "fixed top-0 bottom-0 z-[110] flex flex-col bg-background shadow-2xl transition-transform duration-300 ease-in-out pointer-events-auto",
           position === "left" ? "left-0" : "right-0",
           transformClass,
-          className
+          className,
         )}
         style={{ width: typeof width === "number" ? `${width}px` : width }}
         {...props}
@@ -75,7 +82,7 @@ export const SidebarHeader = ({
   <div
     className={cn(
       "p-4 border-b border-border/50 bg-muted/20 min-h-[64px] flex items-center",
-      className
+      className,
     )}
     {...props}
   >
@@ -88,13 +95,7 @@ export const SidebarBody = ({
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex-1 overflow-y-auto p-2",
-      className
-    )}
-    {...props}
-  >
+  <div className={cn("flex-1 overflow-y-auto p-2", className)} {...props}>
     {children}
   </div>
 );

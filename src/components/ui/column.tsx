@@ -1,9 +1,14 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import { MainAxisAlignment, CrossAxisAlignment, MainAxisSize } from "./layout-types";
+import { cn } from "../utils";
+import {
+  MainAxisAlignment,
+  CrossAxisAlignment,
+  MainAxisSize,
+} from "./layout-types";
 import { sizePropsToStyle, sizeToCss, type SizeProps } from "./flutter-style";
 
-export interface ColumnProps extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
+export interface ColumnProps
+  extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
   mainAxisAlignment?: MainAxisAlignment;
   crossAxisAlignment?: CrossAxisAlignment;
   mainAxisSize?: MainAxisSize;
@@ -35,7 +40,7 @@ export const Column = React.forwardRef<HTMLDivElement, ColumnProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -45,12 +50,19 @@ export const Column = React.forwardRef<HTMLDivElement, ColumnProps>(
           mainAxisAlignment,
           crossAxisAlignment,
           mainAxisSize === MainAxisSize.max ? "h-full" : "h-auto",
-          className
+          className,
         )}
         style={{
           gap: sizeToCss(gap),
           padding: sizeToCss(padding),
-          ...sizePropsToStyle({ width, height, minWidth, maxWidth, minHeight, maxHeight }),
+          ...sizePropsToStyle({
+            width,
+            height,
+            minWidth,
+            maxWidth,
+            minHeight,
+            maxHeight,
+          }),
           ...style,
         }}
         {...props}
@@ -58,7 +70,7 @@ export const Column = React.forwardRef<HTMLDivElement, ColumnProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Column.displayName = "Column";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface GridViewProps extends React.HTMLAttributes<HTMLDivElement> {
   crossAxisCount?: number;
@@ -31,7 +31,7 @@ export const GridView = React.forwardRef<HTMLDivElement, GridViewProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const content =
       itemBuilder && itemCount !== undefined
@@ -43,10 +43,12 @@ export const GridView = React.forwardRef<HTMLDivElement, GridViewProps>(
     const gridTemplateColumns = crossAxisCount
       ? `repeat(${crossAxisCount}, minmax(0, 1fr))`
       : maxCrossAxisExtent
-      ? `repeat(auto-fill, minmax(${
-          typeof maxCrossAxisExtent === "number" ? `${maxCrossAxisExtent}px` : maxCrossAxisExtent
-        }, 1fr))`
-      : undefined;
+        ? `repeat(auto-fill, minmax(${
+            typeof maxCrossAxisExtent === "number"
+              ? `${maxCrossAxisExtent}px`
+              : maxCrossAxisExtent
+          }, 1fr))`
+        : undefined;
 
     return (
       <div
@@ -54,9 +56,14 @@ export const GridView = React.forwardRef<HTMLDivElement, GridViewProps>(
         className={cn("grid overflow-y-auto", className)}
         style={{
           gridTemplateColumns,
-          rowGap: typeof mainAxisSpacing === "number" ? `${mainAxisSpacing}px` : mainAxisSpacing,
+          rowGap:
+            typeof mainAxisSpacing === "number"
+              ? `${mainAxisSpacing}px`
+              : mainAxisSpacing,
           columnGap:
-            typeof crossAxisSpacing === "number" ? `${crossAxisSpacing}px` : crossAxisSpacing,
+            typeof crossAxisSpacing === "number"
+              ? `${crossAxisSpacing}px`
+              : crossAxisSpacing,
           padding: typeof padding === "number" ? `${padding}px` : padding,
           ...style,
         }}
@@ -65,7 +72,7 @@ export const GridView = React.forwardRef<HTMLDivElement, GridViewProps>(
         {content}
       </div>
     );
-  }
+  },
 );
 
 GridView.displayName = "GridView";

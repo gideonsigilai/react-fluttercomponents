@@ -16,7 +16,7 @@
  *  - allowImplicitScrolling (keeps adjacent pages alive)
  */
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { Color, SizeInput } from "./flutter-style";
 import { sizeToCss } from "./flutter-style";
 
@@ -118,7 +118,7 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
       className,
       style,
     },
-    ref
+    ref,
   ) => {
     const isHorizontal = scrollDirection === "horizontal";
     const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -144,12 +144,18 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
         const pageSize = isHorizontal ? el.clientWidth : el.clientHeight;
         const offset = index * pageSize * viewportFraction;
         if (isHorizontal) {
-          el.scrollTo({ left: reverse ? -offset : offset, behavior: smooth ? "smooth" : "instant" });
+          el.scrollTo({
+            left: reverse ? -offset : offset,
+            behavior: smooth ? "smooth" : "instant",
+          });
         } else {
-          el.scrollTo({ top: reverse ? -offset : offset, behavior: smooth ? "smooth" : "instant" });
+          el.scrollTo({
+            top: reverse ? -offset : offset,
+            behavior: smooth ? "smooth" : "instant",
+          });
         }
       },
-      [isHorizontal, reverse, viewportFraction, pageCount]
+      [isHorizontal, reverse, viewportFraction, pageCount],
     );
 
     // ── Sync controlled page ────────────────────────────────
@@ -163,7 +169,7 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
     // ── Expose imperative controller ────────────────────────
     React.useEffect(() => {
       if (!controller) return;
-      controller.current = {
+      (controller as any).current = {
         animateToPage: (p, _ms = 300) => {
           scrollToPage(p, true);
           setCurrentPage(p);
@@ -182,7 +188,9 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
           scrollToPage(prev, true);
           setCurrentPage(prev);
         },
-        get page() { return currentPage; },
+        get page() {
+          return currentPage;
+        },
       };
     }, [controller, currentPage, pageCount, scrollToPage]);
 
@@ -223,7 +231,8 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
               onPageChanged?.(i);
             }}
             style={{
-              width: i === currentPage ? indicatorDotSize * 2.5 : indicatorDotSize,
+              width:
+                i === currentPage ? indicatorDotSize * 2.5 : indicatorDotSize,
               height: indicatorDotSize,
               borderRadius: indicatorDotSize,
               backgroundColor:
@@ -234,7 +243,8 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
               border: "none",
               padding: 0,
               cursor: "pointer",
-              transition: "width 250ms cubic-bezier(.4,0,.2,1), opacity 250ms, background-color 250ms",
+              transition:
+                "width 250ms cubic-bezier(.4,0,.2,1), opacity 250ms, background-color 250ms",
             }}
           />
         ))}
@@ -265,17 +275,29 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
           className={cn(
             "flex flex-1 min-h-0",
             isHorizontal
-              ? (reverse ? "flex-row-reverse" : "flex-row")
-              : (reverse ? "flex-col-reverse" : "flex-col"),
+              ? reverse
+                ? "flex-row-reverse"
+                : "flex-row"
+              : reverse
+                ? "flex-col-reverse"
+                : "flex-col",
             physics === "never" && "overflow-hidden",
-            physics !== "never" && (isHorizontal ? "overflow-x-auto overflow-y-hidden" : "overflow-y-auto overflow-x-hidden"),
+            physics !== "never" &&
+              (isHorizontal
+                ? "overflow-x-auto overflow-y-hidden"
+                : "overflow-y-auto overflow-x-hidden"),
           )}
           style={{
-            scrollSnapType: physics === "page"
-              ? (isHorizontal ? "x mandatory" : "y mandatory")
-              : physics === "free"
-              ? (isHorizontal ? "x proximity" : "y proximity")
-              : undefined,
+            scrollSnapType:
+              physics === "page"
+                ? isHorizontal
+                  ? "x mandatory"
+                  : "y mandatory"
+                : physics === "free"
+                  ? isHorizontal
+                    ? "x proximity"
+                    : "y proximity"
+                  : undefined,
             scrollBehavior: "smooth",
             // Hide scrollbar
             scrollbarWidth: "none",
@@ -283,7 +305,11 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
           }}
         >
           {pages.map((page, i) => (
-            <div key={i} style={pageStyle} aria-hidden={i !== currentPage ? true : undefined}>
+            <div
+              key={i}
+              style={pageStyle}
+              aria-hidden={i !== currentPage ? true : undefined}
+            >
               {page}
             </div>
           ))}
@@ -293,7 +319,7 @@ export const PageView = React.forwardRef<HTMLDivElement, PageViewProps>(
         {dots}
       </div>
     );
-  }
+  },
 );
 
 PageView.displayName = "PageView";

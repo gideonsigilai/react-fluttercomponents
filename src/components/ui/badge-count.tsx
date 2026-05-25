@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface BadgeCountProps extends React.HTMLAttributes<HTMLDivElement> {
   count?: number;
@@ -37,7 +37,10 @@ export function BadgeCount({
   const isSmall = displayContent === undefined || displayContent === null;
 
   return (
-    <div className={cn("relative inline-flex flex-shrink-0", className)} {...props}>
+    <div
+      className={cn("relative inline-flex flex-shrink-0", className)}
+      {...props}
+    >
       {children}
       {isLabelVisible && (
         <span
@@ -45,10 +48,14 @@ export function BadgeCount({
             "absolute z-10 flex items-center justify-center rounded-full bg-destructive font-semibold text-destructive-foreground ring-2 ring-background transition-transform",
             isSmall
               ? "h-2 w-2 right-0 top-0 translate-x-1/3 -translate-y-1/3"
-              : "min-h-5 min-w-5 px-1 text-[11px] right-0 top-0 translate-x-1/3 -translate-y-1/3"
+              : "min-h-5 min-w-5 px-1 text-[11px] right-0 top-0 translate-x-1/3 -translate-y-1/3",
           )}
           style={{
-            ...(offset ? { transform: `translate(calc(33.33% + ${offset.x}px), calc(-33.33% + ${offset.y}px))` } : {}),
+            ...(offset
+              ? {
+                  transform: `translate(calc(33.33% + ${offset.x}px), calc(-33.33% + ${offset.y}px))`,
+                }
+              : {}),
           }}
         >
           {displayContent}

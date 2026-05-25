@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface ExpandedProps extends React.HTMLAttributes<HTMLDivElement> {
   flex?: number;
@@ -22,7 +22,7 @@ export const Expanded = React.forwardRef<HTMLDivElement, ExpandedProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Expanded.displayName = "Expanded";

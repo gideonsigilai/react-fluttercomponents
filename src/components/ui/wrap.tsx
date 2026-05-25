@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { EdgeInsetsInput } from "./flutter-style";
 import { edgeInsetsToStyle } from "./flutter-style";
 

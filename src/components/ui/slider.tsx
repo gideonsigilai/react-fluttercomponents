@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { Color } from "./flutter-style";
 
 export interface SliderProps {
@@ -76,13 +76,21 @@ export const Slider = ({
         value={value}
         disabled={!enabled}
         onChange={(e) => onChanged?.(parseFloat(e.target.value))}
-        onMouseDown={(e) => onChangeStart?.(parseFloat((e.target as HTMLInputElement).value))}
-        onMouseUp={(e) => onChangeEnd?.(parseFloat((e.target as HTMLInputElement).value))}
-        onTouchStart={(e) => onChangeStart?.(parseFloat((e.target as HTMLInputElement).value))}
-        onTouchEnd={(e) => onChangeEnd?.(parseFloat((e.target as HTMLInputElement).value))}
+        onMouseDown={(e) =>
+          onChangeStart?.(parseFloat((e.target as HTMLInputElement).value))
+        }
+        onMouseUp={(e) =>
+          onChangeEnd?.(parseFloat((e.target as HTMLInputElement).value))
+        }
+        onTouchStart={(e) =>
+          onChangeStart?.(parseFloat((e.target as HTMLInputElement).value))
+        }
+        onTouchEnd={(e) =>
+          onChangeEnd?.(parseFloat((e.target as HTMLInputElement).value))
+        }
         className={cn(
           "absolute inset-0 w-full opacity-0 cursor-pointer h-full",
-          !enabled && "cursor-not-allowed opacity-50"
+          !enabled && "cursor-not-allowed opacity-50",
         )}
         style={{ margin: 0 }}
       />

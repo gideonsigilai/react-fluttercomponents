@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { Button, ButtonProps } from "./button";
 
 export interface IconButtonProps extends Omit<ButtonProps, "children"> {
@@ -26,7 +26,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         {icon}
       </Button>
     );
-  }
+  },
 );
 
 IconButton.displayName = "IconButton";

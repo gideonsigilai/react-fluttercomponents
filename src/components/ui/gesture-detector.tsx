@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface GestureDetectorProps extends React.HTMLAttributes<HTMLDivElement> {
   onTap?: () => void;
@@ -12,8 +12,24 @@ export interface GestureDetectorProps extends React.HTMLAttributes<HTMLDivElemen
  * A widget that detects gestures.
  * Equivalent to Flutter's GestureDetector() widget.
  */
-export const GestureDetector = React.forwardRef<HTMLDivElement, GestureDetectorProps>(
-  ({ children, onTap, onDoubleTap, onLongPress, className, onClick, onDoubleClick, onContextMenu, ...props }, ref) => {
+export const GestureDetector = React.forwardRef<
+  HTMLDivElement,
+  GestureDetectorProps
+>(
+  (
+    {
+      children,
+      onTap,
+      onDoubleTap,
+      onLongPress,
+      className,
+      onClick,
+      onDoubleClick,
+      onContextMenu,
+      ...props
+    },
+    ref,
+  ) => {
     const handleLongPress = (e: React.MouseEvent) => {
       if (onLongPress) {
         e.preventDefault();
@@ -44,7 +60,7 @@ export const GestureDetector = React.forwardRef<HTMLDivElement, GestureDetectorP
         {children}
       </div>
     );
-  }
+  },
 );
 
 GestureDetector.displayName = "GestureDetector";

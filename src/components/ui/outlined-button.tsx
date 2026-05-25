@@ -1,7 +1,16 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import type { Color, EdgeInsetsInput, BorderRadiusInput, SizeInput } from "./flutter-style";
-import { edgeInsetsToStyle, borderRadiusToStyle, sizeToCss } from "./flutter-style";
+import { cn } from "../utils";
+import type {
+  Color,
+  EdgeInsetsInput,
+  BorderRadiusInput,
+  SizeInput,
+} from "./flutter-style";
+import {
+  edgeInsetsToStyle,
+  borderRadiusToStyle,
+  sizeToCss,
+} from "./flutter-style";
 
 export interface OutlinedButtonProps {
   /** The button label widget. */
@@ -63,10 +72,11 @@ export const OutlinedButton = ({
         "active:scale-[0.98]",
         !backgroundColor && "bg-transparent",
         !foregroundColor && "text-foreground",
-        !borderColor && "border-border hover:border-primary/60 hover:bg-accent/50",
+        !borderColor &&
+          "border-border hover:border-primary/60 hover:bg-accent/50",
         disabled && "opacity-50 cursor-not-allowed pointer-events-none",
         fullWidth && "w-full",
-        className
+        className,
       )}
       style={{
         border: `${borderWidth}px solid ${borderColor ?? "var(--border)"}`,
@@ -75,7 +85,10 @@ export const OutlinedButton = ({
         width: sizeToCss(width),
         height: sizeToCss(height),
         ...borderRadiusToStyle(borderRadius),
-        ...edgeInsetsToStyle(padding ?? { top: 10, bottom: 10, left: 24, right: 24 }, "padding"),
+        ...edgeInsetsToStyle(
+          padding ?? { top: 10, bottom: 10, left: 24, right: 24 },
+          "padding",
+        ),
         ...style,
       }}
     >

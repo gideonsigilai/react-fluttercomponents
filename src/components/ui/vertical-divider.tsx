@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface VerticalDividerProps {
   /** Width (thickness) of the line in px. Default 1. */

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { GestureDetector, GestureDetectorProps } from "./gesture-detector";
 
 /**
@@ -13,14 +13,14 @@ export const InkWell = React.forwardRef<HTMLDivElement, GestureDetectorProps>(
         ref={ref}
         className={cn(
           "relative overflow-hidden transition-all duration-200 hover:bg-accent/50 active:bg-accent/80 rounded-sm",
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </GestureDetector>
     );
-  }
+  },
 );
 
 InkWell.displayName = "InkWell";

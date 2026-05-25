@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface CircularProgressIndicatorProps {
   size?: number;
@@ -21,7 +21,10 @@ export const CircularProgressIndicator = ({
 }: CircularProgressIndicatorProps) => {
   return (
     <div
-      className={cn("animate-spin rounded-full border-solid border-t-transparent", className)}
+      className={cn(
+        "animate-spin rounded-full border-solid border-t-transparent",
+        className,
+      )}
       style={{
         width: `${size}px`,
         height: `${size}px`,

@@ -1,9 +1,14 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import { MainAxisAlignment, CrossAxisAlignment, MainAxisSize } from "./layout-types";
+import { cn } from "../utils";
+import {
+  MainAxisAlignment,
+  CrossAxisAlignment,
+  MainAxisSize,
+} from "./layout-types";
 import { sizePropsToStyle, sizeToCss, type SizeProps } from "./flutter-style";
 
-export interface RowProps extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
+export interface RowProps
+  extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
   mainAxisAlignment?: MainAxisAlignment;
   crossAxisAlignment?: CrossAxisAlignment;
   mainAxisSize?: MainAxisSize;
@@ -35,7 +40,7 @@ export const Row = React.forwardRef<HTMLDivElement, RowProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -45,12 +50,19 @@ export const Row = React.forwardRef<HTMLDivElement, RowProps>(
           mainAxisAlignment,
           crossAxisAlignment,
           mainAxisSize === MainAxisSize.max ? "w-full" : "w-auto",
-          className
+          className,
         )}
         style={{
           gap: sizeToCss(gap),
           padding: sizeToCss(padding),
-          ...sizePropsToStyle({ width, height, minWidth, maxWidth, minHeight, maxHeight }),
+          ...sizePropsToStyle({
+            width,
+            height,
+            minWidth,
+            maxWidth,
+            minHeight,
+            maxHeight,
+          }),
           ...style,
         }}
         {...props}
@@ -58,7 +70,7 @@ export const Row = React.forwardRef<HTMLDivElement, RowProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Row.displayName = "Row";

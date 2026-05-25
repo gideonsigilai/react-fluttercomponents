@@ -1,8 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { cn } from "@/lib/utils";
-import type { Color, EdgeInsetsInput, BorderRadiusInput, SizeInput } from "./flutter-style";
-import { edgeInsetsToStyle, borderRadiusToStyle, sizeToCss, elevationToShadow } from "./flutter-style";
+import { cn } from "../utils";
+import type {
+  Color,
+  EdgeInsetsInput,
+  BorderRadiusInput,
+  SizeInput,
+} from "./flutter-style";
+import {
+  edgeInsetsToStyle,
+  borderRadiusToStyle,
+  sizeToCss,
+  elevationToShadow,
+} from "./flutter-style";
 
 // ─── DropdownMenuItem ───────────────────────────────────────────────────────
 
@@ -57,14 +67,23 @@ export interface DropdownButtonProps<T> {
   key?: React.Key;
 }
 
-function readItemProps<T>(el: React.ReactElement<DropdownMenuItemProps<T>>): DropdownMenuItemProps<T> {
+function readItemProps<T>(
+  el: React.ReactElement<DropdownMenuItemProps<T>>,
+): DropdownMenuItemProps<T> {
   return el.props;
 }
 
 // Stable checkmark SVG — defined once outside component
 const CheckIcon = (
-  <svg viewBox="0 0 12 10" className="h-3 w-3" fill="none" stroke="currentColor"
-    strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    viewBox="0 0 12 10"
+    className="h-3 w-3"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2.5}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M1 5l3.5 3.5L11 1" />
   </svg>
 );
@@ -131,22 +150,37 @@ export function DropdownButton<T>({
       boxShadow: elevationToShadow(elevation),
       backgroundColor: menuBackgroundColor ?? "var(--popover)",
       ...borderRadiusToStyle(borderRadius),
-      ...(openUp ? { bottom: window.innerHeight - rect.top + 4 } : { top: rect.bottom + 4 }),
+      ...(openUp
+        ? { bottom: window.innerHeight - rect.top + 4 }
+        : { top: rect.bottom + 4 }),
       ...alignOffset,
     });
     setOpen(true);
-  }, [enabled, preferUp, alignment, menuMaxHeight, elevation, menuBackgroundColor, borderRadius]);
+  }, [
+    enabled,
+    preferUp,
+    alignment,
+    menuMaxHeight,
+    elevation,
+    menuBackgroundColor,
+    borderRadius,
+  ]);
 
   // Close on outside click / Escape
   React.useEffect(() => {
     if (!open) return;
     const handleClick = (e: MouseEvent) => {
       if (
-        menuRef.current && !menuRef.current.contains(e.target as Node) &&
-        buttonRef.current && !buttonRef.current.contains(e.target as Node)
-      ) setOpen(false);
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      )
+        setOpen(false);
     };
-    const handleKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", handleClick);
     document.addEventListener("keydown", handleKey);
     return () => {
@@ -157,22 +191,30 @@ export function DropdownButton<T>({
 
   const selectedItem = React.useMemo(
     () => items.find((el) => readItemProps(el).value === value),
-    [items, value]
+    [items, value],
   );
 
   const displayChild = selectedItem
     ? readItemProps(selectedItem).child
-    : enabled ? hint : (disabledHint ?? hint);
+    : enabled
+      ? hint
+      : (disabledHint ?? hint);
 
   const chevronColor = enabled ? iconEnabledColor : iconDisabledColor;
 
   const defaultIcon = (
     <svg
-      width={iconSize} height={iconSize} viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth={2}
-      strokeLinecap="round" strokeLinejoin="round"
+      width={iconSize}
+      height={iconSize}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       style={{
-        color: chevronColor, flexShrink: 0,
+        color: chevronColor,
+        flexShrink: 0,
         transition: "transform 200ms",
         transform: open ? "rotate(180deg)" : "rotate(0deg)",
       }}
@@ -183,17 +225,22 @@ export function DropdownButton<T>({
 
   const handleToggle = React.useCallback(
     () => (open ? setOpen(false) : openMenu()),
-    [open, openMenu]
+    [open, openMenu],
   );
 
   return (
-    <div className={cn("inline-flex flex-col w-full", className)} style={{ width: sizeToCss(width) }}>
+    <div
+      className={cn("inline-flex flex-col w-full", className)}
+      style={{ width: sizeToCss(width) }}
+    >
       {label && (
-        <label className={cn(
-          "text-sm font-medium mb-1 select-none",
-          !enabled && "opacity-50",
-          errorText ? "text-destructive" : "text-foreground",
-        )}>
+        <label
+          className={cn(
+            "text-sm font-medium mb-1 select-none",
+            !enabled && "opacity-50",
+            errorText ? "text-destructive" : "text-foreground",
+          )}
+        >
           {label}
         </label>
       )}
@@ -210,9 +257,11 @@ export function DropdownButton<T>({
           "border transition-colors duration-150 select-none",
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
           filled ? "bg-secondary" : "bg-background",
-          open ? "border-primary ring-2 ring-primary/20"
-            : errorText ? "border-destructive"
-            : "border-border hover:border-primary/60",
+          open
+            ? "border-primary ring-2 ring-primary/20"
+            : errorText
+              ? "border-destructive"
+              : "border-border hover:border-primary/60",
           !enabled && "opacity-50 cursor-not-allowed",
         )}
         style={{
@@ -220,12 +269,17 @@ export function DropdownButton<T>({
           backgroundColor: dropdownColor,
           borderColor,
           ...borderRadiusToStyle(borderRadius),
-          ...edgeInsetsToStyle(padding ?? { top: 0, bottom: 0, left: 12, right: 8 }, "padding"),
+          ...edgeInsetsToStyle(
+            padding ?? { top: 0, bottom: 0, left: 12, right: 8 },
+            "padding",
+          ),
           ...style,
         }}
       >
         <span className="flex-1 min-w-0 text-left truncate">
-          {displayChild ?? <span className="text-muted-foreground">Select…</span>}
+          {displayChild ?? (
+            <span className="text-muted-foreground">Select…</span>
+          )}
         </span>
         {icon ?? defaultIcon}
       </button>
@@ -234,58 +288,73 @@ export function DropdownButton<T>({
         <p className="mt-1 text-xs font-medium text-destructive">{errorText}</p>
       )}
 
-      {open && ReactDOM.createPortal(
-        <div
-          ref={menuRef}
-          role="listbox"
-          aria-label={label}
-          style={{ ...menuStyle, overflowY: "auto", border: "1px solid var(--border)" }}
-          className="py-1"
-        >
-          {items.map((el, i) => {
-            const itemProps = readItemProps(el);
-            const isSelected = itemProps.value === value;
-            const itemEnabled = itemProps.enabled !== false;
+      {open &&
+        ReactDOM.createPortal(
+          <div
+            ref={menuRef}
+            role="listbox"
+            aria-label={label}
+            style={{
+              ...menuStyle,
+              overflowY: "auto",
+              border: "1px solid var(--border)",
+            }}
+            className="py-1"
+          >
+            {items.map((el, i) => {
+              const itemProps = readItemProps(el);
+              const isSelected = itemProps.value === value;
+              const itemEnabled = itemProps.enabled !== false;
 
-            return (
-              <div
-                key={el.key ?? i}
-                role="option"
-                aria-selected={isSelected}
-                aria-disabled={!itemEnabled}
-                tabIndex={itemEnabled ? 0 : undefined}
-                style={{ minHeight: `${itemProps.height ?? 48}px` }}
-                className={cn(
-                  "flex items-center px-4 text-sm transition-colors cursor-pointer select-none",
-                  isSelected ? "bg-primary/10 text-primary font-medium" : "text-popover-foreground",
-                  itemEnabled ? "hover:bg-accent hover:text-accent-foreground" : "opacity-40 cursor-not-allowed",
-                )}
-                onClick={() => {
-                  if (!itemEnabled) return;
-                  itemProps.onTap?.();
-                  onChanged?.(itemProps.value);
-                  setOpen(false);
-                }}
-                onKeyDown={(e) => {
-                  if (!itemEnabled) return;
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
+              return (
+                <div
+                  key={el.key ?? i}
+                  role="option"
+                  aria-selected={isSelected}
+                  aria-disabled={!itemEnabled}
+                  tabIndex={itemEnabled ? 0 : undefined}
+                  style={{ minHeight: `${itemProps.height ?? 48}px` }}
+                  className={cn(
+                    "flex items-center px-4 text-sm transition-colors cursor-pointer select-none",
+                    isSelected
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-popover-foreground",
+                    itemEnabled
+                      ? "hover:bg-accent hover:text-accent-foreground"
+                      : "opacity-40 cursor-not-allowed",
+                  )}
+                  onClick={() => {
+                    if (!itemEnabled) return;
                     itemProps.onTap?.();
                     onChanged?.(itemProps.value);
                     setOpen(false);
-                  }
-                }}
-              >
-                <span className={cn("mr-2 flex-none w-4", isSelected ? "opacity-100" : "opacity-0")} aria-hidden="true">
-                  {CheckIcon}
-                </span>
-                {itemProps.child}
-              </div>
-            );
-          })}
-        </div>,
-        document.body
-      )}
+                  }}
+                  onKeyDown={(e) => {
+                    if (!itemEnabled) return;
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      itemProps.onTap?.();
+                      onChanged?.(itemProps.value);
+                      setOpen(false);
+                    }
+                  }}
+                >
+                  <span
+                    className={cn(
+                      "mr-2 flex-none w-4",
+                      isSelected ? "opacity-100" : "opacity-0",
+                    )}
+                    aria-hidden="true"
+                  >
+                    {CheckIcon}
+                  </span>
+                  {itemProps.child}
+                </div>
+              );
+            })}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

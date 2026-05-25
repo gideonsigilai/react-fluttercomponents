@@ -15,7 +15,7 @@
  *  - Loading state with shimmer
  */
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { Color } from "./flutter-style";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -106,17 +106,19 @@ export interface CircularAvatarProps {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 const STATUS_COLORS: Record<AvatarStatus, string> = {
-  online:  "#4CAF50",
+  online: "#4CAF50",
   offline: "#9E9E9E",
-  away:    "#FFC107",
-  busy:    "#F44336",
+  away: "#FFC107",
+  busy: "#F44336",
 };
 
 /** Derive up to 2 initials from a string (e.g. "John Doe" → "JD"). */
 function toInitials(text: string): string {
   const parts = text.trim().split(/\s+/);
   if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "";
-  return ((parts[0][0] ?? "") + (parts[parts.length - 1][0] ?? "")).toUpperCase();
+  return (
+    (parts[0][0] ?? "") + (parts[parts.length - 1][0] ?? "")
+  ).toUpperCase();
 }
 
 /** Generate a deterministic hue from a string for consistent avatar colors. */
@@ -136,7 +138,10 @@ function autoBackgroundColor(seed: string): string {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-export const CircularAvatar = React.forwardRef<HTMLDivElement, CircularAvatarProps>(
+export const CircularAvatar = React.forwardRef<
+  HTMLDivElement,
+  CircularAvatarProps
+>(
   (
     {
       backgroundImage,
@@ -160,7 +165,7 @@ export const CircularAvatar = React.forwardRef<HTMLDivElement, CircularAvatarPro
       className,
       style,
     },
-    ref
+    ref,
   ) => {
     const [imgError, setImgError] = React.useState(false);
 
@@ -180,15 +185,24 @@ export const CircularAvatar = React.forwardRef<HTMLDivElement, CircularAvatarPro
 
     // Auto background color from initials seed
     const isMutedBg = !backgroundColor && !resolvedInitials;
-    const resolvedBg = backgroundColor
-      ?? (resolvedInitials ? autoBackgroundColor(resolvedInitials) : "var(--muted)");
+    const resolvedBg =
+      backgroundColor ??
+      (resolvedInitials
+        ? autoBackgroundColor(resolvedInitials)
+        : "var(--muted)");
 
-    const resolvedFg = foregroundColor ?? (isMutedBg ? "var(--muted-foreground)" : "#ffffff");
-    const resolvedFontSize = fontSize ?? Math.max(10, Math.round(radius * 0.55));
+    const resolvedFg =
+      foregroundColor ?? (isMutedBg ? "var(--muted-foreground)" : "#ffffff");
+    const resolvedFontSize =
+      fontSize ?? Math.max(10, Math.round(radius * 0.55));
 
     const showImage = !!backgroundImage && !imgError;
-    const showInitials = !showImage && !!resolvedInitials && (!resolvedChild || typeof resolvedChild === "string");
-    const showChild = !showImage && !!resolvedChild && typeof resolvedChild !== "string";
+    const showInitials =
+      !showImage &&
+      !!resolvedInitials &&
+      (!resolvedChild || typeof resolvedChild === "string");
+    const showChild =
+      !showImage && !!resolvedChild && typeof resolvedChild !== "string";
 
     // Status dot size
     const dotSize = Math.max(8, Math.round(radius * 0.38));
@@ -253,12 +267,19 @@ export const CircularAvatar = React.forwardRef<HTMLDivElement, CircularAvatarPro
         tabIndex={onTap ? 0 : undefined}
         aria-label={alt ?? resolvedInitials ?? "avatar"}
         onClick={onTap}
-        onKeyDown={onTap ? (e) => { if (e.key === "Enter" || e.key === " ") onTap(); } : undefined}
+        onKeyDown={
+          onTap
+            ? (e) => {
+                if (e.key === "Enter" || e.key === " ") onTap();
+              }
+            : undefined
+        }
         className={cn(
           "relative inline-flex items-center justify-center overflow-hidden select-none",
           "transition-transform duration-150",
-          onTap && "hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          className
+          onTap &&
+            "hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          className,
         )}
         style={containerStyle}
       >
@@ -282,7 +303,7 @@ export const CircularAvatar = React.forwardRef<HTMLDivElement, CircularAvatarPro
     );
 
     return avatar;
-  }
+  },
 );
 
 CircularAvatar.displayName = "CircularAvatar";
@@ -305,56 +326,58 @@ export interface AvatarGroupProps {
   key?: React.Key;
 }
 
-export const AvatarGroup = React.memo(({
-  avatars,
-  max = 4,
-  overlap,
-  radius = 18,
-  onOverflowTap,
-  className,
-}: AvatarGroupProps) => {
-  const resolvedOverlap = overlap ?? Math.round(radius * 0.6);
-  const visible = avatars.slice(0, max);
-  const overflow = avatars.length - max;
+export const AvatarGroup = React.memo(
+  ({
+    avatars,
+    max = 4,
+    overlap,
+    radius = 18,
+    onOverflowTap,
+    className,
+  }: AvatarGroupProps) => {
+    const resolvedOverlap = overlap ?? Math.round(radius * 0.6);
+    const visible = avatars.slice(0, max);
+    const overflow = avatars.length - max;
 
-  return (
-    <div
-      className={cn("flex items-center", className)}
-      style={{ paddingLeft: resolvedOverlap }}
-    >
-      {visible.map((props, i) => (
-        <div
-          key={props.key ?? i}
-          style={{ marginLeft: -resolvedOverlap, zIndex: visible.length - i }}
-          className="relative"
-        >
-          <CircularAvatar
-            {...props}
-            radius={radius}
-            ringColor="var(--background)"
-            ringWidth={2}
-          />
-        </div>
-      ))}
-      {overflow > 0 && (
-        <div
-          style={{ marginLeft: -resolvedOverlap, zIndex: 0 }}
-          className="relative"
-        >
-          <CircularAvatar
-            radius={radius}
-            initials={`+${overflow}`}
-            backgroundColor="var(--muted)"
-            foregroundColor="var(--muted-foreground)"
-            ringColor="var(--background)"
-            ringWidth={2}
-            onTap={onOverflowTap}
-            fontSize={Math.max(9, Math.round(radius * 0.45))}
-          />
-        </div>
-      )}
-    </div>
-  );
-});
+    return (
+      <div
+        className={cn("flex items-center", className)}
+        style={{ paddingLeft: resolvedOverlap }}
+      >
+        {visible.map((props, i) => (
+          <div
+            key={props.key ?? i}
+            style={{ marginLeft: -resolvedOverlap, zIndex: visible.length - i }}
+            className="relative"
+          >
+            <CircularAvatar
+              {...props}
+              radius={radius}
+              ringColor="var(--background)"
+              ringWidth={2}
+            />
+          </div>
+        ))}
+        {overflow > 0 && (
+          <div
+            style={{ marginLeft: -resolvedOverlap, zIndex: 0 }}
+            className="relative"
+          >
+            <CircularAvatar
+              radius={radius}
+              initials={`+${overflow}`}
+              backgroundColor="var(--muted)"
+              foregroundColor="var(--muted-foreground)"
+              ringColor="var(--background)"
+              ringWidth={2}
+              onTap={onOverflowTap}
+              fontSize={Math.max(9, Math.round(radius * 0.45))}
+            />
+          </div>
+        )}
+      </div>
+    );
+  },
+);
 
 AvatarGroup.displayName = "AvatarGroup";

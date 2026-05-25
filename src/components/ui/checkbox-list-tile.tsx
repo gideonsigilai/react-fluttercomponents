@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { Color, EdgeInsetsInput } from "./flutter-style";
 import { edgeInsetsToStyle } from "./flutter-style";
 import { Checkbox } from "./checkbox";
@@ -84,9 +84,11 @@ export const CheckboxListTile = ({
       className={cn(
         "flex items-center transition-colors",
         dense ? "px-3 py-2" : "px-4 py-3",
-        enabled ? "cursor-pointer hover:bg-accent/50" : "opacity-50 cursor-not-allowed",
+        enabled
+          ? "cursor-pointer hover:bg-accent/50"
+          : "opacity-50 cursor-not-allowed",
         selected && !selectedTileColor && !tileColor && "bg-accent",
-        className
+        className,
       )}
       style={{
         backgroundColor: background,
@@ -110,7 +112,12 @@ export const CheckboxListTile = ({
           {title}
         </div>
         {subtitle && (
-          <div className={cn("text-muted-foreground mt-0.5", dense ? "text-xs" : "text-sm")}>
+          <div
+            className={cn(
+              "text-muted-foreground mt-0.5",
+              dense ? "text-xs" : "text-sm",
+            )}
+          >
             {subtitle}
           </div>
         )}

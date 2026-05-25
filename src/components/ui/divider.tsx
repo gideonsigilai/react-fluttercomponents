@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 
 export interface DividerProps {
   thickness?: number;
@@ -27,7 +27,8 @@ export const Divider = ({
       style={{
         height: `${thickness}px`,
         marginLeft: typeof indent === "number" ? `${indent}px` : indent,
-        marginRight: typeof endIndent === "number" ? `${endIndent}px` : endIndent,
+        marginRight:
+          typeof endIndent === "number" ? `${endIndent}px` : endIndent,
         backgroundColor: color || "hsl(var(--border))",
       }}
       aria-hidden="true"

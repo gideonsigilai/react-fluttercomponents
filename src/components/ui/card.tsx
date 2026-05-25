@@ -1,7 +1,17 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import type { Color, EdgeInsetsInput, BorderRadiusInput, SizeInput } from "./flutter-style";
-import { edgeInsetsToStyle, borderRadiusToStyle, sizeToCss, elevationToShadow } from "./flutter-style";
+import { cn } from "../utils";
+import type {
+  Color,
+  EdgeInsetsInput,
+  BorderRadiusInput,
+  SizeInput,
+} from "./flutter-style";
+import {
+  edgeInsetsToStyle,
+  borderRadiusToStyle,
+  sizeToCss,
+  elevationToShadow,
+} from "./flutter-style";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Elevation (shadow depth). Default 1. */
@@ -43,11 +53,13 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const handleKeyDown = React.useCallback(
-      (e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") onTap?.(); },
-      [onTap]
+      (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") onTap?.();
+      },
+      [onTap],
     );
 
     return (
@@ -59,8 +71,9 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         onKeyDown={onTap ? handleKeyDown : undefined}
         className={cn(
           "bg-card text-card-foreground",
-          onTap && "cursor-pointer transition-opacity hover:opacity-90 active:opacity-70",
-          className
+          onTap &&
+            "cursor-pointer transition-opacity hover:opacity-90 active:opacity-70",
+          className,
         )}
         style={{
           boxShadow: elevationToShadow(elevation),
@@ -77,28 +90,42 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Card.displayName = "Card";
 
-export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
-  )
-);
+export const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props}
+  />
+));
 CardHeader.displayName = "CardHeader";
 
-export const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn("text-xl font-semibold leading-none tracking-tight", className)} {...props} />
-  )
-);
+export const CardTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn(
+      "text-xl font-semibold leading-none tracking-tight",
+      className,
+    )}
+    {...props}
+  />
+));
 CardTitle.displayName = "CardTitle";
 
-export const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-  )
-);
+export const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+));
 CardContent.displayName = "CardContent";

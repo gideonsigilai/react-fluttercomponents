@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { Text } from "./text";
 import {
   borderToStyle,
@@ -13,7 +13,10 @@ import {
   type SizeInput,
 } from "./flutter-style";
 
-export interface ListTileProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface ListTileProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   leading?: React.ReactNode;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
@@ -68,9 +71,9 @@ export const ListTile = React.forwardRef<HTMLDivElement, ListTileProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const background = selected ? selectedTileColor ?? tileColor : tileColor;
+    const background = selected ? (selectedTileColor ?? tileColor) : tileColor;
     return (
       <div
         ref={ref}
@@ -80,10 +83,12 @@ export const ListTile = React.forwardRef<HTMLDivElement, ListTileProps>(
         className={cn(
           "flex items-center transition-colors",
           dense ? "px-3 py-2" : "px-4 py-3",
-          enabled ? "cursor-pointer hover:bg-accent/50" : "cursor-not-allowed opacity-50",
+          enabled
+            ? "cursor-pointer hover:bg-accent/50"
+            : "cursor-not-allowed opacity-50",
           selected && !selectedTileColor && !tileColor && "bg-accent",
           ltr && "flex-row-reverse",
-          className
+          className,
         )}
         style={{
           ...borderToStyle(border),
@@ -100,21 +105,51 @@ export const ListTile = React.forwardRef<HTMLDivElement, ListTileProps>(
         }}
         {...props}
       >
-        {leading && <div className={cn("flex-none", ltr ? "ml-4" : "mr-4")}>{leading}</div>}
+        {leading && (
+          <div className={cn("flex-none", ltr ? "ml-4" : "mr-4")}>
+            {leading}
+          </div>
+        )}
         <div className={cn("flex-1 min-w-0", ltr && "text-right")}>
-          <div className={cn("font-medium break-words", dense ? "text-xs sm:text-sm" : "text-sm sm:text-base")}>
-            {typeof title === "string" ? <Text variant="p" className="m-0 p-0 leading-snug">{title}</Text> : title}
+          <div
+            className={cn(
+              "font-medium break-words",
+              dense ? "text-xs sm:text-sm" : "text-sm sm:text-base",
+            )}
+          >
+            {typeof title === "string" ? (
+              <Text variant="p" className="m-0 p-0 leading-snug">
+                {title}
+              </Text>
+            ) : (
+              title
+            )}
           </div>
           {subtitle && (
-            <div className={cn("text-muted-foreground break-words mt-0.5", dense ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm")}>
-              {typeof subtitle === "string" ? <Text variant="muted" className="m-0 p-0">{subtitle}</Text> : subtitle}
+            <div
+              className={cn(
+                "text-muted-foreground break-words mt-0.5",
+                dense ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm",
+              )}
+            >
+              {typeof subtitle === "string" ? (
+                <Text variant="muted" className="m-0 p-0">
+                  {subtitle}
+                </Text>
+              ) : (
+                subtitle
+              )}
             </div>
           )}
         </div>
-        {trailing && <div className={cn("flex-none", ltr ? "mr-4" : "ml-4")}>{trailing}</div>}
+        {trailing && (
+          <div className={cn("flex-none", ltr ? "mr-4" : "ml-4")}>
+            {trailing}
+          </div>
+        )}
       </div>
     );
-  }
+  },
 );
 
 ListTile.displayName = "ListTile";

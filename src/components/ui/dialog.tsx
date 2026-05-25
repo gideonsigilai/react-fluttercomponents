@@ -1,8 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { cn } from "@/lib/utils";
-import type { Color, EdgeInsetsInput, BorderRadiusInput, SizeInput } from "./flutter-style";
-import { edgeInsetsToStyle, borderRadiusToStyle, sizeToCss, elevationToShadow } from "./flutter-style";
+import { cn } from "../utils";
+import type {
+  Color,
+  EdgeInsetsInput,
+  BorderRadiusInput,
+  SizeInput,
+} from "./flutter-style";
+import {
+  edgeInsetsToStyle,
+  borderRadiusToStyle,
+  sizeToCss,
+  elevationToShadow,
+} from "./flutter-style";
 
 export interface DialogProps {
   /** Whether the dialog is visible. */
@@ -50,7 +60,9 @@ export const Dialog = ({
   // Keyboard + body scroll lock — single effect
   React.useEffect(() => {
     if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose?.(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose?.();
+    };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
     return () => {
@@ -75,7 +87,10 @@ export const Dialog = ({
       />
       {/* Surface */}
       <div
-        className={cn("relative bg-background text-foreground overflow-hidden", className)}
+        className={cn(
+          "relative bg-background text-foreground overflow-hidden",
+          className,
+        )}
         style={{
           boxShadow: elevationToShadow(elevation),
           backgroundColor,
@@ -89,7 +104,7 @@ export const Dialog = ({
         {child}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 
@@ -132,10 +147,12 @@ export const AlertDialog = ({
         {title && (
           <div
             className="text-lg font-semibold"
-            style={edgeInsetsToStyle(
-              titlePadding ?? { top: 24, left: 24, right: 24, bottom: 16 },
-              "padding"
-            ) as React.CSSProperties}
+            style={
+              edgeInsetsToStyle(
+                titlePadding ?? { top: 24, left: 24, right: 24, bottom: 16 },
+                "padding",
+              ) as React.CSSProperties
+            }
           >
             {title}
           </div>
@@ -143,10 +160,12 @@ export const AlertDialog = ({
         {content && (
           <div
             className="text-sm text-muted-foreground"
-            style={edgeInsetsToStyle(
-              contentPadding ?? { left: 24, right: 24, bottom: 24 },
-              "padding"
-            ) as React.CSSProperties}
+            style={
+              edgeInsetsToStyle(
+                contentPadding ?? { left: 24, right: 24, bottom: 24 },
+                "padding",
+              ) as React.CSSProperties
+            }
           >
             {content}
           </div>
@@ -154,10 +173,12 @@ export const AlertDialog = ({
         {actions && actions.length > 0 && (
           <div
             className="flex items-center justify-end gap-2"
-            style={edgeInsetsToStyle(
-              actionsPadding ?? { left: 24, right: 24, bottom: 16 },
-              "padding"
-            ) as React.CSSProperties}
+            style={
+              edgeInsetsToStyle(
+                actionsPadding ?? { left: 24, right: 24, bottom: 16 },
+                "padding",
+              ) as React.CSSProperties
+            }
           >
             {actions.map((action, i) => (
               <React.Fragment key={i}>{action}</React.Fragment>

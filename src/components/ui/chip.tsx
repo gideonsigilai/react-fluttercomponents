@@ -1,6 +1,11 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import type { Color, EdgeInsetsInput, BorderRadiusInput, BorderValue } from "./flutter-style";
+import { cn } from "../utils";
+import type {
+  Color,
+  EdgeInsetsInput,
+  BorderRadiusInput,
+  BorderValue,
+} from "./flutter-style";
 import {
   edgeInsetsToStyle,
   borderRadiusToStyle,
@@ -10,17 +15,39 @@ import {
 
 // ─── Text-style types (mirrors text.tsx) ─────────────────────────────────────
 type FontWeight =
-  | "thin" | "extraLight" | "light" | "normal"
-  | "medium" | "semiBold" | "bold" | "extraBold" | "black"
-  | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  | "thin"
+  | "extraLight"
+  | "light"
+  | "normal"
+  | "medium"
+  | "semiBold"
+  | "bold"
+  | "extraBold"
+  | "black"
+  | 100
+  | 200
+  | 300
+  | 400
+  | 500
+  | 600
+  | 700
+  | 800
+  | 900;
 type TextOverflow = "ellipsis" | "clip" | "visible" | "fade";
 type TextAlign = "left" | "center" | "right" | "justify" | "start" | "end";
 type FontStyle = "normal" | "italic";
 type TextDecoration = "none" | "underline" | "line-through" | "overline";
 
 const fontWeightMap: Record<string, string> = {
-  thin: "100", extraLight: "200", light: "300", normal: "400",
-  medium: "500", semiBold: "600", bold: "700", extraBold: "800", black: "900",
+  thin: "100",
+  extraLight: "200",
+  light: "300",
+  normal: "400",
+  medium: "500",
+  semiBold: "600",
+  bold: "700",
+  extraBold: "800",
+  black: "900",
 };
 const resolveFontWeight = (w?: FontWeight): string | undefined => {
   if (w === undefined) return undefined;
@@ -200,37 +227,57 @@ export const Chip = React.memo(
       if (selected) return selectedColor ?? "hsl(var(--primary))";
       if (backgroundColor) return backgroundColor;
       switch (variant) {
-        case "outlined": return "transparent";
-        case "elevated": return "hsl(var(--card))";
-        case "assist":   return "hsl(var(--card))";
-        default:         return "hsl(var(--secondary))";
+        case "outlined":
+          return "transparent";
+        case "elevated":
+          return "hsl(var(--card))";
+        case "assist":
+          return "hsl(var(--card))";
+        default:
+          return "hsl(var(--secondary))";
       }
     })();
 
     // ── Resolve label color ───────────────────────────────────
     const resolvedLabelColor = (() => {
       if (!enabled) return "hsl(var(--muted-foreground))";
-      if (selected) return selectedLabelColor ?? "hsl(var(--primary-foreground))";
+      if (selected)
+        return selectedLabelColor ?? "hsl(var(--primary-foreground))";
       if (labelColor) return labelColor;
       switch (variant) {
-        case "outlined": return "hsl(var(--foreground))";
-        default:         return "hsl(var(--secondary-foreground))";
+        case "outlined":
+          return "hsl(var(--foreground))";
+        default:
+          return "hsl(var(--secondary-foreground))";
       }
     })();
 
     // ── Resolve border ────────────────────────────────────────
-    const resolvedBorder: BorderValue | undefined = border ?? (
-      variant === "outlined" || variant === "elevated"
+    const resolvedBorder: BorderValue | undefined =
+      border ??
+      (variant === "outlined" || variant === "elevated"
         ? {
-            top:    { color: selected ? "hsl(var(--primary))" : "hsl(var(--border))", width: 1 },
-            right:  { color: selected ? "hsl(var(--primary))" : "hsl(var(--border))", width: 1 },
-            bottom: { color: selected ? "hsl(var(--primary))" : "hsl(var(--border))", width: 1 },
-            left:   { color: selected ? "hsl(var(--primary))" : "hsl(var(--border))", width: 1 },
+            top: {
+              color: selected ? "hsl(var(--primary))" : "hsl(var(--border))",
+              width: 1,
+            },
+            right: {
+              color: selected ? "hsl(var(--primary))" : "hsl(var(--border))",
+              width: 1,
+            },
+            bottom: {
+              color: selected ? "hsl(var(--primary))" : "hsl(var(--border))",
+              width: 1,
+            },
+            left: {
+              color: selected ? "hsl(var(--primary))" : "hsl(var(--border))",
+              width: 1,
+            },
           }
-        : undefined
-    );
+        : undefined);
 
-    const currentElevation = pressed && isInteractive ? pressElevation : elevation;
+    const currentElevation =
+      pressed && isInteractive ? pressElevation : elevation;
 
     const chipStyle: React.CSSProperties = {
       backgroundColor: resolvedBg,
@@ -240,22 +287,33 @@ export const Chip = React.memo(
       ...borderRadiusToStyle(borderRadius),
       ...borderToStyle(resolvedBorder),
       ...edgeInsetsToStyle(padding ?? { top: 4, bottom: 4, left: 8, right: 8 }),
-      transition: "box-shadow 0.15s ease, opacity 0.15s ease, background-color 0.15s ease",
+      transition:
+        "box-shadow 0.15s ease, opacity 0.15s ease, background-color 0.15s ease",
     };
 
     // ── Label text style (mirrors Text component resolution) ──────────────
     const isNoWrap = softWrap === false || maxLines === 1;
     const labelStyle: React.CSSProperties = {
       ...edgeInsetsToStyle(labelPadding),
-      ...(labelBorderRadius !== undefined ? borderRadiusToStyle(labelBorderRadius) : {}),
-      ...(labelBackgroundColor !== undefined ? { backgroundColor: labelBackgroundColor } : {}),
-      fontSize: fontSize !== undefined
-        ? (typeof fontSize === "number" ? `${fontSize}px` : fontSize)
-        : undefined,
+      ...(labelBorderRadius !== undefined
+        ? borderRadiusToStyle(labelBorderRadius)
+        : {}),
+      ...(labelBackgroundColor !== undefined
+        ? { backgroundColor: labelBackgroundColor }
+        : {}),
+      fontSize:
+        fontSize !== undefined
+          ? typeof fontSize === "number"
+            ? `${fontSize}px`
+            : fontSize
+          : undefined,
       fontWeight: resolveFontWeight(fontWeight),
-      letterSpacing: letterSpacing !== undefined
-        ? (typeof letterSpacing === "number" ? `${letterSpacing}px` : letterSpacing)
-        : undefined,
+      letterSpacing:
+        letterSpacing !== undefined
+          ? typeof letterSpacing === "number"
+            ? `${letterSpacing}px`
+            : letterSpacing
+          : undefined,
       lineHeight: lineHeight !== undefined ? lineHeight : undefined,
       textDecoration: decoration,
       textAlign,
@@ -267,16 +325,16 @@ export const Chip = React.memo(
             ...(isNoWrap
               ? { whiteSpace: "nowrap" as const }
               : maxLines && maxLines > 1
-              ? {
-                  display: "-webkit-box",
-                  WebkitLineClamp: maxLines,
-                  WebkitBoxOrient: "vertical" as const,
-                }
-              : {}),
+                ? {
+                    display: "-webkit-box",
+                    WebkitLineClamp: maxLines,
+                    WebkitBoxOrient: "vertical" as const,
+                  }
+                : {}),
           }
         : overflow === "clip"
-        ? { overflow: "hidden" as const }
-        : {}),
+          ? { overflow: "hidden" as const }
+          : {}),
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -298,9 +356,11 @@ export const Chip = React.memo(
           "inline-flex items-center gap-1.5 select-none outline-none",
           isInteractive && enabled && "cursor-pointer",
           !enabled && "cursor-not-allowed opacity-50",
-          isInteractive && enabled && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+          isInteractive &&
+            enabled &&
+            "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
           isInteractive && enabled && "hover:opacity-85 active:opacity-70",
-          className
+          className,
         )}
         style={chipStyle}
       >
@@ -321,7 +381,11 @@ export const Chip = React.memo(
               stroke="currentColor"
               strokeWidth={2.5}
             >
-              <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M20 6L9 17l-5-5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </span>
         )}
@@ -353,13 +417,23 @@ export const Chip = React.memo(
             className={cn(
               "flex-none flex items-center justify-center -mr-1 rounded-full",
               "hover:bg-black/10 dark:hover:bg-white/10 transition-colors",
-              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
             )}
             style={{ color: deleteIconColor ?? resolvedLabelColor }}
           >
             {deleteIcon ?? (
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
-                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                viewBox="0 0 24 24"
+                className="h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  d="M18 6L6 18M6 6l12 12"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             )}
           </span>
@@ -371,12 +445,14 @@ export const Chip = React.memo(
       return (
         <div className="relative group/chip inline-flex">
           {chip}
-          <div className={cn(
-            "pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50",
-            "px-2 py-1 rounded text-xs font-medium whitespace-nowrap",
-            "bg-popover text-popover-foreground shadow-md border border-border",
-            "opacity-0 group-hover/chip:opacity-100 transition-opacity duration-150"
-          )}>
+          <div
+            className={cn(
+              "pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50",
+              "px-2 py-1 rounded text-xs font-medium whitespace-nowrap",
+              "bg-popover text-popover-foreground shadow-md border border-border",
+              "opacity-0 group-hover/chip:opacity-100 transition-opacity duration-150",
+            )}
+          >
             {tooltip}
           </div>
         </div>
@@ -384,7 +460,7 @@ export const Chip = React.memo(
     }
 
     return chip;
-  }
+  },
 );
 
 Chip.displayName = "Chip";

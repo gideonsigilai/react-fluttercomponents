@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { Color } from "./flutter-style";
 
 export interface CheckboxProps {
@@ -46,7 +46,7 @@ export const Checkbox = ({
           : "border-input bg-background hover:border-primary/60",
         !enabled && "opacity-50 cursor-not-allowed",
         enabled && "cursor-pointer",
-        className
+        className,
       )}
       style={{
         backgroundColor: value ? activeColor : undefined,

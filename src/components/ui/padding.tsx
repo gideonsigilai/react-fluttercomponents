@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import {
   edgeInsetsToStyle,
   sizePropsToStyle,
@@ -7,7 +7,8 @@ import {
   type SizeProps,
 } from "./flutter-style";
 
-export interface PaddingProps extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
+export interface PaddingProps
+  extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
   padding: EdgeInsetsInput;
   key?: React.Key;
 }
@@ -18,8 +19,20 @@ export interface PaddingProps extends React.HTMLAttributes<HTMLDivElement>, Size
  */
 export const Padding = React.forwardRef<HTMLDivElement, PaddingProps>(
   (
-    { padding, width, height, minWidth, maxWidth, minHeight, maxHeight, children, className, style, ...props },
-    ref
+    {
+      padding,
+      width,
+      height,
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
+      children,
+      className,
+      style,
+      ...props
+    },
+    ref,
   ) => {
     return (
       <div
@@ -27,7 +40,14 @@ export const Padding = React.forwardRef<HTMLDivElement, PaddingProps>(
         className={cn(className)}
         style={{
           ...edgeInsetsToStyle(padding, "padding"),
-          ...sizePropsToStyle({ width, height, minWidth, maxWidth, minHeight, maxHeight }),
+          ...sizePropsToStyle({
+            width,
+            height,
+            minWidth,
+            maxWidth,
+            minHeight,
+            maxHeight,
+          }),
           ...style,
         }}
         {...props}
@@ -35,7 +55,7 @@ export const Padding = React.forwardRef<HTMLDivElement, PaddingProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Padding.displayName = "Padding";

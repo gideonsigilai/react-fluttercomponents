@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { Color } from "./flutter-style";
 
 export interface SwitchProps {
@@ -48,7 +48,7 @@ export const Switch = ({
         !inactiveTrackColor && !value && "bg-input",
         disabled && "opacity-50 cursor-not-allowed",
         !disabled && "cursor-pointer",
-        className
+        className,
       )}
       style={{
         backgroundColor: value
@@ -60,7 +60,7 @@ export const Switch = ({
         className={cn(
           "pointer-events-none inline-block h-5 w-5 rounded-full shadow-md ring-0 transition-transform duration-200",
           value ? "translate-x-5" : "translate-x-0.5",
-          !activeThumbColor && !inactiveThumbColor && "bg-background"
+          !activeThumbColor && !inactiveThumbColor && "bg-background",
         )}
         style={{
           backgroundColor: value

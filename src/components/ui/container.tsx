@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import {
   borderToStyle,
   borderRadiusToStyle,
@@ -52,7 +52,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -62,7 +62,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
           alignment === "center" && "items-center justify-center",
           alignment === "start" && "items-start justify-start",
           alignment === "end" && "items-end justify-end",
-          className
+          className,
         )}
         style={{
           ...edgeInsetsToStyle(padding, "padding"),
@@ -83,7 +83,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Container.displayName = "Container";

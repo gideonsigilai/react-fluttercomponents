@@ -1,9 +1,10 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { Alignment } from "./layout-types";
 import { sizePropsToStyle, type SizeProps } from "./flutter-style";
 
-export interface AlignProps extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
+export interface AlignProps
+  extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
   alignment?: Alignment;
   key?: React.Key;
 }
@@ -27,14 +28,21 @@ export const Align = React.forwardRef<HTMLDivElement, AlignProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
         ref={ref}
         className={cn("flex w-full h-full", alignment, className)}
         style={{
-          ...sizePropsToStyle({ width, height, minWidth, maxWidth, minHeight, maxHeight }),
+          ...sizePropsToStyle({
+            width,
+            height,
+            minWidth,
+            maxWidth,
+            minHeight,
+            maxHeight,
+          }),
           ...style,
         }}
         {...props}
@@ -42,7 +50,7 @@ export const Align = React.forwardRef<HTMLDivElement, AlignProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Align.displayName = "Align";

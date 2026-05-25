@@ -1,0 +1,17 @@
+{
+  "tsx": true,
+  "style": "tailwind",
+  "tailwind": {
+    "css": "src/index.css"
+  },
+  "aliases": {
+    "components": "@/components",
+    "ui": "@/components/ui",
+    "utils": "@/components/utils.ts"
+  },
+  "paths": {
+    "components": "src/components",
+    "ui": "src\\components\\ui",
+    "utils": "src/components/utils.ts"
+  }
+}

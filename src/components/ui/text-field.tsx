@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import { Input } from "./input";
 import { Label } from "./label";
 import type { Color, EdgeInsetsInput, InputBorderInput } from "./flutter-style";
@@ -311,7 +311,9 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
               {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
               onChange={(e) => {
                 onChanged?.(e.target.value);
-                (props as React.TextareaHTMLAttributes<HTMLTextAreaElement>).onChange?.(e);
+                (
+                  props as React.TextareaHTMLAttributes<HTMLTextAreaElement>
+                ).onChange?.(e);
               }}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
