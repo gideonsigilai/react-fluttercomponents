@@ -1,6 +1,14 @@
 {
   "name": "@gideonsigilai/react-fluttercomponents",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gideonsigilai/react-fluttercomponents.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gideonsigilai/react-fluttercomponents/issues"
+  },
+  "homepage": "https://github.com/gideonsigilai/react-fluttercomponents#readme",
   "description": "Interactive Sandbox and CLI for Flutter-like React Components styled with Tailwind CSS",
   "main": "bin/index.js",
   "bin": {

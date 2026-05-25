@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install Dependencies
         run: npm install
@@ -65,4 +65,4 @@ jobs:
             * High-fidelity Flutter replica widgets (`Container`, `Card`, `Row`, `Column`, `CheckboxListTile`).
             * Automated custom alias resolution for standard components and helper utilities.
             * Dynamic npm peer package installation on adding components.
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHTOKEN }}
