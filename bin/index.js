@@ -239,7 +239,7 @@ program
     printColumns(helperColumns);
     
     console.log(chalk.cyan(`\nTotal components cataloged: ${componentKeys.length}`));
-    console.log(`Install them using: ${chalk.bold('node bin/index.js add <component-name>')}\n`);
+    console.log(`Install them using: ${chalk.bold('npx @gideonsigilai/react-fluttercomponents add <component-name>')} or ${chalk.bold('npx flutter-components add <component-name>')}\n`);
   });
 
 // 3. ADD
@@ -247,11 +247,13 @@ program
   .command('add [components...]')
   .description('Add React-Flutter components to your project')
   .action(async (components) => {
-    if (!await fs.exists(CONFIG_FILE)) {
-      console.log(chalk.red('\nError: Configuration file flutter-components.json not found.'));
-      console.log(`Please run ${chalk.bold('node bin/index.js init')} first to set up your project.\n`);
-      return;
-    }
+    try {
+      if (!await fs.exists(CONFIG_FILE)) {
+        console.log(chalk.red('\nError: Configuration file flutter-components.json not found.'));
+        console.log(`To resolve this, please run the initialization command first to set up your project:`);
+        console.log(`  ${chalk.bold('npx @gideonsigilai/react-fluttercomponents init')}  (or ${chalk.bold('npx flutter-components init')})\n`);
+        return;
+      }
     
     const config = await fs.readJson(CONFIG_FILE);
     
@@ -291,11 +293,13 @@ program
     
     while (installQueue.length > 0) {
       const compId = installQueue.shift();
+      if (compId === 'utils') continue;
       if (componentsToInstall.has(compId)) continue;
       
       const registryComp = registry.components[compId];
       if (!registryComp) {
         console.log(chalk.red(`\nError: Component "${compId}" not found in registry.`));
+        console.log(`Please run ${chalk.bold('npx @gideonsigilai/react-fluttercomponents list')} or ${chalk.bold('npx flutter-components list')} to see all available components.\n`);
         return;
       }
       
@@ -351,7 +355,8 @@ program
         compSpinner.succeed(`Added ${chalk.bold(compId)}`);
       } catch (error) {
         compSpinner.fail(`Failed to add ${compId}`);
-        console.error(chalk.red(error.message));
+        console.error(chalk.red(`Error details: ${error.message}`));
+        console.log(`Please check if your file system is writable and if ${chalk.bold('flutter-components.json')} has the correct paths.\n`);
       }
     }
     
@@ -375,6 +380,17 @@ program
     }
     
     console.log(chalk.bold.green('\nComponents installation completed successfully! 🚀\n'));
+    } catch (error) {
+      console.log(chalk.red(`\nAn error occurred while adding components.`));
+      console.log(chalk.red(`Details: ${error.message}`));
+      console.log(`If your configuration file is invalid or corrupted, you can re-run the initialization:\n  ${chalk.bold('npx flutter-components init')}\n`);
+    }
   });
+
+program.on('command:*', () => {
+  console.error(chalk.red('\nError: Invalid command.'));
+  console.log(`To see all available commands, run: ${chalk.bold('npx @gideonsigilai/react-fluttercomponents --help')} or ${chalk.bold('npx flutter-components --help')}\n`);
+  process.exit(1);
+});
 
 program.parse(process.argv);

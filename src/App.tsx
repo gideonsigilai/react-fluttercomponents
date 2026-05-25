@@ -43,6 +43,8 @@ export default function App() {
   const [isDark, setIsDark] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [copied, setCopied] = useState(false);
+  const [showCliModal, setShowCliModal] = useState(false);
+  const [copiedText, setCopiedText] = useState("");
 
   // Toggle Theme
   useEffect(() => {
@@ -146,6 +148,15 @@ export default function App() {
 
         <div className="flex items-center gap-3">
           <button
+            onClick={() => setShowCliModal(true)}
+            className="px-3 py-1.5 rounded-lg border border-primary/20 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm"
+            title="View CLI setup & installation guide"
+          >
+            <Laptop size={14} />
+            <span>CLI Installation</span>
+          </button>
+
+          <button
             onClick={() => setIsDark(!isDark)}
             className="p-2 rounded-lg border border-border bg-card hover:bg-accent text-foreground transition-all duration-150"
             title="Toggle Dark/Light Theme"
@@ -244,16 +255,22 @@ export default function App() {
 
           {/* SIDEBAR FOOTER */}
           <div className="p-4 border-t border-border bg-card/25 select-none">
-            <div className="bg-primary/5 rounded-xl p-3 border border-primary/10">
-              <h4 className="text-[11px] font-bold text-primary mb-1 flex items-center gap-1.5">
+            <div className="bg-primary/5 rounded-xl p-3 border border-primary/10 flex flex-col gap-2">
+              <h4 className="text-[11px] font-bold text-primary flex items-center gap-1.5">
                 💡 Local CLI Available
               </h4>
               <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Add any of these widgets straight to your codebase recursively using:
+                Add widgets recursively straight into your project:
               </p>
-              <code className="block mt-2 bg-card p-1.5 rounded text-[9px] font-mono border border-border text-foreground select-all text-center">
-                npx flutter-components add
+              <code className="block bg-card p-1.5 rounded text-[9px] font-mono border border-border text-foreground select-all text-center font-bold">
+                npx flutter-components add {activeComponent.id}
               </code>
+              <button
+                onClick={() => setShowCliModal(true)}
+                className="w-full py-1 text-[10px] font-bold text-center border border-primary/20 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition"
+              >
+                View Full CLI Setup Guide &rarr;
+              </button>
             </div>
           </div>
         </aside>
@@ -482,6 +499,146 @@ export default function App() {
         </main>
 
       </div>
+
+      {/* CLI INSTALLATION GUIDE MODAL */}
+      {showCliModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-all animate-in fade-in duration-200">
+          <div className="bg-card border border-border w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-border bg-card/50 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-primary/10 text-primary p-2 rounded-xl">
+                  <Laptop size={18} />
+                </div>
+                <div>
+                  <h3 className="font-outfit font-extrabold text-base tracking-tight">React-Flutter CLI Setup</h3>
+                  <p className="text-[10px] text-muted-foreground">Supercharge your workflow by installing components directly from your terminal</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowCliModal(false)}
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-accent transition"
+                aria-label="Close modal"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 custom-scroll-bar text-xs leading-relaxed">
+              
+              {/* Option 1: Local NPM Link */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-foreground flex items-center gap-2">
+                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">1</span>
+                    Local NPM Link (Best for Dev / Pairing)
+                  </h4>
+                  <span className="text-[9px] uppercase font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/25">Recommended</span>
+                </div>
+                <p className="text-muted-foreground pl-7 text-[11px]">
+                  If you are using this package locally on your machine, link it globally so it's callable in any project:
+                </p>
+                <div className="bg-muted border border-border p-3.5 rounded-xl font-mono text-[11px] relative pl-7 flex items-center justify-between group">
+                  <code className="text-foreground select-all">npm link</code>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText("npm link");
+                      setCopiedText("link");
+                      setTimeout(() => setCopiedText(""), 2000);
+                    }}
+                    className="p-1.5 rounded-md hover:bg-accent opacity-0 group-hover:opacity-100 transition duration-150 text-muted-foreground hover:text-foreground"
+                    title="Copy to clipboard"
+                  >
+                    {copiedText === "link" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Option 2: Project Initialization */}
+              <div className="space-y-3">
+                <h4 className="font-bold text-foreground flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">2</span>
+                  Initialize Your React Project
+                </h4>
+                <p className="text-muted-foreground pl-7 text-[11px]">
+                  Navigate to your consumer React project directory and run the initialization wizard:
+                </p>
+                <div className="bg-muted border border-border p-3.5 rounded-xl font-mono text-[11px] relative pl-7 flex items-center justify-between group">
+                  <code className="text-foreground select-all">npx flutter-components init</code>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText("npx flutter-components init");
+                      setCopiedText("init");
+                      setTimeout(() => setCopiedText(""), 2000);
+                    }}
+                    className="p-1.5 rounded-md hover:bg-accent opacity-0 group-hover:opacity-100 transition duration-150 text-muted-foreground hover:text-foreground"
+                    title="Copy to clipboard"
+                  >
+                    {copiedText === "init" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                  </button>
+                </div>
+                <p className="text-[10px] text-muted-foreground pl-7 leading-normal">
+                  💡 This creates a <code className="px-1 bg-accent border border-border rounded font-mono">flutter-components.json</code> config file and sets up the tailwind utility helper automatically!
+                </p>
+              </div>
+
+              {/* Option 3: Add Components */}
+              <div className="space-y-3">
+                <h4 className="font-bold text-foreground flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">3</span>
+                  Install Flutter-style Widgets
+                </h4>
+                <p className="text-muted-foreground pl-7 text-[11px]">
+                  Pull any component along with its local & registry dependencies instantly:
+                </p>
+                <div className="bg-muted border border-border p-3.5 rounded-xl font-mono text-[11px] relative pl-7 flex items-center justify-between group">
+                  <code className="text-foreground select-all">npx flutter-components add {activeComponent.id}</code>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`npx flutter-components add ${activeComponent.id}`);
+                      setCopiedText("add");
+                      setTimeout(() => setCopiedText(""), 2000);
+                    }}
+                    className="p-1.5 rounded-md hover:bg-accent opacity-0 group-hover:opacity-100 transition duration-150 text-muted-foreground hover:text-foreground"
+                    title="Copy to clipboard"
+                  >
+                    {copiedText === "add" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                  </button>
+                </div>
+                <p className="text-[10px] text-muted-foreground pl-7 leading-normal">
+                  💡 You can also install multiple components at once: <code className="px-1 bg-accent border border-border rounded font-mono">npx flutter-components add button card column</code>.
+                </p>
+              </div>
+
+              {/* Diagnostic Help Tips */}
+              <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 space-y-2">
+                <h5 className="font-bold text-primary flex items-center gap-1.5 text-[11px]">
+                  🚨 Facing any issues?
+                </h5>
+                <ul className="list-disc pl-4 text-[10px] text-muted-foreground space-y-1.5">
+                  <li>To view all available widgets and helper components: <code className="font-mono text-foreground px-1 bg-card border rounded">npx flutter-components list</code></li>
+                  <li>To get usage guidelines and help flags: <code className="font-mono text-foreground px-1 bg-card border rounded">npx flutter-components --help</code></li>
+                  <li>Ensure your target project contains a <code className="font-mono text-foreground px-1 bg-card border rounded">package.json</code> and has tailwind CSS initialized.</li>
+                </ul>
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-border bg-card/30 flex justify-end">
+              <button 
+                onClick={() => setShowCliModal(false)}
+                className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/95 transition shadow"
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
