@@ -5,6 +5,7 @@ import {
   borderRadiusToStyle,
   edgeInsetsToStyle,
   sizeToCss,
+  elevationToShadow,
   type BorderValue,
   type BorderRadiusInput,
   type EdgeInsetsInput,
@@ -24,6 +25,7 @@ export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   maxHeight?: SizeInput;
   borderRadius?: BorderRadiusInput;
   border?: BorderValue;
+  elevation?: number;
   alignment?: "center" | "start" | "end";
   key?: React.Key;
 }
@@ -47,6 +49,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
       maxHeight,
       borderRadius,
       border,
+      elevation,
       alignment,
       className,
       style,
@@ -76,6 +79,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
           maxWidth: sizeToCss(maxWidth),
           minHeight: sizeToCss(minHeight),
           maxHeight: sizeToCss(maxHeight),
+          boxShadow: elevation !== undefined ? elevationToShadow(elevation) : undefined,
           ...style,
         }}
         {...props}

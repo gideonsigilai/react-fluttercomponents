@@ -5,7 +5,7 @@ import {
   CrossAxisAlignment,
   MainAxisSize,
 } from "./layout-types";
-import { sizePropsToStyle, sizeToCss, type SizeProps } from "./flutter-style";
+import { sizePropsToStyle, sizeToCss, borderToStyle, edgeInsetsToStyle, borderRadiusToStyle, elevationToShadow, type SizeProps, type BorderValue, type Color, type BorderRadiusInput, type EdgeInsetsInput } from "./flutter-style";
 
 export interface ColumnProps
   extends React.HTMLAttributes<HTMLDivElement>, SizeProps {
@@ -13,7 +13,11 @@ export interface ColumnProps
   crossAxisAlignment?: CrossAxisAlignment;
   mainAxisSize?: MainAxisSize;
   gap?: number | string;
-  padding?: number | string;
+  padding?: EdgeInsetsInput;
+  border?: BorderValue;
+  color?: Color;
+  borderRadius?: BorderRadiusInput;
+  elevation?: number;
   key?: React.Key;
 }
 
@@ -30,6 +34,10 @@ export const Column = React.forwardRef<HTMLDivElement, ColumnProps>(
       mainAxisSize = MainAxisSize.max,
       gap,
       padding,
+      border,
+      color,
+      borderRadius,
+      elevation,
       width,
       height,
       minWidth,
@@ -54,7 +62,11 @@ export const Column = React.forwardRef<HTMLDivElement, ColumnProps>(
         )}
         style={{
           gap: sizeToCss(gap),
-          padding: sizeToCss(padding),
+          ...edgeInsetsToStyle(padding, "padding"),
+          ...borderToStyle(border),
+          backgroundColor: color,
+          ...borderRadiusToStyle(borderRadius),
+          boxShadow: elevation !== undefined ? elevationToShadow(elevation) : undefined,
           ...sizePropsToStyle({
             width,
             height,

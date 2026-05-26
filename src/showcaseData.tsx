@@ -95,7 +95,7 @@ import { Divider } from "./components/ui/divider";
 import { Separator } from "./components/ui/separator";
 import { VerticalDivider } from "./components/ui/vertical-divider";
 import { Colors } from "./components/ui/Colors";
-import { Border } from "./components/ui/flutter-style";
+import { Border, EdgeInsets as EdgeInsetsUtil } from "./components/ui/flutter-style";
 
 import { Alignment, MainAxisAlignment, CrossAxisAlignment } from "./components/ui/layout-types";
 
@@ -2454,11 +2454,11 @@ import { Checkbox } from "@/components/ui/checkbox";
       { name: "badgeColor", label: "Badge color swatch", type: "color", defaultValue: "#ef4444" }
     ],
     renderPreview: (states) => (
-      <Container 
+      <Container
         width={340} 
         padding={20}
         border={Border.all({ color: "hsl(var(--border))", width: 1 })}
-        backgroundColor="hsl(var(--card))"
+        color="hsl(var(--card))"
         borderRadius={12}
         elevation={1}
       >
@@ -2468,7 +2468,7 @@ import { Checkbox } from "@/components/ui/checkbox";
             <Container 
               width={48} 
               height={48} 
-              backgroundColor="hsl(var(--accent) / 0.4)"
+              color="hsl(var(--accent) / 0.4)"
               border={Border.all({ color: "hsl(var(--border))", width: 1 })}
               borderRadius={12}
               alignment="center"
@@ -2529,7 +2529,7 @@ import { Text } from "@/components/ui/text";
   <Container 
     width={48} 
     height={48} 
-    backgroundColor="hsl(var(--accent) / 0.4)"
+    color="hsl(var(--accent) / 0.4)"
     border={Border.all({ color: "hsl(var(--border))", width: 1 })}
     borderRadius={12}
     alignment="center"
@@ -2581,7 +2581,7 @@ import { Text } from "@/components/ui/text";
         padding={16}
         border={Border.all({ color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" })}
         borderRadius={12}
-        backgroundColor="hsl(var(--card) / 0.25)"
+        color="hsl(var(--card) / 0.25)"
       >
         <Chip
           label={states.label}
@@ -2692,7 +2692,7 @@ import { CrossAxisAlignment } from "@/components/ui/types";
         padding={20}
         border={Border.all({ color: "hsl(var(--border))", width: 1 })}
         borderRadius={12}
-        backgroundColor="hsl(var(--card))"
+        color="hsl(var(--card))"
         elevation={2}
       >
         <Row mainAxisAlignment={MainAxisAlignment.spaceAround} crossAxisAlignment={CrossAxisAlignment.center}>
@@ -2842,15 +2842,15 @@ import { Card } from "@/components/ui/card";
         width={320} 
         height={128} 
         border={Border.all({ color: "hsl(var(--border))", width: 1 })}
-        backgroundColor="hsl(var(--card))"
+        color="hsl(var(--card))"
         borderRadius={12}
         elevation={1}
         alignment="center"
       >
         <Tooltip message={states.message} side="top">
           <Container
-            padding={{ horizontal: 20, vertical: 10 }}
-            backgroundColor="hsl(var(--primary))"
+            padding={EdgeInsetsUtil.symmetric({ horizontal: 20, vertical: 10 })}
+            color="hsl(var(--primary))"
             borderRadius={8}
             elevation={1}
             style={{ cursor: "pointer" }}
@@ -2874,8 +2874,8 @@ import { Text } from "@/components/ui/text";
 
 <Tooltip message="${states.message}" side="top">
   <Container
-    padding={{ horizontal: 20, vertical: 10 }}
-    backgroundColor="hsl(var(--primary))"
+    padding={EdgeInsetsUtil.symmetric({ horizontal: 20, vertical: 10 })}
+    color="hsl(var(--primary))"
     borderRadius={8}
   >
     <Text 
@@ -2901,12 +2901,12 @@ import { Text } from "@/components/ui/text";
           height={144} 
           border={Border.all({ color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" })}
           borderRadius={12}
-          backgroundColor="hsl(var(--card) / 0.1)"
+          color="hsl(var(--card) / 0.1)"
           alignment="center"
         >
           <Container
-            padding={{ horizontal: 20, vertical: 10 }}
-            backgroundColor="#f43f5e"
+            padding={EdgeInsetsUtil.symmetric({ horizontal: 20, vertical: 10 })}
+            color="#f43f5e"
             borderRadius={8}
             elevation={1}
             style={{ cursor: "pointer" }}
@@ -2959,7 +2959,7 @@ import { Text } from "@/components/ui/text";
                 actions={[
                   <Container 
                     key="c" 
-                    padding={{ horizontal: 14, vertical: 6 }}
+                    padding={EdgeInsetsUtil.symmetric({ horizontal: 14, vertical: 6 })}
                     border={Border.all({ color: "hsl(var(--border))", width: 1 })}
                     borderRadius={6}
                     style={{ cursor: "pointer" }}
@@ -2971,8 +2971,8 @@ import { Text } from "@/components/ui/text";
                   </Container>,
                   <Container 
                     key="o" 
-                    padding={{ horizontal: 16, vertical: 6 }}
-                    backgroundColor="#f43f5e"
+                    padding={EdgeInsetsUtil.symmetric({ horizontal: 16, vertical: 6 })}
+                    color="#f43f5e"
                     borderRadius={6}
                     elevation={1}
                     style={{ cursor: "pointer" }}
@@ -3042,9 +3042,9 @@ import { Text } from "@/components/ui/text";
     renderPreview: () => (
       <Container 
         width={320} 
-        padding={{ all: 20 }} 
-        backgroundColor="hsl(var(--card))"
-        border={{ all: { color: "hsl(var(--border))", width: 1 } }}
+        padding={EdgeInsetsUtil.all(20)} 
+        color="hsl(var(--card))"
+        border={Border.all({ color: "hsl(var(--border))", width: 1 })}
         borderRadius={12}
         elevation={2}
       >
@@ -3061,7 +3061,7 @@ import { Text } from "@/components/ui/text";
           </Text>
           <Container 
             padding={14}
-            backgroundColor="hsl(var(--accent) / 0.4)"
+            color="hsl(var(--accent) / 0.4)"
             borderRadius={8}
             border={Border.all({ color: "hsl(var(--border))", width: 1 })}
           >
@@ -3099,9 +3099,9 @@ import { Text } from "@/components/ui/text";
       <Column 
         width={320} 
         gap={16} 
-        padding={{ all: 20 }} 
-        border={{ all: { color: "hsl(var(--border))", width: 1 } }}
-        backgroundColor="hsl(var(--card))"
+        padding={EdgeInsetsUtil.all(20)} 
+        border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+        color="hsl(var(--card))"
         borderRadius={12}
         elevation={2}
       >
@@ -3128,7 +3128,7 @@ import { Text } from "@/components/ui/text";
               height={96} 
               borderRadius={8}
               border={Border.all({ color: "hsl(var(--border))", width: 1 })}
-              backgroundColor="hsl(var(--accent) / 0.25)"
+              color="hsl(var(--accent) / 0.25)"
               style={{ overflow: "hidden" }}
             >
               <Image 
@@ -3182,9 +3182,9 @@ import { Container } from "@/components/ui/container";
       <Column 
         width={320} 
         gap={16} 
-        padding={{ all: 20 }} 
-        border={{ all: { color: "hsl(var(--border))", width: 1 } }}
-        backgroundColor="hsl(var(--card))"
+        padding={EdgeInsetsUtil.all(20)} 
+        border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+        color="hsl(var(--card))"
         borderRadius={12}
         elevation={2}
         mainAxisAlignment={MainAxisAlignment.center}
@@ -3194,8 +3194,8 @@ import { Container } from "@/components/ui/container";
             Horizontal Divider (t={states.thickness}px):
           </Text>
           <Container 
-            padding={{ all: 8 }} 
-            backgroundColor="hsl(var(--accent) / 0.25)"
+            padding={EdgeInsetsUtil.all(8)} 
+            color="hsl(var(--accent) / 0.25)"
             borderRadius={6}
           >
             <Column gap={8}>
@@ -3211,8 +3211,8 @@ import { Container } from "@/components/ui/container";
             Dashed Separator:
           </Text>
           <Container 
-            padding={{ all: 8 }} 
-            backgroundColor="hsl(var(--accent) / 0.25)"
+            padding={EdgeInsetsUtil.all(8)} 
+            color="hsl(var(--accent) / 0.25)"
             borderRadius={6}
           >
             <Column gap={8}>
@@ -3225,7 +3225,7 @@ import { Container } from "@/components/ui/container";
 
         <Container 
           height={80} 
-          backgroundColor="hsl(var(--accent) / 0.25)"
+          color="hsl(var(--accent) / 0.25)"
           borderRadius={6}
           padding={8}
         >
@@ -3298,7 +3298,7 @@ import { Text } from "@/components/ui/text";
           gap={12} 
           padding={20}
           border={Border.all({ color: "hsl(var(--border))", width: 1 })}
-          backgroundColor="hsl(var(--card))"
+          color="hsl(var(--card))"
           borderRadius={12}
           elevation={2}
         >
