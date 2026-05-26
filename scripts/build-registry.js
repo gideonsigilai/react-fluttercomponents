@@ -105,10 +105,15 @@ async function buildRegistry() {
     }
   }
 
-  // Read specific core helpers in src/components (like date-format.ts)
-  const dateFormatPath = path.join(SRC_COMPONENTS_DIR, 'date-format.ts');
-  if (await fs.exists(dateFormatPath)) {
-    await processFile(dateFormatPath);
+  // Read all utility helpers in src/components/ (date-format.ts, intl.ts, validators.ts, etc.)
+  const srcComponentFiles = await fs.readdir(SRC_COMPONENTS_DIR);
+  for (const file of srcComponentFiles) {
+    const fullPath = path.join(SRC_COMPONENTS_DIR, file);
+    const stat = await fs.stat(fullPath);
+    // Only process .ts/.tsx files directly in src/components/ (not subdirectories like ui/)
+    if (stat.isFile() && (file.endsWith('.ts') || file.endsWith('.tsx')) && file !== 'utils.ts') {
+      await processFile(fullPath);
+    }
   }
 
   const registry = {

@@ -17,7 +17,14 @@ import {
   Sparkles,
   Info,
   ExternalLink,
-  Laptop
+  Laptop,
+  Menu,
+  X,
+  Smartphone,
+  Tablet,
+  Monitor,
+  ZoomIn,
+  ZoomOut
 } from "lucide-react";
 
 import { Row } from "./components/ui/row";
@@ -45,6 +52,12 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [showCliModal, setShowCliModal] = useState(false);
   const [copiedText, setCopiedText] = useState("");
+  
+  // Layout & Responsive States
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [previewDevice, setPreviewDevice] = useState<"responsive" | "mobile" | "tablet">("responsive");
+  const [previewScale, setPreviewScale] = useState(1.0);
+  const [showCode, setShowCode] = useState(true); // Toggle for code visibility
 
   // Toggle Theme
   useEffect(() => {
@@ -133,67 +146,78 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans bg-background text-foreground transition-colors duration-200">
       
       {/* HEADER */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50">
+      <header className="border-b border-border bg-background px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="bg-primary/20 text-primary p-2 rounded-xl font-bold text-xl flex items-center justify-center shadow-inner hover:scale-105 transition-all">
-            ⚡
-          </div>
-          <div>
-            <h1 className="font-outfit font-extrabold text-lg tracking-tight flex items-center gap-2 leading-none">
-              React-Flutter <span className="text-primary text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-primary/10 tracking-wider">Tailwind Sandbox</span>
-            </h1>
-            <p className="text-[10px] text-muted-foreground mt-1">High-fidelity replication of Flutter widgets and layout APIs in React</p>
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 hover:bg-accent rounded-md lg:hidden transition-smooth"
+            title="Toggle Sidebar"
+          >
+            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="text-2xl">⚡</div>
+            <div>
+              <h1 className="font-semibold text-base md:text-lg">React-Flutter Components</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block">Flutter-style widgets for React</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowCliModal(true)}
-            className="px-3 py-1.5 rounded-lg border border-primary/20 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm"
-            title="View CLI setup & installation guide"
+            className="px-3 py-1.5 text-xs font-medium border border-border hover:bg-accent rounded-md transition-smooth flex items-center gap-1.5"
           >
             <Laptop size={14} />
-            <span>CLI Installation</span>
+            <span className="hidden sm:inline">CLI</span>
           </button>
 
           <button
             onClick={() => setIsDark(!isDark)}
-            className="p-2 rounded-lg border border-border bg-card hover:bg-accent text-foreground transition-all duration-150"
-            title="Toggle Dark/Light Theme"
+            className="p-2 hover:bg-accent rounded-md transition-smooth"
+            title="Toggle theme"
           >
-            {isDark ? <Sun size={16} className="text-yellow-400" /> : <Moon size={16} className="text-indigo-600" />}
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-
-          <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md bg-accent text-accent-foreground border border-border">
-            v1.0.0 Stable
-          </span>
         </div>
       </header>
 
       {/* BODY CONTENT */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         
-        {/* SIDEBAR NAVIGATION */}
-        <aside className="w-80 border-r border-border bg-card/10 flex flex-col overflow-hidden">
+        {/* Backdrop for Mobile Sidebar Drawer */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden transition-all animate-in fade-in duration-200"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* SIDEBAR NAVIGATION - INDEPENDENT SCROLL */}
+        <aside 
+          className={`fixed lg:static inset-y-0 left-0 z-40 lg:z-0 w-72 max-w-[85vw] lg:max-w-none border-r border-border bg-background flex flex-col overflow-hidden transition-transform duration-300 lg:transition-none lg:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }`}
+        >
           
-          {/* SEARCH BAR */}
-          <div className="p-4 border-b border-border bg-card/5 select-none">
+          {/* SEARCH BAR - FIXED */}
+          <div className="p-4 border-b border-border flex-shrink-0">
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                <Search size={14} />
-              </span>
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search widgets (e.g. Scaffold, Column)..."
-                className="w-full pl-9 pr-4 py-2 border border-border rounded-lg bg-card text-xs focus:ring-1 focus:ring-primary focus:border-primary outline-none placeholder-muted-foreground/60 transition-all"
+                placeholder="Search widgets..."
+                className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 transition-smooth"
               />
             </div>
           </div>
 
-          {/* ACCORDION CATEGORY NAVIGATION */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll-bar select-none">
+          {/* ACCORDION CATEGORY NAVIGATION - SCROLLABLE */}
+          <nav className="flex-1 overflow-y-auto p-4 space-y-2 custom-scroll-bar">
             {SHOWCASE_CATEGORIES.map(category => {
               const matchedComponents = getFilteredComponents(category.id);
               const isExpanded = !!expandedCategories[category.id];
@@ -201,48 +225,40 @@ export default function App() {
               if (matchedComponents.length === 0) return null;
 
               return (
-                <div key={category.id} className="border border-border/60 bg-card/30 rounded-xl overflow-hidden transition-all duration-200">
-                  {/* Category Header */}
+                <div key={category.id} className="border border-border rounded-lg overflow-hidden">
                   <button
                     onClick={() => toggleCategory(category.id)}
-                    className="w-full px-3.5 py-3 flex items-center justify-between text-left hover:bg-accent/40 transition-colors"
+                    className="w-full px-3 py-2.5 flex items-center justify-between text-left hover:bg-accent transition-smooth"
                   >
-                    <Row className="items-center gap-2.5">
-                      <span className="text-primary/80">{category.icon}</span>
-                      <span className="text-xs font-bold tracking-tight text-foreground/90">{category.name}</span>
-                    </Row>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">{category.icon}</span>
+                      <span className="text-sm font-medium">{category.name}</span>
+                    </div>
                     
-                    <Row className="items-center gap-2">
-                      <span className="text-[9px] font-mono px-2 py-0.5 bg-accent rounded-full border border-border/80 font-bold opacity-75">
-                        {matchedComponents.length}
-                      </span>
-                      {isExpanded ? <ChevronDown size={14} className="opacity-60" /> : <ChevronRight size={14} className="opacity-60" />}
-                    </Row>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">{matchedComponents.length}</span>
+                      {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    </div>
                   </button>
 
-                  {/* Collapsible widgets list */}
                   {isExpanded && (
-                    <div className="border-t border-border/40 p-1.5 space-y-0.5 bg-card/10">
+                    <div className="border-t border-border bg-accent/30">
                       {matchedComponents.map(comp => {
                         const isActive = comp.id === activeComponentId;
                         return (
                           <button
                             key={comp.id}
-                            onClick={() => setActiveComponentId(comp.id)}
-                            className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center justify-between ${
+                            onClick={() => {
+                              setActiveComponentId(comp.id);
+                              setIsSidebarOpen(false);
+                            }}
+                            className={`w-full text-left px-4 py-2 text-sm transition-smooth ${
                               isActive 
-                                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-semibold" 
-                                : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                                ? "bg-primary text-primary-foreground font-medium" 
+                                : "hover:bg-accent"
                             }`}
                           >
-                            <span>{comp.name}</span>
-                            <span className={`text-[8px] uppercase tracking-wide px-1.5 py-0.5 rounded font-bold ${
-                              isActive 
-                                ? "bg-white/20 text-white" 
-                                : "bg-accent text-muted-foreground/80 border border-border"
-                            }`}>
-                              WIDGET
-                            </span>
+                            {comp.name}
                           </button>
                         );
                       })}
@@ -253,23 +269,18 @@ export default function App() {
             })}
           </nav>
 
-          {/* SIDEBAR FOOTER */}
-          <div className="p-4 border-t border-border bg-card/25 select-none">
-            <div className="bg-primary/5 rounded-xl p-3 border border-primary/10 flex flex-col gap-2">
-              <h4 className="text-[11px] font-bold text-primary flex items-center gap-1.5">
-                💡 Local CLI Available
-              </h4>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Add widgets recursively straight into your project:
-              </p>
-              <code className="block bg-card p-1.5 rounded text-[9px] font-mono border border-border text-foreground select-all text-center font-bold">
+          {/* SIDEBAR FOOTER - FIXED */}
+          <div className="p-4 border-t border-border flex-shrink-0">
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">Add components via CLI:</p>
+              <code className="block bg-accent px-3 py-2 rounded-md text-xs font-mono">
                 npx flutter-components add {activeComponent.id}
               </code>
               <button
                 onClick={() => setShowCliModal(true)}
-                className="w-full py-1 text-[10px] font-bold text-center border border-primary/20 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition"
+                className="w-full py-2 text-xs font-medium border border-border hover:bg-accent rounded-md transition-smooth"
               >
-                View Full CLI Setup Guide &rarr;
+                View CLI Guide
               </button>
             </div>
           </div>
@@ -278,104 +289,242 @@ export default function App() {
         {/* WORKSPACE PREVIEW & CONTROLS */}
         <main className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-card/5">
           
-          {/* PREVIEW SPACE */}
-          <section className="flex-1 p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto border-b lg:border-b-0 lg:border-r border-border">
+          {/* PREVIEW SPACE - INDEPENDENT SCROLL */}
+          <section className="flex-1 flex flex-col overflow-hidden border-b lg:border-b-0 lg:border-r border-border">
             
-            <div className="flex items-start justify-between">
-              <div>
-                <h2 className="font-outfit font-extrabold text-2xl tracking-tight flex items-center gap-2">
-                  {activeComponent.name} Showcase
-                </h2>
-                <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
-                  {activeComponent.description}
-                </p>
+            {/* HEADER - FIXED */}
+            <div className="p-4 md:p-6 space-y-4 flex-shrink-0 border-b border-border">
+              <div className="space-y-2">
+                <h2 className="text-xl md:text-2xl font-semibold">{activeComponent.name}</h2>
+                <p className="text-sm text-muted-foreground">{activeComponent.description}</p>
               </div>
-            </div>
 
-            {/* LIVE PREVIEW BOX */}
-            <div className="flex-1 min-h-[350px] border border-border rounded-2xl bg-card/45 relative flex items-center justify-center p-8 overflow-hidden shadow-sm backdrop-blur-sm">
-              {/* Subtle Grid Background */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-40 pointer-events-none" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
-
-              {/* RENDER ACTIVE PREVIEW */}
-              <div className="z-10 w-full flex justify-center items-center">
-                {activeComponent && (activeComponent.controls.length === 0 || Object.keys(widgetStates).length > 0) ? (
-                  <ActivePreview 
-                    key={activeComponent.id}
-                    component={activeComponent} 
-                    states={widgetStates} 
-                    setStates={setWidgetStates} 
-                  />
-                ) : (
-                  <div className="text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
-                    <Sparkles className="animate-spin text-primary" size={24} />
-                    Initializing widget canvas...
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* REAL-TIME GENERATED JSX INVOKER CODE */}
-            <div className="border border-border bg-card/30 p-5 rounded-2xl overflow-hidden relative">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 select-none">
-                  <Code size={14} className="text-primary" /> React-Flutter Code Invocation
-                </h3>
-                
+              {/* PREVIEW FRAME / CANVAS HEADER CONTROLS */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3 border border-border rounded-lg bg-accent/30">
+              {/* Left: Device Selection */}
+              <div className="flex items-center gap-1">
                 <button
-                  onClick={handleCopyCode}
-                  className="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-accent text-xs font-semibold flex items-center gap-1.5 hover:text-foreground transition-all"
-                  title="Copy JSX implementation code to clipboard"
+                  onClick={() => { setPreviewDevice("responsive"); setPreviewScale(1.0); }}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-smooth flex items-center gap-1.5 ${
+                    previewDevice === "responsive"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
                 >
-                  {copied ? (
-                    <>
-                      <Check size={13} className="text-emerald-500" />
-                      <span className="text-emerald-500 font-bold">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={13} />
-                      <span>Copy Code</span>
-                    </>
-                  )}
+                  <Monitor size={14} />
+                  <span className="hidden sm:inline">Responsive</span>
+                </button>
+                <button
+                  onClick={() => { setPreviewDevice("mobile"); setPreviewScale(0.9); }}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-smooth flex items-center gap-1.5 ${
+                    previewDevice === "mobile"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <Smartphone size={14} />
+                  <span className="hidden sm:inline">Mobile</span>
+                </button>
+                <button
+                  onClick={() => { setPreviewDevice("tablet"); setPreviewScale(0.65); }}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-smooth flex items-center gap-1.5 ${
+                    previewDevice === "tablet"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  <Tablet size={14} />
+                  <span className="hidden sm:inline">Tablet</span>
                 </button>
               </div>
 
-              <div className="relative">
-                <pre className="bg-card/70 border border-border p-4 rounded-xl text-xs font-mono overflow-x-auto text-primary-foreground/90 max-h-[180px] custom-scroll-bar select-all">
-                  {activeComponent ? activeComponent.generateCode(widgetStates) : ""}
-                </pre>
+              {/* Right: Zoom Controls + Code Toggle */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setPreviewScale(prev => Math.max(0.25, Number((prev - 0.1).toFixed(2))))}
+                    disabled={previewScale <= 0.25}
+                    className="p-1.5 hover:bg-accent rounded-md disabled:opacity-30 transition-smooth"
+                  >
+                    <ZoomOut size={14} />
+                  </button>
+                  <span className="text-xs font-mono px-2 py-1 bg-background border border-border rounded-md min-w-[50px] text-center">
+                    {Math.round(previewScale * 100)}%
+                  </span>
+                  <button
+                    onClick={() => setPreviewScale(prev => Math.min(2.0, Number((prev + 0.1).toFixed(2))))}
+                    disabled={previewScale >= 2.0}
+                    className="p-1.5 hover:bg-accent rounded-md disabled:opacity-30 transition-smooth"
+                  >
+                    <ZoomIn size={14} />
+                  </button>
+                  <button
+                    onClick={() => setPreviewScale(1.0)}
+                    className="px-2 py-1.5 text-xs font-medium hover:bg-accent rounded-md transition-smooth"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                {/* Code Toggle Button */}
+                <button
+                  onClick={() => setShowCode(!showCode)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-smooth flex items-center gap-1.5 border ${
+                    showCode
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border hover:bg-accent"
+                  }`}
+                  title={showCode ? "Hide code" : "Show code"}
+                >
+                  <Code size={14} />
+                  <span className="hidden md:inline">{showCode ? "Hide Code" : "Show Code"}</span>
+                </button>
               </div>
+            </div>
+            </div>
+
+            {/* SPLIT VIEW: PREVIEW AND CODE - SCROLLABLE */}
+            <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 md:p-6 overflow-auto custom-scroll-bar">
+              
+              {/* LIVE PREVIEW BOX */}
+              <div className="flex-1 border border-border rounded-lg bg-accent/20 relative flex items-start justify-center p-6 min-h-[400px]">
+                {/* Simple grid background */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+
+                {/* RENDER ACTIVE PREVIEW */}
+                <div className="z-10 w-full flex justify-center items-start pt-8">
+                  
+                  {/* Device Frame Wrapper */}
+                  <div 
+                    className={`transition-smooth flex items-center justify-center ${
+                      previewDevice === "mobile" 
+                        ? "w-[375px] h-[667px] border-4 border-foreground rounded-[32px] bg-background shadow-xl relative overflow-hidden" 
+                        : previewDevice === "tablet" 
+                        ? "w-[768px] h-[1024px] border-[6px] border-foreground rounded-[40px] bg-background shadow-xl relative overflow-hidden" 
+                        : "w-full"
+                    }`}
+                    style={{
+                      transform: `scale(${previewScale})`,
+                      transformOrigin: "top center",
+                    }}
+                  >
+                    
+                    {/* Phone Notch */}
+                    {previewDevice === "mobile" && (
+                      <div className="absolute top-0 inset-x-0 h-6 bg-foreground flex justify-center items-center z-50">
+                        <div className="w-24 h-3.5 bg-background rounded-b-xl" />
+                      </div>
+                    )}
+
+                    {/* Tablet Camera */}
+                    {previewDevice === "tablet" && (
+                      <div className="absolute top-0 inset-x-0 h-8 bg-foreground flex justify-center items-center z-50">
+                        <div className="w-3 h-3 rounded-full bg-background/30" />
+                      </div>
+                    )}
+
+                    {/* Inner Container */}
+                    <div 
+                      className={`w-full h-full flex justify-center items-center ${
+                        previewDevice === "mobile" ? "pt-6 pb-2 px-2" : previewDevice === "tablet" ? "pt-8 pb-4 px-4" : "p-2"
+                      }`}
+                    >
+                      {activeComponent && (activeComponent.controls.length === 0 || Object.keys(widgetStates).length > 0) ? (
+                        <ActivePreview 
+                          key={activeComponent.id}
+                          component={activeComponent} 
+                          states={widgetStates} 
+                          setStates={setWidgetStates} 
+                        />
+                      ) : (
+                        <div className="text-center text-sm text-muted-foreground flex flex-col items-center gap-2">
+                          <Sparkles className="animate-spin" size={24} />
+                          <span>Loading...</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Home Bar */}
+                    {previewDevice === "mobile" && (
+                      <div className="absolute bottom-1 inset-x-0 flex justify-center z-50">
+                        <div className="w-28 h-1 bg-foreground/60 rounded-full" />
+                      </div>
+                    )}
+
+                    {previewDevice === "tablet" && (
+                      <div className="absolute bottom-1.5 inset-x-0 flex justify-center z-50">
+                        <div className="w-32 h-1 bg-foreground/50 rounded-full" />
+                      </div>
+                    )}
+
+                  </div>
+                </div>
+              </div>
+
+              {/* CODE DISPLAY - COLLAPSIBLE WITH INDEPENDENT SCROLL */}
+              {showCode && (
+                <div className="w-full lg:w-96 border border-border rounded-lg p-4 bg-accent/20 flex flex-col min-h-[400px] max-h-[600px]">
+                  <div className="flex justify-between items-center mb-3 flex-shrink-0">
+                    <h3 className="text-sm font-medium flex items-center gap-2">
+                      <Code size={16} /> Generated Code
+                    </h3>
+                    
+                    <button
+                      onClick={handleCopyCode}
+                      className="px-3 py-1.5 text-xs font-medium border border-border hover:bg-accent rounded-md transition-smooth flex items-center gap-1.5"
+                    >
+                      {copied ? (
+                        <>
+                          <Check size={14} className="text-green-500" />
+                          <span>Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <pre className="flex-1 bg-background border border-border p-4 rounded-md text-xs font-mono overflow-auto custom-scroll-bar">
+                    {activeComponent ? activeComponent.generateCode(widgetStates) : ""}
+                  </pre>
+                </div>
+              )}
+
             </div>
 
           </section>
 
-          {/* DYNAMIC INTERACTIVE CONTROLS PANE */}
-          <section className="w-full lg:w-96 p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto bg-card/10 select-none">
-            <div className="border-b border-border/80 pb-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-1.5">
-                <Sliders size={14} className="text-primary" /> Widget Attributes
+          {/* DYNAMIC INTERACTIVE CONTROLS PANE - INDEPENDENT SCROLL */}
+          <section className="w-full lg:w-80 flex flex-col overflow-hidden bg-accent/10 border-t lg:border-t-0 lg:border-l border-border">
+            
+            {/* HEADER - FIXED */}
+            <div className="p-4 md:p-6 space-y-1 border-b border-border flex-shrink-0">
+              <h3 className="text-sm font-medium flex items-center gap-2">
+                <Sliders size={16} /> Controls
               </h3>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Adjust controller variables dynamically to update the component properties in real-time.
+              <p className="text-xs text-muted-foreground">
+                Adjust properties in real-time
               </p>
             </div>
 
-            <div className="flex-1 flex flex-col gap-5">
+            {/* CONTROLS - SCROLLABLE */}
+            <div className="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto custom-scroll-bar">
               {activeComponent && activeComponent.controls.length > 0 ? (
                 activeComponent.controls.map((control) => {
                   const currentValue = widgetStates[control.name] !== undefined ? widgetStates[control.name] : control.defaultValue;
 
                   return (
-                    <div key={control.name} className="space-y-2 border-b border-border/30 pb-3 last:border-b-0">
+                    <div key={control.name} className="space-y-2">
                       
                       {/* Control Label */}
-                      <label className="text-xs font-semibold text-muted-foreground flex justify-between">
-                        <span>{control.label}:</span> 
+                      <label className="text-xs font-medium flex justify-between items-center">
+                        <span>{control.label}</span> 
                         {control.type !== "color" && control.type !== "toggle" && (
-                          <span className="font-mono text-foreground font-bold px-1.5 py-0.5 rounded bg-accent text-[10px] border border-border">
-                            {typeof currentValue === "boolean" ? (currentValue ? "TRUE" : "FALSE") : String(currentValue)}
+                          <span className="font-mono text-xs px-2 py-0.5 bg-accent border border-border rounded-md">
+                            {typeof currentValue === "boolean" ? (currentValue ? "ON" : "OFF") : String(currentValue)}
                           </span>
                         )}
                       </label>
@@ -389,7 +538,7 @@ export default function App() {
                           step={control.step ?? 1}
                           value={currentValue}
                           onChange={(e) => handleControlChange(control.name, Number(e.target.value))}
-                          className="w-full accent-primary bg-accent/40 rounded-lg cursor-pointer h-1.5 outline-none"
+                          className="w-full accent-primary h-1.5"
                         />
                       )}
 
@@ -399,12 +548,11 @@ export default function App() {
                           value={currentValue}
                           onChange={(e) => {
                             const val = e.target.value;
-                            // Check if option value should be a number or string
                             const opt = control.options?.find(o => typeof o === "object" ? String(o.value) === val : String(o) === val);
                             const parsedVal = opt && typeof opt === "object" ? opt.value : (isNaN(Number(val)) ? val : Number(val));
                             handleControlChange(control.name, parsedVal);
                           }}
-                          className="w-full px-2.5 py-2 border border-border rounded-lg bg-card text-xs outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full px-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
                         >
                           {control.options?.map((opt, oIdx) => {
                             const isObj = typeof opt === "object";
@@ -424,14 +572,14 @@ export default function App() {
                         <button
                           type="button"
                           onClick={() => handleControlChange(control.name, !currentValue)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold w-full justify-between transition ${
+                          className={`flex items-center gap-2 px-3 py-2 text-sm font-medium w-full justify-between rounded-md border transition-smooth ${
                             currentValue 
                               ? "bg-primary/10 border-primary text-primary" 
-                              : "bg-card border-border hover:bg-accent text-muted-foreground"
+                              : "border-border hover:bg-accent"
                           }`}
                         >
-                          <span>{currentValue ? "Enabled (ON)" : "Disabled (OFF)"}</span>
-                          <span className={`w-2 h-2 rounded-full ${currentValue ? "bg-primary animate-pulse" : "bg-muted"}`} />
+                          <span>{currentValue ? "Enabled" : "Disabled"}</span>
+                          <div className={`w-2 h-2 rounded-full ${currentValue ? "bg-primary" : "bg-muted"}`} />
                         </button>
                       )}
 

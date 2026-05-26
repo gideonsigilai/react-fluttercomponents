@@ -41,8 +41,8 @@ import { Flexible } from "./components/ui/flexible";
 
 import { Scaffold } from "./components/ui/scaffold";
 import { AppBar } from "./components/ui/app-bar";
-import { Sidebar } from "./components/ui/sidebar";
-import { SmartDrawer } from "./components/ui/smart-drawer";
+import { Sidebar, SidebarHeader, SidebarBody } from "./components/ui/sidebar";
+import { SmartDrawer, SmartDrawerTile } from "./components/ui/smart-drawer";
 
 import { ListView } from "./components/ui/list-view";
 import { ListTile } from "./components/ui/list-tile";
@@ -95,6 +95,7 @@ import { Divider } from "./components/ui/divider";
 import { Separator } from "./components/ui/separator";
 import { VerticalDivider } from "./components/ui/vertical-divider";
 import { Colors } from "./components/ui/Colors";
+import { Border } from "./components/ui/flutter-style";
 
 import { Alignment, MainAxisAlignment, CrossAxisAlignment } from "./components/ui/layout-types";
 
@@ -154,11 +155,14 @@ export const SHOWCASE_COMPONENTS: ShowcaseComponent[] = [
         borderRadius={states.borderRadius}
         padding={states.padding}
         color={states.color}
-        className="flex items-center justify-center text-center shadow-lg transition-all"
+        alignment="center"
+        className="shadow-lg transition-all"
       >
-        <Text variant="bodyLarge" className="text-white font-bold tracking-wide">
-          Container Box<br/>
-          <span className="text-[10px] font-normal opacity-85">{states.width}x{states.height}px</span>
+        <Text variant="bodyLarge" style={{ color: "white", fontWeight: "bold", letterSpacing: "0.05em", textAlign: "center" }}>
+          Container Box
+        </Text>
+        <Text variant="bodySmall" style={{ color: "white", opacity: 0.85 }}>
+          {states.width}x{states.height}px
         </Text>
       </Container>
     ),
@@ -171,10 +175,14 @@ import { Text } from "@/components/ui/text";
   borderRadius={${states.borderRadius}}
   padding={${states.padding}}
   color="${states.color}"
-  className="flex items-center justify-center text-center shadow-lg"
+  alignment="center"
+  className="shadow-lg transition-all"
 >
-  <Text variant="bodyLarge" className="text-white font-bold">
+  <Text variant="bodyLarge" style={{ color: "white", fontWeight: "bold", letterSpacing: "0.05em", textAlign: "center" }}>
     Container Box
+  </Text>
+  <Text variant="bodySmall" style={{ color: "white", opacity: 0.85 }}>
+    {${states.width}}x{${states.height}}px
   </Text>
 </Container>`
   },
@@ -191,17 +199,20 @@ import { Text } from "@/components/ui/text";
       <Card
         elevation={states.elevation}
         margin={states.margin}
-        className="w-80 p-6 bg-card border border-border shadow-xl transition-all"
+        width={320}
+        padding={24}
+        color="hsl(var(--card))"
+        style={{ border: "1px solid hsl(var(--border))" }}
       >
-        <Column crossAxisAlignment={CrossAxisAlignment.start} className="gap-3">
-          <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full">
-            <Badge color="#3b82f6" className="text-[10px] text-white">Flutter style</Badge>
-            <Text variant="bodySmall" className="text-muted-foreground">Elevated Card</Text>
+        <Column crossAxisAlignment={CrossAxisAlignment.start} gap={12}>
+          <Row mainAxisAlignment={MainAxisAlignment.spaceBetween}>
+            <Badge style={{ fontSize: 10, color: "white", backgroundColor: "#3b82f6" }}>Flutter style</Badge>
+            <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>Elevated Card</Text>
           </Row>
-          <Text variant="titleLarge" className="font-outfit font-semibold">
+          <Text variant="titleLarge" style={{ fontFamily: "Outfit", fontWeight: 600 }}>
             Tactile Depth Card
           </Text>
-          <Text variant="bodyMedium" className="text-muted-foreground leading-relaxed">
+          <Text variant="bodyMedium" style={{ color: "hsl(var(--muted-foreground))", lineHeight: 1.6 }}>
             Cards mimic physical sheets of paper with an elevation class determining drop shadow sizes.
           </Text>
         </Column>
@@ -209,16 +220,30 @@ import { Text } from "@/components/ui/text";
     ),
     generateCode: (states) => `import { Card } from "@/components/ui/card";
 import { Column } from "@/components/ui/column";
+import { Row } from "@/components/ui/row";
+import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
+import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-types";
 
 <Card
   elevation={${states.elevation}}
   margin={${states.margin}}
-  className="p-6 bg-card"
+  width={320}
+  padding={24}
+  color="hsl(var(--card))"
+  style={{ border: "1px solid hsl(var(--border))" }}
 >
-  <Column className="gap-2">
-    <Text variant="titleLarge">Tactile Card</Text>
-    <Text variant="bodyMedium">Elevation value is ${states.elevation}dp</Text>
+  <Column crossAxisAlignment={CrossAxisAlignment.start} gap={12}>
+    <Row mainAxisAlignment={MainAxisAlignment.spaceBetween}>
+      <Badge style={{ fontSize: 10, color: "white", backgroundColor: "#3b82f6" }}>Flutter style</Badge>
+      <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>Elevated Card</Text>
+    </Row>
+    <Text variant="titleLarge" style={{ fontFamily: "Outfit", fontWeight: 600 }}>
+      Tactile Depth Card
+    </Text>
+    <Text variant="bodyMedium" style={{ color: "hsl(var(--muted-foreground))", lineHeight: 1.6 }}>
+      Cards mimic physical sheets of paper with an elevation class determining drop shadow sizes.
+    </Text>
   </Column>
 </Card>`
   },
@@ -234,28 +259,69 @@ import { Text } from "@/components/ui/text";
       { name: "right", label: "Right Spacer", type: "range", defaultValue: 24, min: 0, max: 48 }
     ],
     renderPreview: (states) => (
-      <div className="border border-dashed border-border/80 rounded-xl bg-card/20">
+      <Container
+        border={{
+          top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.2)"
+      >
         <Padding padding={{ top: states.top, bottom: states.bottom, left: states.left, right: states.right }}>
-          <div className="bg-primary/20 text-primary border border-primary/30 p-4 rounded-lg font-mono text-xs text-center font-bold">
-            Padded Box (T:{states.top} R:{states.right} B:{states.bottom} L:{states.left})
-          </div>
+          <Container
+            color="hsl(var(--primary) / 0.2)"
+            border={{
+              top: { color: "hsl(var(--primary) / 0.3)", width: 1 },
+              bottom: { color: "hsl(var(--primary) / 0.3)", width: 1 },
+              left: { color: "hsl(var(--primary) / 0.3)", width: 1 },
+              right: { color: "hsl(var(--primary) / 0.3)", width: 1 }
+            }}
+            padding={16}
+            borderRadius={8}
+            alignment="center"
+          >
+            <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontFamily: "monospace", fontWeight: "bold" }}>
+              Padded Box (T:{states.top} R:{states.right} B:{states.bottom} L:{states.left})
+            </Text>
+          </Container>
         </Padding>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Padding } from "@/components/ui/padding";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<Padding
-  padding={{ 
-    top: ${states.top}, 
-    bottom: ${states.bottom}, 
-    left: ${states.left}, 
-    right: ${states.right} 
+<Container
+  border={{
+    top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
   }}
+  borderRadius={12}
+  color="hsl(var(--card) / 0.2)"
 >
-  <div className="bg-primary/20 p-4 rounded">
-    Content inside padding
-  </div>
-</Padding>`
+  <Padding padding={{ top: ${states.top}, bottom: ${states.bottom}, left: ${states.left}, right: ${states.right} }}>
+    <Container
+      color="hsl(var(--primary) / 0.2)"
+      border={{
+        top: { color: "hsl(var(--primary) / 0.3)", width: 1 },
+        bottom: { color: "hsl(var(--primary) / 0.3)", width: 1 },
+        left: { color: "hsl(var(--primary) / 0.3)", width: 1 },
+        right: { color: "hsl(var(--primary) / 0.3)", width: 1 }
+      }}
+      padding={16}
+      borderRadius={8}
+      alignment="center"
+    >
+      <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontFamily: "monospace", fontWeight: "bold" }}>
+        Padded Box (T:${states.top} R:${states.right} B:${states.bottom} L:${states.left})
+      </Text>
+    </Container>
+  </Padding>
+</Container>`
   },
   {
     id: "align",
@@ -272,22 +338,66 @@ import { Text } from "@/components/ui/text";
       }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-44 border border-dashed border-border/80 rounded-xl bg-card/10 relative p-1.5">
+      <Container
+        width={320}
+        height={176}
+        border={{
+          top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.1)"
+        padding={6}
+        className="relative"
+      >
         <Align alignment={states.alignment}>
-          <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center text-white font-bold shadow-md">
-            🎯
-          </div>
+          <Container
+            width={48}
+            height={48}
+            color="#ec4899"
+            borderRadius={8}
+            alignment="center"
+            style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}
+          >
+            <Text variant="titleLarge" style={{ color: "white" }}>🎯</Text>
+          </Container>
         </Align>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Align } from "@/components/ui/align";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 import { Alignment } from "@/components/ui/layout-types";
 
-<div className="w-80 h-44 relative bg-card">
+<Container
+  width={320}
+  height={176}
+  border={{
+    top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+  }}
+  borderRadius={12}
+  color="hsl(var(--card) / 0.1)"
+  padding={6}
+  style={{ position: "relative" }}
+>
   <Align alignment={Alignment.${Object.keys(Alignment).find(k => Alignment[k] === states.alignment)}}>
-    <div className="w-12 h-12 bg-pink-500 rounded" />
+    <Container
+      width={48}
+      height={48}
+      color="#ec4899"
+      borderRadius={8}
+      alignment="center"
+      style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}
+    >
+      <Text variant="titleLarge" style={{ color: "white" }}>🎯</Text>
+    </Container>
   </Align>
-</div>`
+</Container>`
   },
   {
     id: "center",
@@ -296,21 +406,61 @@ import { Alignment } from "@/components/ui/layout-types";
     category: "layout",
     controls: [],
     renderPreview: () => (
-      <div className="w-80 h-40 border border-dashed border-border/80 rounded-xl bg-card/10">
+      <Container
+        width={320}
+        height={160}
+        border={{
+          top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.1)"
+      >
         <Center>
-          <div className="bg-indigo-500 text-white font-bold p-5 rounded-xl shadow-lg">
-            Perfect Center Widget
-          </div>
+          <Container
+            color="#6366f1"
+            padding={20}
+            borderRadius={12}
+            elevation={4}
+          >
+            <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>
+              Perfect Center Widget
+            </Text>
+          </Container>
         </Center>
-      </div>
+      </Container>
     ),
     generateCode: () => `import { Center } from "@/components/ui/center";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<Center>
-  <div className="bg-indigo-500 p-5 rounded">
-    Perfect Center Widget
-  </div>
-</Center>`
+<Container
+  width={320}
+  height={160}
+  border={{
+    top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+  }}
+  borderRadius={12}
+  color="hsl(var(--card) / 0.1)"
+>
+  <Center>
+    <Container
+      color="#6366f1"
+      padding={20}
+      borderRadius={12}
+      style={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
+    >
+      <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>
+        Perfect Center Widget
+      </Text>
+    </Container>
+  </Center>
+</Container>`
   },
   {
     id: "sizedbox",
@@ -322,19 +472,71 @@ import { Alignment } from "@/components/ui/layout-types";
       { name: "height", label: "Fixed Height (px)", type: "range", defaultValue: 90, min: 20, max: 200 }
     ],
     renderPreview: (states) => (
-      <div className="p-4 border border-dashed border-border/80 rounded-xl bg-card/10">
+      <Container
+        padding={16}
+        border={{
+          top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.1)"
+      >
         <SizedBox width={states.width} height={states.height}>
-          <div className="w-full h-full bg-violet-600/25 border border-violet-500/50 rounded-lg flex items-center justify-center text-xs font-mono font-bold text-violet-400">
-            {states.width}x{states.height}
-          </div>
+          <Container
+            color="hsl(var(--primary) / 0.25)"
+            border={{
+              top: { color: "hsl(var(--primary) / 0.5)", width: 1 },
+              bottom: { color: "hsl(var(--primary) / 0.5)", width: 1 },
+              left: { color: "hsl(var(--primary) / 0.5)", width: 1 },
+              right: { color: "hsl(var(--primary) / 0.5)", width: 1 }
+            }}
+            borderRadius={8}
+            alignment="center"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontFamily: "monospace", fontWeight: "bold" }}>
+              {states.width}x{states.height}
+            </Text>
+          </Container>
         </SizedBox>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { SizedBox } from "@/components/ui/sized-box";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<SizedBox width={${states.width}} height={${states.height}}>
-  <div className="w-full h-full bg-violet-500" />
-</SizedBox>`
+<Container
+  padding={16}
+  border={{
+    top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+  }}
+  borderRadius={12}
+  color="hsl(var(--card) / 0.1)"
+>
+  <SizedBox width={${states.width}} height={${states.height}}>
+    <Container
+      color="hsl(var(--primary) / 0.25)"
+      border={{
+        top: { color: "hsl(var(--primary) / 0.5)", width: 1 },
+        bottom: { color: "hsl(var(--primary) / 0.5)", width: 1 },
+        left: { color: "hsl(var(--primary) / 0.5)", width: 1 },
+        right: { color: "hsl(var(--primary) / 0.5)", width: 1 }
+      }}
+      borderRadius={8}
+      alignment="center"
+      style={{ width: "100%", height: "100%" }}
+    >
+      <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontFamily: "monospace", fontWeight: "bold" }}>
+        ${states.width}x${states.height}
+      </Text>
+    </Container>
+  </SizedBox>
+</Container>`
   },
   {
     id: "coloredbox",
@@ -345,19 +547,66 @@ import { Alignment } from "@/components/ui/layout-types";
       { name: "color", label: "Color Selection", type: "color", defaultValue: "#10b981" }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-32 rounded-xl overflow-hidden border border-border">
-        <ColoredBox color={states.color} className="w-full h-full flex items-center justify-center p-4">
-          <span className="text-white font-bold bg-black/35 px-4 py-2 rounded-full backdrop-blur-sm text-sm">
-            ColoredBox Color: {states.color}
-          </span>
+      <Container
+        width={320}
+        height={128}
+        borderRadius={12}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        style={{ overflow: "hidden" }}
+      >
+        <ColoredBox color={states.color} style={{ width: "100%", height: "100%" }}>
+          <Center>
+            <Container
+              color="rgba(0, 0, 0, 0.35)"
+              padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+              borderRadius={9999}
+              style={{ backdropFilter: "blur(4px)" }}
+            >
+              <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+                ColoredBox: {states.color}
+              </Text>
+            </Container>
+          </Center>
         </ColoredBox>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { ColoredBox } from "@/components/ui/colored-box";
+import { Center } from "@/components/ui/center";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<ColoredBox color="${states.color}" className="w-full h-full p-4">
-  <span>ColoredBox background</span>
-</ColoredBox>`
+<Container
+  width={320}
+  height={128}
+  borderRadius={12}
+  border={{
+    top: { color: "hsl(var(--border))", width: 1 },
+    bottom: { color: "hsl(var(--border))", width: 1 },
+    left: { color: "hsl(var(--border))", width: 1 },
+    right: { color: "hsl(var(--border))", width: 1 }
+  }}
+  style={{ overflow: "hidden" }}
+>
+  <ColoredBox color="${states.color}" style={{ width: "100%", height: "100%" }}>
+    <Center>
+      <Container
+        color="rgba(0, 0, 0, 0.35)"
+        padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+        borderRadius={9999}
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+          ColoredBox: ${states.color}
+        </Text>
+      </Container>
+    </Center>
+  </ColoredBox>
+</Container>`
   },
   {
     id: "aspectratio",
@@ -373,19 +622,59 @@ import { Alignment } from "@/components/ui/layout-types";
       ]}
     ],
     renderPreview: (states) => (
-      <div className="w-64 border border-dashed border-border/80 p-2 rounded-xl bg-card/10">
+      <Container
+        width={256}
+        border={{
+          top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+        }}
+        padding={8}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.1)"
+      >
         <AspectRatio ratio={states.ratio}>
-          <div className="w-full h-full bg-gradient-to-tr from-amber-500 to-rose-500 rounded-lg flex items-center justify-center text-white font-bold text-xs">
-            Aspect Ratio ({states.ratio === 1.77 ? "16:9" : states.ratio === 1.33 ? "4:3" : states.ratio === 1.0 ? "1:1" : "2:3"})
-          </div>
+          <Container
+            color="linear-gradient(to top right, #f59e0b, #ef4444)"
+            borderRadius={8}
+            alignment="center"
+            style={{ width: "100%", height: "100%", background: "linear-gradient(to top right, #f59e0b, #f43f5e)" }}
+          >
+            <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>
+              Aspect Ratio ({states.ratio === 1.77 ? "16:9" : states.ratio === 1.33 ? "4:3" : states.ratio === 1.0 ? "1:1" : "2:3"})
+            </Text>
+          </Container>
         </AspectRatio>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<AspectRatio ratio={${states.ratio}}>
-  <div className="bg-gradient-to-tr from-amber-500 to-rose-500" />
-</AspectRatio>`
+<Container
+  width={256}
+  border={{
+    top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+  }}
+  padding={8}
+  borderRadius={12}
+  color="hsl(var(--card) / 0.1)"
+>
+  <AspectRatio ratio={${states.ratio}}>
+    <Container
+      alignment="center"
+      style={{ width: "100%", height: "100%", background: "linear-gradient(to top right, #f59e0b, #f43f5e)" }}
+    >
+      <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>
+        Aspect Ratio (${states.ratio === 1.77 ? "16:9" : states.ratio === 1.33 ? "4:3" : states.ratio === 1.0 ? "1:1" : "2:3"})
+      </Text>
+    </Container>
+  </AspectRatio>
+</Container>`
   },
   {
     id: "cliprrect",
@@ -396,19 +685,46 @@ import { Alignment } from "@/components/ui/layout-types";
       { name: "radius", label: "Clip Radius (px)", type: "range", defaultValue: 20, min: 0, max: 60 }
     ],
     renderPreview: (states) => (
-      <ClipRRect borderRadius={states.radius} className="shadow-lg">
-        <div className="w-64 h-36 bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center p-4">
-          <span className="text-white font-bold text-center leading-tight">
-            Clipped Rounded Corner Box<br/>
-            <span className="text-xs font-mono font-normal opacity-80">Radius: {states.radius}px</span>
-          </span>
-        </div>
+      <ClipRRect borderRadius={states.radius} style={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
+        <Container
+          width={256}
+          height={144}
+          alignment="center"
+          style={{ background: "linear-gradient(to top right, #2563eb, #6366f1, #9333ea)" }}
+        >
+          <Column crossAxisAlignment={CrossAxisAlignment.center} gap={4}>
+            <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>
+              Clipped Rounded Corner Box
+            </Text>
+            <Text variant="bodySmall" style={{ color: "white", opacity: 0.8, fontFamily: "monospace" }}>
+              Radius: {states.radius}px
+            </Text>
+          </Column>
+        </Container>
       </ClipRRect>
     ),
     generateCode: (states) => `import { ClipRRect } from "@/components/ui/clip-r-rect";
+import { Container } from "@/components/ui/container";
+import { Column } from "@/components/ui/column";
+import { Text } from "@/components/ui/text";
+import { CrossAxisAlignment } from "@/components/ui/layout-types";
 
-<ClipRRect borderRadius={${states.radius}}>
-  <div className="w-64 h-36 bg-gradient-to-tr from-blue-600 to-purple-600" />
+<ClipRRect borderRadius={${states.radius}} style={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
+  <Container
+    width={256}
+    height={144}
+    alignment="center"
+    style={{ background: "linear-gradient(to top right, #2563eb, #6366f1, #9333ea)" }}
+  >
+    <Column crossAxisAlignment={CrossAxisAlignment.center} gap={4}>
+      <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>
+        Clipped Rounded Corner Box
+      </Text>
+      <Text variant="bodySmall" style={{ color: "white", opacity: 0.8, fontFamily: "monospace" }}>
+        Radius: ${states.radius}px
+      </Text>
+    </Column>
+  </Container>
 </ClipRRect>`
   },
 
@@ -423,31 +739,70 @@ import { Alignment } from "@/components/ui/layout-types";
       { name: "cross", label: "Cross Axis (Vertical)", type: "select", defaultValue: CrossAxisAlignment.center, options: Object.values(CrossAxisAlignment) }
     ],
     renderPreview: (states) => (
-      <div className="w-full max-w-md p-4 border border-dashed border-border/80 rounded-xl bg-card/30">
+      <Container 
+        width="100%"
+        maxWidth={448}
+        padding={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        border={{
+          top: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" }
+        }}
+        borderRadius={8}
+        color="hsl(var(--card) / 0.1)"
+      >
         <Row 
           mainAxisAlignment={states.main} 
           crossAxisAlignment={states.cross}
-          className="min-h-[140px] border border-dashed border-border/60 rounded-lg p-3 bg-card/10 gap-3"
+          gap={12}
         >
-          <Container width={50} height={50} color="#ec4899" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">1</Container>
-          <Container width={50} height={70} color="#3b82f6" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">2</Container>
-          <Container width={50} height={40} color="#10b981" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">3</Container>
+          <Container width={50} height={50} color="#ec4899" borderRadius={8} alignment="center">
+            <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>1</Text>
+          </Container>
+          <Container width={50} height={70} color="#3b82f6" borderRadius={8} alignment="center">
+            <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>2</Text>
+          </Container>
+          <Container width={50} height={40} color="#10b981" borderRadius={8} alignment="center">
+            <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>3</Text>
+          </Container>
         </Row>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Row } from "@/components/ui/row";
 import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-types";
 
-<Row 
-  mainAxisAlignment={MainAxisAlignment.${Object.keys(MainAxisAlignment).find(k => MainAxisAlignment[k] === states.main)}} 
-  crossAxisAlignment={CrossAxisAlignment.${Object.keys(CrossAxisAlignment).find(k => CrossAxisAlignment[k] === states.cross)}}
-  className="gap-3"
+<Container 
+  width="100%"
+  maxWidth={448}
+  padding={12}
+  border={{
+    top: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" }
+  }}
+  borderRadius={8}
+  color="hsl(var(--card) / 0.1)"
 >
-  <Container width={50} height={50} color="#ec4899" />
-  <Container width={50} height={70} color="#3b82f6" />
-  <Container width={50} height={40} color="#10b981" />
-</Row>`
+  <Row 
+    mainAxisAlignment={MainAxisAlignment.${Object.keys(MainAxisAlignment).find(k => MainAxisAlignment[k] === states.main)}} 
+    crossAxisAlignment={CrossAxisAlignment.${Object.keys(CrossAxisAlignment).find(k => CrossAxisAlignment[k] === states.cross)}}
+    gap={12}
+  >
+    <Container width={50} height={50} color="#ec4899" borderRadius={8} alignment="center">
+      <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>1</Text>
+    </Container>
+    <Container width={50} height={70} color="#3b82f6" borderRadius={8} alignment="center">
+      <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>2</Text>
+    </Container>
+    <Container width={50} height={40} color="#10b981" borderRadius={8} alignment="center">
+      <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>3</Text>
+    </Container>
+  </Row>
+</Container>`
   },
   {
     id: "column",
@@ -459,31 +814,70 @@ import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-ty
       { name: "cross", label: "Cross Axis (Horizontal)", type: "select", defaultValue: CrossAxisAlignment.center, options: Object.values(CrossAxisAlignment) }
     ],
     renderPreview: (states) => (
-      <div className="w-full max-w-sm p-4 border border-dashed border-border/80 rounded-xl bg-card/30">
+      <Container 
+        width="100%"
+        maxWidth={384}
+        padding={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        border={{
+          top: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" }
+        }}
+        borderRadius={8}
+        color="hsl(var(--card) / 0.1)"
+      >
         <Column 
           mainAxisAlignment={states.main} 
           crossAxisAlignment={states.cross}
-          className="min-h-[220px] border border-dashed border-border/60 rounded-lg p-3 bg-card/10 gap-3"
+          gap={12}
         >
-          <Container width={80} height={40} color="#ec4899" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">Box A</Container>
-          <Container width={100} height={40} color="#3b82f6" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">Box B</Container>
-          <Container width={70} height={40} color="#10b981" className="flex items-center justify-center text-white font-bold rounded-lg shadow-md">Box C</Container>
+          <Container width={80} height={40} color="#ec4899" borderRadius={8} alignment="center">
+            <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Box A</Text>
+          </Container>
+          <Container width={100} height={40} color="#3b82f6" borderRadius={8} alignment="center">
+            <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Box B</Text>
+          </Container>
+          <Container width={70} height={40} color="#10b981" borderRadius={8} alignment="center">
+            <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Box C</Text>
+          </Container>
         </Column>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Column } from "@/components/ui/column";
 import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-types";
 
-<Column 
-  mainAxisAlignment={MainAxisAlignment.${Object.keys(MainAxisAlignment).find(k => MainAxisAlignment[k] === states.main)}} 
-  crossAxisAlignment={CrossAxisAlignment.${Object.keys(CrossAxisAlignment).find(k => CrossAxisAlignment[k] === states.cross)}}
-  className="gap-3"
+<Container 
+  width="100%"
+  maxWidth={384}
+  padding={12}
+  border={{
+    top: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.6)", width: 1, style: "dashed" }
+  }}
+  borderRadius={8}
+  color="hsl(var(--card) / 0.1)"
 >
-  <Container width={80} height={40} color="#ec4899" />
-  <Container width={100} height={40} color="#3b82f6" />
-  <Container width={70} height={40} color="#10b981" />
-</Column>`
+  <Column 
+    mainAxisAlignment={MainAxisAlignment.${Object.keys(MainAxisAlignment).find(k => MainAxisAlignment[k] === states.main)}} 
+    crossAxisAlignment={CrossAxisAlignment.${Object.keys(CrossAxisAlignment).find(k => CrossAxisAlignment[k] === states.cross)}}
+    gap={12}
+  >
+    <Container width={80} height={40} color="#ec4899" borderRadius={8} alignment="center">
+      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Box A</Text>
+    </Container>
+    <Container width={100} height={40} color="#3b82f6" borderRadius={8} alignment="center">
+      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Box B</Text>
+    </Container>
+    <Container width={70} height={40} color="#10b981" borderRadius={8} alignment="center">
+      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Box C</Text>
+    </Container>
+  </Column>
+</Container>`
   },
   {
     id: "stack",
@@ -495,51 +889,134 @@ import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-ty
       { name: "badgeRight", label: "Badge Right Offset", type: "range", defaultValue: 10, min: -10, max: 80 }
     ],
     renderPreview: (states) => (
-      <Stack className="w-64 h-64 border border-border bg-card rounded-xl shadow-md p-4 overflow-visible">
-        {/* Underlay base */}
-        <Container 
-          width={180} 
-          height={180} 
-          color="#3b82f6" 
-          borderRadius={16} 
-          className="flex items-center justify-center text-white text-center font-bold"
-        >
-          Base Stack Canvas
-        </Container>
+      <Container
+        width={256}
+        height={256}
+        padding={{ top: 16, bottom: 16, left: 16, right: 16 }}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card))"
+      >
+        <Stack clipBehavior="visible">
+          <Container 
+            width={180} 
+            height={180} 
+            color="#3b82f6" 
+            borderRadius={16} 
+            alignment="center"
+          >
+            <Text variant="bodyMedium" style={{ color: "white", textAlign: "center", fontWeight: "bold" }}>
+              Base Stack Canvas
+            </Text>
+          </Container>
 
-        {/* Positioned element */}
-        <Positioned top={states.badgeTop} right={states.badgeRight}>
-          <div className="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg border-2 border-card animate-pulse">
-            New
-          </div>
-        </Positioned>
+          <Positioned top={states.badgeTop} right={states.badgeRight}>
+            <Container
+              width={48}
+              height={48}
+              color="#ec4899"
+              borderRadius={24}
+              alignment="center"
+              border={{
+                top: { color: "hsl(var(--card))", width: 2 },
+                bottom: { color: "hsl(var(--card))", width: 2 },
+                left: { color: "hsl(var(--card))", width: 2 },
+                right: { color: "hsl(var(--card))", width: 2 }
+              }}
+            >
+              <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>New</Text>
+            </Container>
+          </Positioned>
 
-        <Positioned bottom={12} left={12}>
-          <span className="bg-black/75 px-3 py-1 rounded-full text-white text-xs font-semibold backdrop-blur-sm border border-white/10">
-            Overlaid Badge
-          </span>
-        </Positioned>
-      </Stack>
+          <Positioned bottom={12} left={12}>
+            <Container
+              color="rgba(0, 0, 0, 0.75)"
+              padding={{ top: 4, bottom: 4, left: 12, right: 12 }}
+              borderRadius={9999}
+              border={{
+                top: { color: "rgba(255, 255, 255, 0.1)", width: 1 },
+                bottom: { color: "rgba(255, 255, 255, 0.1)", width: 1 },
+                left: { color: "rgba(255, 255, 255, 0.1)", width: 1 },
+                right: { color: "rgba(255, 255, 255, 0.1)", width: 1 }
+              }}
+            >
+              <Text variant="bodySmall" style={{ color: "white", fontWeight: 600 }}>Overlaid Badge</Text>
+            </Container>
+          </Positioned>
+        </Stack>
+      </Container>
     ),
     generateCode: (states) => `import { Stack } from "@/components/ui/stack";
 import { Positioned } from "@/components/ui/positioned";
 import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<Stack className="w-64 h-64 bg-card rounded-xl shadow-md">
-  <Container width={180} height={180} color="#3b82f6" borderRadius={16} />
-  
-  <Positioned top={${states.badgeTop}} right={${states.badgeRight}}>
-    <div className="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center text-white">
-      New
-    </div>
-  </Positioned>
+<Container
+  width={256}
+  height={256}
+  padding={16}
+  border={{
+    top: { color: "hsl(var(--border))", width: 1 },
+    bottom: { color: "hsl(var(--border))", width: 1 },
+    left: { color: "hsl(var(--border))", width: 1 },
+    right: { color: "hsl(var(--border))", width: 1 }
+  }}
+  borderRadius={12}
+  color="hsl(var(--card))"
+>
+  <Stack clipBehavior="visible">
+    <Container 
+      width={180} 
+      height={180} 
+      color="#3b82f6" 
+      borderRadius={16} 
+      alignment="center"
+    >
+      <Text variant="bodyMedium" style={{ color: "white", textAlign: "center", fontWeight: "bold" }}>
+        Base Stack Canvas
+      </Text>
+    </Container>
 
-  <Positioned bottom={12} left={12}>
-    <span className="bg-black/75 px-3 py-1 rounded-full text-white text-xs">
-      Overlaid Badge
-    </span>
-  </Positioned>
-</Stack>`
+    <Positioned top={${states.badgeTop}} right={${states.badgeRight}}>
+      <Container
+        width={48}
+        height={48}
+        color="#ec4899"
+        borderRadius={24}
+        alignment="center"
+        border={{
+          top: { color: "hsl(var(--card))", width: 2 },
+          bottom: { color: "hsl(var(--card))", width: 2 },
+          left: { color: "hsl(var(--card))", width: 2 },
+          right: { color: "hsl(var(--card))", width: 2 }
+        }}
+      >
+        <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>New</Text>
+      </Container>
+    </Positioned>
+
+    <Positioned bottom={12} left={12}>
+      <Container
+        color="rgba(0, 0, 0, 0.75)"
+        padding={{ top: 4, bottom: 4, left: 12, right: 12 }}
+        borderRadius={9999}
+        border={{
+          top: { color: "rgba(255, 255, 255, 0.1)", width: 1 },
+          bottom: { color: "rgba(255, 255, 255, 0.1)", width: 1 },
+          left: { color: "rgba(255, 255, 255, 0.1)", width: 1 },
+          right: { color: "rgba(255, 255, 255, 0.1)", width: 1 }
+        }}
+      >
+        <Text variant="bodySmall" style={{ color: "white", fontWeight: 600 }}>Overlaid Badge</Text>
+      </Container>
+    </Positioned>
+  </Stack>
+</Container>`
   },
   {
     id: "wrap",
@@ -551,25 +1028,47 @@ import { Container } from "@/components/ui/container";
       { name: "runSpacing", label: "Run Spacing (px)", type: "range", defaultValue: 8, min: 0, max: 24 }
     ],
     renderPreview: (states) => (
-      <div className="w-72 border border-dashed border-border/80 p-4 rounded-xl bg-card/20">
+      <Container
+        width={288}
+        padding={{ top: 16, bottom: 16, left: 16, right: 16 }}
+        border={{
+          top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.2)"
+      >
         <Wrap spacing={states.spacing} runSpacing={states.runSpacing}>
           {["React", "Flutter", "Tailwind", "GetX", "TypeScript", "Vite", "Zustand", "HTML"].map((tag, i) => (
-            <span key={i} className="px-3.5 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-semibold shadow-sm hover:scale-105 transition-all">
-              {tag}
-            </span>
+            <Chip key={i} label={tag} />
           ))}
         </Wrap>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Wrap } from "@/components/ui/wrap";
+import { Container } from "@/components/ui/container";
+import { Chip } from "@/components/ui/chip";
 
-<Wrap spacing={${states.spacing}} runSpacing={${states.runSpacing}}>
-  {["React", "Flutter", "Tailwind"].map(tag => (
-    <span className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs">
-      {tag}
-    </span>
-  ))}
-</Wrap>`
+<Container
+  width={288}
+  padding={16}
+  border={{
+    top: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    bottom: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    left: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" },
+    right: { color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" }
+  }}
+  borderRadius={12}
+  color="hsl(var(--card) / 0.2)"
+>
+  <Wrap spacing={${states.spacing}} runSpacing={${states.runSpacing}}>
+    {["React", "Flutter", "Tailwind"].map(tag => (
+      <Chip key={tag} label={tag} />
+    ))}
+  </Wrap>
+</Container>`
   },
   {
     id: "gap-spacer",
@@ -581,53 +1080,126 @@ import { Container } from "@/components/ui/container";
       { name: "expandedFlex", label: "Expanded Flex Weight", type: "range", defaultValue: 2, min: 1, max: 5 }
     ],
     renderPreview: (states) => (
-      <Column className="w-full max-w-sm gap-4 p-4 border border-dashed border-border/85 rounded-xl bg-card/20">
-        {/* Showcase 1: Gap Helper */}
-        <div className="w-full">
-          <span className="text-xs font-mono text-muted-foreground block mb-2">Row showing Gap({states.gapValue}px):</span>
-          <Row className="bg-card/40 p-2.5 rounded-lg border border-border items-center">
-            <div className="px-3 py-2 bg-pink-500 rounded text-white text-xs font-bold shadow-sm">Left Box</div>
-            <Gap size={states.gapValue} />
-            <div className="px-3 py-2 bg-blue-500 rounded text-white text-xs font-bold shadow-sm">Right Box</div>
-          </Row>
-        </div>
+      <Container
+        width="100%"
+        maxWidth={384}
+        padding={{ top: 16, bottom: 16, left: 16, right: 16 }}
+        border={{
+          top: { color: "hsl(var(--border) / 0.85)", width: 1, style: "dashed" },
+          bottom: { color: "hsl(var(--border) / 0.85)", width: 1, style: "dashed" },
+          left: { color: "hsl(var(--border) / 0.85)", width: 1, style: "dashed" },
+          right: { color: "hsl(var(--border) / 0.85)", width: 1, style: "dashed" }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.2)"
+      >
+        <Column gap={16}>
+          <Column crossAxisAlignment={CrossAxisAlignment.start} gap={8}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+              Row showing Gap({states.gapValue}px):
+            </Text>
+            <Container
+              padding={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              borderRadius={8}
+              border={{
+                top: { color: "hsl(var(--border))", width: 1 },
+                bottom: { color: "hsl(var(--border))", width: 1 },
+                left: { color: "hsl(var(--border))", width: 1 },
+                right: { color: "hsl(var(--border))", width: 1 }
+              }}
+              color="hsl(var(--card) / 0.4)"
+              width="100%"
+            >
+              <Row crossAxisAlignment={CrossAxisAlignment.center}>
+                <Container color="#ec4899" borderRadius={4} padding={{ top: 8, bottom: 8, left: 12, right: 12 }} alignment="center">
+                  <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Left Box</Text>
+                </Container>
+                
+                <Gap size={states.gapValue} />
+                
+                <Container color="#3b82f6" borderRadius={4} padding={{ top: 8, bottom: 8, left: 12, right: 12 }} alignment="center">
+                  <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Right Box</Text>
+                </Container>
+              </Row>
+            </Container>
+          </Column>
 
-        {/* Showcase 2: Spacer & Expanded */}
-        <div className="w-full border-t border-border/80 pt-3">
-          <span className="text-xs font-mono text-muted-foreground block mb-2">Row showing Spacer() & Expanded(flex: {states.expandedFlex}):</span>
-          <Row className="bg-card/40 p-2.5 rounded-lg border border-border items-center">
-            <div className="px-3 py-2 bg-amber-500 rounded text-white text-xs font-bold shadow-sm">A</div>
-            
-            <Spacer /> {/* Fills remaining space */}
-            
-            <div className="px-3 py-2 bg-purple-500 rounded text-white text-xs font-bold shadow-sm">B (Spacer left)</div>
-            
-            <Expanded flex={states.expandedFlex}>
-              <div className="h-9 bg-emerald-500 rounded text-white text-xs font-bold shadow-sm flex items-center justify-center px-2 truncate ml-2">
-                Expanded flex={states.expandedFlex}
-              </div>
-            </Expanded>
-          </Row>
-        </div>
-      </Column>
+          <Column crossAxisAlignment={CrossAxisAlignment.start} gap={8} padding={{ top: 12, bottom: 0, left: 0, right: 0 }} border={{ top: { color: "hsl(var(--border) / 0.8)", width: 1 } }}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+              Row showing Spacer() & Expanded(flex: {states.expandedFlex}):
+            </Text>
+            <Container
+              padding={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              borderRadius={8}
+              border={{
+                top: { color: "hsl(var(--border))", width: 1 },
+                bottom: { color: "hsl(var(--border))", width: 1 },
+                left: { color: "hsl(var(--border))", width: 1 },
+                right: { color: "hsl(var(--border))", width: 1 }
+              }}
+              color="hsl(var(--card) / 0.4)"
+              width="100%"
+            >
+              <Row crossAxisAlignment={CrossAxisAlignment.center}>
+                <Container color="#f59e0b" borderRadius={4} padding={{ top: 8, bottom: 8, left: 12, right: 12 }} alignment="center">
+                  <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>A</Text>
+                </Container>
+
+                <Spacer />
+
+                <Container color="#8b5cf6" borderRadius={4} padding={{ top: 8, bottom: 8, left: 12, right: 12 }} alignment="center">
+                  <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>B</Text>
+                </Container>
+
+                <Expanded flex={states.expandedFlex}>
+                  <Container color="#10b981" borderRadius={4} height={32} alignment="center" margin={{ left: 8 }}>
+                    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingLeft: "8px", paddingRight: "8px" }}>
+                      Flex={states.expandedFlex}
+                    </Text>
+                  </Container>
+                </Expanded>
+              </Row>
+            </Container>
+          </Column>
+        </Column>
+      </Container>
     ),
     generateCode: (states) => `import { Row } from "@/components/ui/row";
+import { Column } from "@/components/ui/column";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 import { Gap } from "@/components/ui/gap";
 import { Spacer } from "@/components/ui/spacer";
 import { Expanded } from "@/components/ui/expanded";
+import { CrossAxisAlignment } from "@/components/ui/layout-types";
 
-<Row className="items-center">
-  <div>A</div>
+<Row crossAxisAlignment={CrossAxisAlignment.center}>
+  <Container color="#ec4899" borderRadius={4} padding={8}>
+    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Left Box</Text>
+  </Container>
   <Gap size={${states.gapValue}} />
-  <div>B</div>
+  <Container color="#3b82f6" borderRadius={4} padding={8}>
+    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>Right Box</Text>
+  </Container>
+</Row>
+
+<Row crossAxisAlignment={CrossAxisAlignment.center}>
+  <Container color="#f59e0b" borderRadius={4} padding={8}>
+    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>A</Text>
+  </Container>
   <Spacer />
+  <Container color="#8b5cf6" borderRadius={4} padding={8}>
+    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>B</Text>
+  </Container>
   <Expanded flex={${states.expandedFlex}}>
-    <div className="bg-emerald-500">Expanded Element</div>
+    <Container color="#10b981" borderRadius={4} height={32} alignment="center" margin={{ left: 8 }}>
+      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+        Flex=${states.expandedFlex}
+      </Text>
+    </Container>
   </Expanded>
 </Row>`
   },
-
-  // ─── 3. APP LAYOUT & SCAFFOLDING ───────────────────────────────────────────
   {
     id: "scaffold",
     name: "Scaffold & App Layout",
@@ -638,37 +1210,73 @@ import { Expanded } from "@/components/ui/expanded";
       { name: "showFab", label: "Floating Action Button", type: "toggle", defaultValue: true }
     ],
     renderPreview: (states, setStates) => (
-      <div className="w-full max-w-sm h-96 border border-border rounded-xl bg-card overflow-hidden shadow-xl flex relative">
-        
-        {/* Draw open/close portal overlay */}
+      <Container
+        width="100%"
+        maxWidth={384}
+        height={384}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card))"
+        className="overflow-hidden shadow-xl relative flex"
+      >
         {states.showDrawer && (
-          <div className="absolute inset-0 bg-black/60 z-30 transition-opacity flex">
-            <div className="w-2/3 h-full bg-card border-r border-border p-5 flex flex-col gap-4 shadow-2xl relative">
-              <span className="text-sm font-bold uppercase tracking-wider text-primary">Main Drawer menu</span>
-              <Column className="gap-2 text-xs">
-                <span className="p-2 bg-accent/40 rounded font-semibold cursor-pointer">🏠 Home Dashboard</span>
-                <span className="p-2 hover:bg-accent/30 rounded cursor-pointer">👤 Profile Settings</span>
-                <span className="p-2 hover:bg-accent/30 rounded cursor-pointer">🔔 Alerts</span>
+          <Container
+            color="rgba(0,0,0,0.6)"
+            className="absolute inset-0 z-30 flex"
+          >
+            <Container
+              width="66.6%"
+              height="100%"
+              color="hsl(var(--card))"
+              border={{ right: { color: "hsl(var(--border))", width: 1 } }}
+              padding={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              className="shadow-2xl flex flex-col justify-between"
+            >
+              <Column gap={16}>
+                <Text variant="bodyMedium" style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", color: "hsl(var(--primary))" }}>
+                  Main Drawer
+                </Text>
+                <Column gap={8}>
+                  <Container color="hsl(var(--accent) / 0.4)" borderRadius={4} padding={8}>
+                    <Text variant="bodySmall" style={{ fontWeight: 600 }}>🏠 Home Dashboard</Text>
+                  </Container>
+                  <Container color="transparent" padding={8} borderRadius={4}>
+                    <Text variant="bodySmall">👤 Profile Settings</Text>
+                  </Container>
+                  <Container color="transparent" padding={8} borderRadius={4}>
+                    <Text variant="bodySmall">🔔 Alerts</Text>
+                  </Container>
+                </Column>
               </Column>
-              <button 
-                onClick={() => setStates({ ...states, showDrawer: false })}
-                className="mt-auto py-2 bg-primary text-white text-xs rounded-lg font-bold"
-              >
-                Close Drawer
-              </button>
-            </div>
-            <div className="flex-1 cursor-pointer" onClick={() => setStates({ ...states, showDrawer: false })} />
-          </div>
+              
+              <ElevatedButton
+                onPressed={() => setStates({ ...states, showDrawer: false })}
+                backgroundColor="hsl(var(--primary))"
+                padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+                child={
+                  <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold", width: "100%", textAlign: "center" }}>
+                    Close Drawer
+                  </Text>
+                }
+              />
+            </Container>
+            <Container style={{ flex: 1, cursor: "pointer" }} onClick={() => setStates({ ...states, showDrawer: false })} />
+          </Container>
         )}
 
         <Scaffold
           appBar={
             <AppBar 
-              title={<span className="text-sm font-bold">Scaffold Sandbox</span>}
+              title={<Text variant="bodyMedium" style={{ fontWeight: "bold" }}>Scaffold Sandbox</Text>}
               leading={
                 <button 
                   onClick={() => setStates({ ...states, showDrawer: true })}
-                  className="p-1 hover:bg-accent rounded text-foreground"
+                  style={{ padding: "4px", borderRadius: "4px" }}
                 >
                   ☰
                 </button>
@@ -681,51 +1289,84 @@ import { Expanded } from "@/components/ui/expanded";
             <FloatingActionButton 
               onPressed={() => alert("FAB Tapped!")}
               backgroundColor="#8b5cf6"
-              icon={<span>+</span>}
+              icon={<Text variant="bodyLarge" style={{ color: "white" }}>+</Text>}
             />
           ) : undefined}
           bottomNavigationBar={
-            <div className="h-12 border-t border-border flex justify-around items-center bg-card text-[10px] text-muted-foreground">
-              <span className="text-primary font-bold">● Feed</span>
-              <span>💬 Chats</span>
-              <span>⚙️ Config</span>
-            </div>
+            <Container
+              height={48}
+              border={{ top: { color: "hsl(var(--border))", width: 1 } }}
+              color="hsl(var(--card))"
+            >
+              <Row mainAxisAlignment={MainAxisAlignment.spaceAround} crossAxisAlignment={CrossAxisAlignment.center} height="100%">
+                <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>● Feed</Text>
+                <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>💬 Chats</Text>
+                <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>⚙️ Config</Text>
+              </Row>
+            </Container>
           }
           body={
-            <div className="p-5 flex flex-col gap-4 h-full bg-accent/10">
-              <span className="text-xs font-semibold text-muted-foreground">SCAFFOLD BODY</span>
-              <div className="p-4 bg-card rounded-xl border border-border text-xs text-center font-medium leading-relaxed">
-                Standard structured page shell mapping header, body, FAB, drawer, and bottom navigation anchors securely.
-              </div>
-            </div>
+            <Container padding={20} color="hsl(var(--accent) / 0.1)" height="100%">
+              <Column gap={16}>
+                <Text variant="bodySmall" style={{ fontWeight: 600, color: "hsl(var(--muted-foreground))" }}>
+                  SCAFFOLD BODY
+                </Text>
+                <Container
+                  padding={16}
+                  color="hsl(var(--card))"
+                  borderRadius={12}
+                  border={{
+                    top: { color: "hsl(var(--border))", width: 1 },
+                    bottom: { color: "hsl(var(--border))", width: 1 },
+                    left: { color: "hsl(var(--border))", width: 1 },
+                    right: { color: "hsl(var(--border))", width: 1 }
+                  }}
+                >
+                  <Text variant="bodySmall" style={{ textAlign: "center", fontWeight: 500, lineHeight: 1.6 }}>
+                    Standard structured page shell mapping header, body, FAB, drawer, and bottom navigation anchors securely.
+                  </Text>
+                </Container>
+              </Column>
+            </Container>
           }
         />
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Scaffold } from "@/components/ui/scaffold";
 import { AppBar } from "@/components/ui/app-bar";
+import { Container } from "@/components/ui/container";
+import { Column } from "@/components/ui/column";
+import { Row } from "@/components/ui/row";
+import { Text } from "@/components/ui/text";
 import { FloatingActionButton } from "@/components/ui/floating-action-button";
+import { MainAxisAlignment, CrossAxisAlignment } from "@/components/ui/layout-types";
 
 <Scaffold
   appBar={
     <AppBar 
-      title={<span>Scaffold Title</span>} 
+      title={<Text variant="bodyMedium" style={{ fontWeight: "bold" }}>Scaffold Title</Text>} 
       leading={<button>☰</button>} 
     />
   }
   floatingActionButton={
-    ${states.showFab ? `<FloatingActionButton onPressed={() => {}} backgroundColor="#8b5cf6" icon={<span>+</span>} />` : "undefined"}
+    ${states.showFab ? `<FloatingActionButton onPressed={() => {}} backgroundColor="#8b5cf6" icon={<Text style={{ color: "white" }}>+</Text>} />` : "undefined"}
   }
   bottomNavigationBar={
-    <div className="h-12 border-t flex justify-around items-center">
-      <span>Feed</span>
-      <span>Settings</span>
-    </div>
+    <Container
+      height={48}
+      border={{ top: { color: "hsl(var(--border))", width: 1 } }}
+      color="hsl(var(--card))"
+    >
+      <Row mainAxisAlignment={MainAxisAlignment.spaceAround} crossAxisAlignment={CrossAxisAlignment.center} height="100%">
+        <Text variant="bodySmall">Feed</Text>
+        <Text variant="bodySmall">Settings</Text>
+      </Row>
+    </Container>
   }
   body={
-    <div className="p-5">
-      Main body content
-    </div>
+    <Container padding={20} color="hsl(var(--accent) / 0.1)">
+      <Text variant="bodyMedium">Main body content</Text>
+    </Container>
   }
 />`
   },
@@ -740,31 +1381,49 @@ import { FloatingActionButton } from "@/components/ui/floating-action-button";
       { name: "bgColor", label: "Background Color Selection", type: "color", defaultValue: "#1e3a8a" }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-28 border border-border bg-card/25 rounded-xl overflow-hidden flex flex-col justify-start relative shadow-sm">
+      <Container
+        width={320}
+        height={112}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card) / 0.25)"
+      >
         <AppBar
-          title={<span className="text-xs font-extrabold uppercase tracking-wide">Main Navigation</span>}
+          title={
+            <Text variant="bodySmall" style={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Main Navigation
+            </Text>
+          }
           centerTitle={states.centerTitle}
           backgroundColor={states.bgColor}
           elevation={states.elevation}
-          leading={<span className="text-sm px-2.5 cursor-pointer hover:opacity-80">🏠</span>}
+          leading={
+            <Text variant="bodyMedium" style={{ paddingLeft: "10px", paddingRight: "10px" }}>🏠</Text>
+          }
           actions={[
-            <span key="a1" className="text-sm px-2 cursor-pointer hover:opacity-80" onClick={() => alert("Notify tapped")}>🔔</span>,
-            <span key="a2" className="text-sm px-2.5 cursor-pointer hover:opacity-80" onClick={() => alert("Search tapped")}>🔍</span>
+            <Text key="a1" variant="bodyMedium" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={() => alert("Notify tapped")}>🔔</Text>,
+            <Text key="a2" variant="bodyMedium" style={{ paddingLeft: "10px", paddingRight: "10px" }} onClick={() => alert("Search tapped")}>🔍</Text>
           ]}
         />
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { AppBar } from "@/components/ui/app-bar";
+import { Text } from "@/components/ui/text";
 
 <AppBar
-  title={<span>Main Navigation</span>}
+  title={<Text variant="bodyMedium" style={{ fontWeight: "bold" }}>Main Navigation</Text>}
   centerTitle={${states.centerTitle}}
   backgroundColor="${states.bgColor}"
   elevation={${states.elevation}}
-  leading={<span>🏠</span>}
+  leading={<Text>🏠</Text>}
   actions={[
-    <span key="a1">🔔</span>,
-    <span key="a2">🔍</span>
+    <Text key="a1">🔔</Text>,
+    <Text key="a2">🔍</Text>
   ]}
 />`
   },
@@ -777,51 +1436,87 @@ import { FloatingActionButton } from "@/components/ui/floating-action-button";
     renderPreview: () => {
       const [isOpen, setIsOpen] = React.useState(false);
       return (
-        <div className="w-full max-w-sm h-72 border border-border rounded-xl overflow-hidden bg-card flex items-center justify-center relative shadow-sm">
-          <button
-            onClick={() => setIsOpen(true)}
-            className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg text-xs shadow hover:bg-primary/90 transition animate-bounce"
-          >
-            Trigger Edge Sidebar Overlay
-          </button>
+        <Container
+          width="100%"
+          maxWidth={384}
+          height={288}
+          border={{
+            top: { color: "hsl(var(--border))", width: 1 },
+            bottom: { color: "hsl(var(--border))", width: 1 },
+            left: { color: "hsl(var(--border))", width: 1 },
+            right: { color: "hsl(var(--border))", width: 1 }
+          }}
+          borderRadius={12}
+          color="hsl(var(--card))"
+          className="overflow-hidden flex items-center justify-center relative shadow-sm"
+        >
+          <ElevatedButton
+            onPressed={() => setIsOpen(true)}
+            backgroundColor="hsl(var(--primary))"
+            padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+            child={
+              <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+                Trigger Edge Sidebar Overlay
+              </Text>
+            }
+          />
           
-          <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} position="left" className="bg-card p-4">
-            <div className="p-3 flex flex-col gap-5 items-center w-full h-full">
-              <div className="w-9 h-9 bg-primary/20 text-primary font-bold rounded-lg flex items-center justify-center shadow-inner">
-                ⚡
-              </div>
-              
-              <Column className="gap-2.5 w-full mt-3">
-                {[
-                  { label: "Dashboard", icon: "📊" },
-                  { label: "Settings", icon: "⚙️" },
-                  { label: "Log out", icon: "🚪" }
-                ].map((item, i) => (
-                  <Row key={i} className="p-2.5 rounded-lg hover:bg-accent/40 cursor-pointer w-full items-center gap-3">
-                    <span className="text-sm">{item.icon}</span>
-                    <span className="text-xs font-semibold">{item.label}</span>
-                  </Row>
-                ))}
+          <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} position="left">
+            <SidebarHeader>
+              <Row crossAxisAlignment={CrossAxisAlignment.center} gap={12}>
+                <Container width={32} height={32} color="hsl(var(--primary) / 0.2)" borderRadius={8} alignment="center">
+                  <Text variant="bodyMedium" style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>⚡</Text>
+                </Container>
+                <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>Sidebar Navigation</Text>
+              </Row>
+            </SidebarHeader>
+            <SidebarBody>
+              <Column gap={8}>
+                <ListTile
+                  leading={<Text variant="bodyMedium">📊</Text>}
+                  title="Dashboard"
+                  onTap={() => alert("Dashboard Tapped")}
+                />
+                <ListTile
+                  leading={<Text variant="bodyMedium">⚙️</Text>}
+                  title="Settings"
+                  onTap={() => alert("Settings Tapped")}
+                />
+                <ListTile
+                  leading={<Text variant="bodyMedium">🚪</Text>}
+                  title="Log out"
+                  onTap={() => setIsOpen(false)}
+                />
               </Column>
-
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="mt-auto py-2 w-full bg-primary text-white text-xs rounded-lg font-bold shadow hover:bg-primary/95 transition"
-              >
-                Close Sidebar
-              </button>
-            </div>
+            </SidebarBody>
           </Sidebar>
-        </div>
+        </Container>
       );
     },
-    generateCode: () => `import { Sidebar } from "@/components/ui/sidebar";
+    generateCode: () => `import { Sidebar, SidebarHeader, SidebarBody } from "@/components/ui/sidebar";
+import { Row } from "@/components/ui/row";
+import { Column } from "@/components/ui/column";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
+import { ListTile } from "@/components/ui/list-tile";
+import { CrossAxisAlignment } from "@/components/ui/layout-types";
 
-// Control open/close state through component controllers:
-<Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} position="left" className="bg-card">
-  <div className="p-5">
-    <h3>Sidebar Header</h3>
-  </div>
+// Control open/close state:
+<Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} position="left">
+  <SidebarHeader>
+    <Row crossAxisAlignment={CrossAxisAlignment.center} gap={12}>
+      <Container width={32} height={32} color="hsl(var(--primary) / 0.2)" borderRadius={8} alignment="center">
+        <Text style={{ color: "hsl(var(--primary))" }}>⚡</Text>
+      </Container>
+      <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>Sidebar Navigation</Text>
+    </Row>
+  </SidebarHeader>
+  <SidebarBody>
+    <Column gap={8}>
+      <ListTile leading={<Text>📊</Text>} title="Dashboard" onTap={() => {}} />
+      <ListTile leading={<Text>⚙️</Text>} title="Settings" onTap={() => {}} />
+    </Column>
+  </SidebarBody>
 </Sidebar>`
   },
   {
@@ -836,60 +1531,105 @@ import { FloatingActionButton } from "@/components/ui/floating-action-button";
     renderPreview: (states, setStates) => {
       const [isOpen, setIsOpen] = React.useState(false);
       return (
-        <div className="w-full max-w-sm h-80 border border-border rounded-xl bg-card overflow-hidden relative shadow-md flex items-center justify-center">
-          
+        <Container
+          width="100%"
+          maxWidth={384}
+          height={320}
+          border={{
+            top: { color: "hsl(var(--border))", width: 1 },
+            bottom: { color: "hsl(var(--border))", width: 1 },
+            left: { color: "hsl(var(--border))", width: 1 },
+            right: { color: "hsl(var(--border))", width: 1}
+          }}
+          borderRadius={12}
+          color="hsl(var(--card))"
+          className="overflow-hidden relative shadow-md flex items-center justify-center"
+        >
           {isOpen && (
-            <div className="absolute inset-0 bg-black/60 z-40 transition-opacity">
+            <Container
+              className="absolute inset-0 bg-black/60 z-40"
+              onClick={() => setIsOpen(false)}
+            >
               <SmartDrawer 
                 drawerWidth={states.drawerWidth}
                 elevation={states.elevation}
-                className="bg-card border-r border-border h-full flex flex-col justify-start relative shadow-2xl"
-              >
-                <div className="p-5 flex flex-col gap-4">
-                  <div className="h-14 bg-gradient-to-tr from-primary to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xs shadow-md">
-                    SmartDrawer Title
-                  </div>
-                  
-                  <Column className="gap-2 text-xs">
-                    <span className="p-2.5 bg-accent/40 rounded font-semibold cursor-pointer">💼 Work Projects</span>
-                    <span className="p-2.5 hover:bg-accent/30 rounded cursor-pointer">📁 Document storage</span>
-                    <span className="p-2.5 hover:bg-accent/30 rounded cursor-pointer">🔔 System alerts</span>
-                  </Column>
-                  
-                  <button 
-                    onClick={() => setIsOpen(false)}
-                    className="mt-6 py-2 bg-primary text-white text-xs rounded-lg font-bold shadow hover:bg-primary/95 transition"
+                header={
+                  <Container
+                    height={56}
+                    color="hsl(var(--primary))"
+                    borderRadius={8}
+                    alignment="center"
                   >
-                    Dismiss Drawer
-                  </button>
-                </div>
+                    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+                      SmartDrawer Header
+                    </Text>
+                  </Container>
+                }
+                footer={
+                  <ElevatedButton
+                    onPressed={() => setIsOpen(false)}
+                    backgroundColor="hsl(var(--primary))"
+                    padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+                    child={
+                      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold", width: "100%", textAlign: "center" }}>
+                        Dismiss
+                      </Text>
+                    }
+                  />
+                }
+              >
+                <SmartDrawerTile icon={<Text>💼</Text>} title="Work Projects" subtitle="Custom team projects" onTap={() => alert("Projects tapped")} />
+                <SmartDrawerTile icon={<Text>📁</Text>} title="Document Storage" subtitle="Sync with cloud storage" onTap={() => alert("Storage tapped")} />
+                <SmartDrawerTile icon={<Text>🔔</Text>} title="System Alerts" badgeCount={3} onTap={() => alert("Alerts tapped")} />
               </SmartDrawer>
-            </div>
+            </Container>
           )}
 
-          <Column className="gap-2 items-center">
-            <button 
-              onClick={() => setIsOpen(true)}
-              className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg text-xs shadow hover:bg-primary/90 transition"
-            >
-              Open SmartDrawer (Left)
-            </button>
-            <span className="text-[10px] text-muted-foreground">Drawer width: {states.drawerWidth}px | elevation: {states.elevation}dp</span>
+          <Column gap={8} crossAxisAlignment={CrossAxisAlignment.center}>
+            <ElevatedButton 
+              onPressed={() => setIsOpen(true)}
+              backgroundColor="hsl(var(--primary))"
+              padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+              child={
+                <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+                  Open SmartDrawer
+                </Text>
+              }
+            />
+            <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>
+              Drawer width: {states.drawerWidth}px | elevation: {states.elevation}dp
+            </Text>
           </Column>
-        </div>
+        </Container>
       );
     },
-    generateCode: (states) => `import { SmartDrawer } from "@/components/ui/smart-drawer";
+    generateCode: (states) => `import { SmartDrawer, SmartDrawerTile } from "@/components/ui/smart-drawer";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-// Render within absolute overlay wrapper or Scaffold drawer triggers
 <SmartDrawer
   drawerWidth={${states.drawerWidth}}
   elevation={${states.elevation}}
-  className="bg-card"
+  header={
+    <Container height={56} color="hsl(var(--primary))" borderRadius={8} alignment="center">
+      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+        SmartDrawer Header
+      </Text>
+    </Container>
+  }
 >
-  <div className="p-5">
-    <h3>Drawer Header</h3>
-  </div>
+  <SmartDrawerTile 
+    icon={<Text>💼</Text>} 
+    title="Work Projects" 
+    subtitle="Custom team projects" 
+    onTap={() => {}} 
+  />
+  <SmartDrawerTile 
+    icon={<Text>📁</Text>} 
+    title="Document Storage" 
+    subtitle="Sync with cloud storage" 
+    onTap={() => {}} 
+  />
 </SmartDrawer>`
   },
 
@@ -904,31 +1644,65 @@ import { FloatingActionButton } from "@/components/ui/floating-action-button";
       { name: "dense", label: "Dense compact list", type: "toggle", defaultValue: false }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-64 border border-border rounded-xl bg-card overflow-hidden shadow-inner p-1">
-        <ListView className="h-full">
+      <Container
+        width={320}
+        height={256}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card))"
+        padding={4}
+        className="overflow-hidden shadow-inner"
+      >
+        <ListView>
           {Array.from({ length: states.itemsCount }).map((_, i) => (
             <ListTile
               key={i}
-              leading={<span className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shadow-sm">#{i+1}</span>}
+              leading={
+                <Container
+                  width={32}
+                  height={32}
+                  borderRadius={999}
+                  color="hsl(var(--primary) / 0.1)"
+                  alignment="center"
+                >
+                  <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>
+                    #{i+1}
+                  </Text>
+                </Container>
+              }
               title={`Scroll Item Title #${i + 1}`}
               subtitle="Dynamic list rows mapping description lines"
               dense={states.dense}
-              className="border-b border-border/40 hover:bg-accent/20 cursor-pointer transition-colors"
+              border={{ bottom: { color: "hsl(var(--border) / 0.4)", width: 1 } }}
             />
           ))}
         </ListView>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { ListView } from "@/components/ui/list-view";
 import { ListTile } from "@/components/ui/list-tile";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<ListView className="h-64">
+<ListView>
   {items.map((item, i) => (
     <ListTile
       key={i}
-      leading={<div className="avatar">#{i+1}</div>}
+      leading={
+        <Container width={32} height={32} borderRadius={999} color="hsl(var(--primary) / 0.1)" alignment="center">
+          <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>
+            #{i+1}
+          </Text>
+        </Container>
+      }
       title="List Item Title"
       dense={${states.dense}}
+      border={{ bottom: { color: "hsl(var(--border) / 0.4)", width: 1 } }}
     />
   ))}
 </ListView>`
@@ -943,36 +1717,55 @@ import { ListTile } from "@/components/ui/list-tile";
       { name: "enabled", label: "Enable Item status", type: "toggle", defaultValue: true }
     ],
     renderPreview: (states) => (
-      <div className="w-80 bg-card rounded-xl border border-border shadow-md divide-y divide-border overflow-hidden">
+      <Container
+        width={320}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card))"
+        className="shadow-md overflow-hidden"
+      >
         <ListTile
-          leading={<span className="text-xl">💳</span>}
+          leading={<Text variant="titleLarge">💳</Text>}
           title="Personal Billing Account"
           subtitle="Visa ending in *4221 - active"
-          trailing={<span className="text-emerald-500 text-xs font-bold font-mono">ACTIVE</span>}
+          trailing={
+            <Text variant="bodySmall" style={{ color: "#10b981", fontWeight: "bold", fontFamily: "monospace" }}>
+              ACTIVE
+            </Text>
+          }
           dense={states.dense}
           enabled={states.enabled}
           onTap={() => alert("Primary ListTile tapped!")}
-          className="hover:bg-accent/30 cursor-pointer"
+          border={{ bottom: { color: "hsl(var(--border) / 0.4)", width: 1 } }}
         />
         <ListTile
-          leading={<span className="text-xl">🔒</span>}
+          leading={<Text variant="titleLarge">🔒</Text>}
           title="Change Account Password"
           subtitle="Last updated 12 days ago"
-          trailing={<span className="text-xs text-muted-foreground">▶</span>}
+          trailing={<Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>▶</Text>}
           dense={states.dense}
           enabled={states.enabled}
           onTap={() => alert("Secondary ListTile tapped!")}
-          className="hover:bg-accent/30 cursor-pointer"
         />
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { ListTile } from "@/components/ui/list-tile";
+import { Text } from "@/components/ui/text";
 
 <ListTile
-  leading={<span>💳</span>}
+  leading={<Text variant="titleLarge">💳</Text>}
   title="Personal Billing Account"
   subtitle="Visa ending in *4221"
-  trailing={<span className="text-emerald-500">ACTIVE</span>}
+  trailing={
+    <Text variant="bodySmall" style={{ color: "#10b981", fontWeight: "bold" }}>
+      ACTIVE
+    </Text>
+  }
   dense={${states.dense}}
   enabled={${states.enabled}}
   onTap={() => {}}
@@ -988,7 +1781,20 @@ import { ListTile } from "@/components/ui/list-tile";
       { name: "spacing", label: "Item spacing gap (px)", type: "range", defaultValue: 8, min: 0, max: 24 }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-64 border border-border rounded-xl bg-card overflow-hidden shadow-inner p-3">
+      <Container
+        width={320}
+        height={256}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card))"
+        padding={12}
+        className="overflow-hidden shadow-inner"
+      >
         <GridView 
           crossAxisCount={states.cols}
           mainAxisSpacing={states.spacing}
@@ -998,31 +1804,53 @@ import { ListTile } from "@/components/ui/list-tile";
           {Array.from({ length: 8 }).map((_, i) => (
             <GridTile
               key={i}
-              className="bg-gradient-to-br from-indigo-500/10 to-primary/10 border border-border rounded-lg p-3 flex flex-col justify-between shadow-sm"
+              className="bg-accent/20 border-border/80"
               header={
-                <span className="text-[9px] uppercase tracking-wider text-primary font-bold">GRID TILE {i+1}</span>
+                <Container padding={6} color="hsl(var(--primary) / 0.1)" width="100%">
+                  <Text variant="bodySmall" style={{ textTransform: "uppercase", letterSpacing: "0.05em", color: "hsl(var(--primary))", fontWeight: "bold", fontSize: "8px" }}>
+                    GRID TILE {i+1}
+                  </Text>
+                </Container>
               }
               child={
-                <div className="h-10 flex items-center justify-center text-sm font-bold text-foreground">
-                  Card #{i + 1}
-                </div>
+                <Center height={80}>
+                  <Text variant="bodySmall" style={{ fontWeight: "bold", color: "hsl(var(--foreground))" }}>
+                    Card #{i + 1}
+                  </Text>
+                </Center>
               }
             />
           ))}
         </GridView>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { GridView } from "@/components/ui/grid-view";
 import { GridTile } from "@/components/ui/grid-tile";
+import { Container } from "@/components/ui/container";
+import { Center } from "@/components/ui/center";
 
-<GridView
+<GridView 
   crossAxisCount={${states.cols}}
   mainAxisSpacing={${states.spacing}}
   crossAxisSpacing={${states.spacing}}
-  className="h-64"
 >
   {items.map((item, i) => (
-    <GridTile key={i} header={<span>Tile {i}</span>} child={<div>Content</div>} />
+    <GridTile
+      key={i}
+      className="bg-accent/20"
+      header={
+        <Container padding={6} color="hsl(var(--primary) / 0.1)" width="100%">
+          <Text variant="bodySmall" style={{ textTransform: "uppercase", color: "hsl(var(--primary))", fontWeight: "bold" }}>
+            TILE {i+1}
+          </Text>
+        </Container>
+      }
+      child={
+        <Center height={80}>
+          <Text variant="bodySmall">Card {i+1}</Text>
+        </Center>
+      }
+    />
   ))}
 </GridView>`
   },
@@ -1035,31 +1863,65 @@ import { GridTile } from "@/components/ui/grid-tile";
       { name: "scrollDir", label: "Scroll Direction", type: "select", defaultValue: "horizontal", options: ["horizontal", "vertical"] }
     ],
     renderPreview: (states) => (
-      <div className="w-72 h-44 border border-border rounded-xl overflow-hidden bg-card relative shadow-md">
+      <Container
+        width={288}
+        height={176}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        className="overflow-hidden bg-card relative shadow-md"
+      >
         <PageView 
           scrollDirection={states.scrollDir} 
           className="w-full h-full"
         >
           {[
-            { title: "Slide 1", desc: "Swipe to navigate panels", bg: "from-blue-600 to-indigo-600" },
-            { title: "Slide 2", desc: "Interactive carousel replication", bg: "from-purple-600 to-pink-600" },
-            { title: "Slide 3", desc: "PageView supports gestures!", bg: "from-emerald-600 to-teal-600" }
+            { title: "Slide 1", desc: "Swipe to navigate panels", color: "#1e3a8a" },
+            { title: "Slide 2", desc: "Interactive carousel replication", color: "#4c1d95" },
+            { title: "Slide 3", desc: "PageView supports gestures!", color: "#065f46" }
           ].map((slide, i) => (
-            <div key={i} className={`w-full h-full flex flex-col items-center justify-center text-center p-5 bg-gradient-to-br ${slide.bg} text-white flex-shrink-0`}>
-              <span className="text-xs uppercase tracking-widest font-extrabold opacity-75">PAGE VIEW</span>
-              <h4 className="text-xl font-bold mt-1">{slide.title}</h4>
-              <p className="text-xs opacity-90 mt-1">{slide.desc}</p>
-            </div>
+            <Container
+              key={i}
+              color={slide.color}
+              padding={20}
+              alignment="center"
+              width="100%"
+              height="100%"
+            >
+              <Column crossAxisAlignment={CrossAxisAlignment.center} gap={4}>
+                <Text variant="bodySmall" style={{ textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 800, color: "rgba(255, 255, 255, 0.7)" }}>
+                  PAGE VIEW
+                </Text>
+                <Text variant="titleLarge" style={{ fontWeight: "bold", color: "white" }}>
+                  {slide.title}
+                </Text>
+                <Text variant="bodySmall" style={{ color: "rgba(255, 255, 255, 0.9)" }}>
+                  {slide.desc}
+                </Text>
+              </Column>
+            </Container>
           ))}
         </PageView>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { PageView } from "@/components/ui/page-view";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
-<PageView scrollDirection="${states.scrollDir}" className="h-44 w-72">
-  <div className="bg-blue-600">Slide 1</div>
-  <div className="bg-purple-600">Slide 2</div>
-  <div className="bg-emerald-600">Slide 3</div>
+<PageView scrollDirection="${states.scrollDir}">
+  <Container color="#1e3a8a" alignment="center">
+    <Text style={{ color: "white" }}>Slide 1</Text>
+  </Container>
+  <Container color="#4c1d95" alignment="center">
+    <Text style={{ color: "white" }}>Slide 2</Text>
+  </Container>
+  <Container color="#065f46" alignment="center">
+    <Text style={{ color: "white" }}>Slide 3</Text>
+  </Container>
 </PageView>`
   },
   {
@@ -1071,10 +1933,26 @@ import { GridTile } from "@/components/ui/grid-tile";
       { name: "pinned", label: "Pin AppBar Header", type: "toggle", defaultValue: true }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-96 border border-border rounded-xl bg-card overflow-hidden shadow-xl relative">
-        <CustomScrollView scrollDirection="vertical" className="h-full">
+      <Container
+        width={320}
+        height={384}
+        border={{
+          top: { color: "hsl(var(--border))", width: 1 },
+          bottom: { color: "hsl(var(--border))", width: 1 },
+          left: { color: "hsl(var(--border))", width: 1 },
+          right: { color: "hsl(var(--border))", width: 1 }
+        }}
+        borderRadius={12}
+        color="hsl(var(--card))"
+        className="overflow-hidden shadow-xl relative"
+      >
+        <CustomScrollView scrollDirection="vertical">
           <SliverAppBar
-            title={<span className="text-xs font-bold uppercase tracking-wider text-white">Collapsible Header</span>}
+            title={
+              <Text variant="bodySmall" style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", color: "white" }}>
+                Collapsible Header
+              </Text>
+            }
             expandedHeight={130}
             collapsedHeight={48}
             pinned={states.pinned}
@@ -1084,33 +1962,64 @@ import { GridTile } from "@/components/ui/grid-tile";
           />
           
           <SliverToBoxAdapter>
-            <div className="p-4 bg-accent/25 text-[11px] font-semibold text-muted-foreground border-b border-border">
-              SLIVER TO BOX ADAPTER CONTENT
-            </div>
+            <Container
+              padding={16}
+              color="hsl(var(--accent) / 0.25)"
+              border={{ bottom: { color: "hsl(var(--border))", width: 1 } }}
+            >
+              <Text variant="bodySmall" style={{ fontWeight: 600, color: "hsl(var(--muted-foreground))", fontSize: "11px" }}>
+                SLIVER TO BOX ADAPTER CONTENT
+              </Text>
+            </Container>
           </SliverToBoxAdapter>
 
           <SliverList itemCount={8} itemBuilder={(i) => (
-            <div key={i} className="p-3 border-b border-border text-xs flex items-center justify-between hover:bg-accent/15 transition-colors">
-              <span>Sliver row element list #{i+1}</span>
-              <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-mono">Row {i+1}</span>
-            </div>
+            <ListTile
+              key={i}
+              title={`Sliver row element list #${i+1}`}
+              trailing={
+                <Container
+                  padding={{ left: 8, right: 8, top: 2, bottom: 2 }}
+                  color="hsl(var(--primary) / 0.1)"
+                  borderRadius={4}
+                >
+                  <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontFamily: "monospace", fontWeight: "bold", fontSize: "10px" }}>
+                    Row {i+1}
+                  </Text>
+                </Container>
+              }
+              border={{ bottom: { color: "hsl(var(--border) / 0.4)", width: 1 } }}
+            />
           )} />
         </CustomScrollView>
-      </div>
+      </Container>
     ),
-    generateCode: (states) => `import { CustomScrollView, SliverAppBar, SliverList } from "@/components/ui/CustomScrollView";
+    generateCode: (states) => `import { CustomScrollView, SliverAppBar, SliverList, SliverToBoxAdapter } from "@/components/ui/CustomScrollView";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
+import { ListTile } from "@/components/ui/list-tile";
 
-<CustomScrollView className="h-96">
+<CustomScrollView>
   <SliverAppBar
-    title={<span>Parallax Collapsing Title</span>}
+    title={
+      <Text variant="bodySmall" style={{ fontWeight: "bold", color: "white" }}>
+        Parallax Collapsing Title
+      </Text>
+    }
     expandedHeight={130}
     pinned={${states.pinned}}
     backgroundColor="#4338ca"
   />
-  
+  <SliverToBoxAdapter>
+    <Container padding={16} color="hsl(var(--accent) / 0.25)">
+      <Text variant="bodySmall">Adapter Content</Text>
+    </Container>
+  </SliverToBoxAdapter>
   <SliverList 
     itemCount={8} 
-    itemBuilder={(i) => <div key={i}>Sliver Row #{i}</div>} 
+    itemBuilder={(i) => (
+      <ListTile key={i} title={\`Row element \${i+1}\`} />
+    )} 
   />
 </CustomScrollView>`
   },
@@ -1125,42 +2034,58 @@ import { GridTile } from "@/components/ui/grid-tile";
       { name: "disabled", label: "Disable Buttons Action", type: "toggle", defaultValue: false }
     ],
     renderPreview: (states) => (
-      <Column className="w-80 gap-4 p-5 border border-border rounded-xl bg-card shadow-md">
-        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">Material style buttons</span>
+      <Column width={320} gap={16} padding={20}>
+        <Text variant="bodySmall" style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", color: "hsl(var(--muted-foreground))" }}>
+          Material style buttons
+        </Text>
         
         <ElevatedButton 
           onPressed={states.disabled ? undefined : () => alert("ElevatedButton Tapped!")}
           backgroundColor="#8b5cf6"
           elevation={4}
           borderRadius={8}
-          className="w-full text-center py-2"
-          child={<span className="text-white text-xs font-bold">Elevated Button</span>}
+          fullWidth={true}
+          padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+          child={
+            <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+              Elevated Button
+            </Text>
+          }
         />
 
         <OutlinedButton 
           onPressed={states.disabled ? undefined : () => alert("OutlinedButton Tapped!")}
           borderRadius={8}
           borderColor="#8b5cf6"
-          className="w-full text-center py-2"
-          child={<span className="text-primary text-xs font-bold">Outlined Button</span>}
+          fullWidth={true}
+          padding={{ top: 8, bottom: 8, left: 16, right: 16 }}
+          child={
+            <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>
+              Outlined Button
+            </Text>
+          }
         />
 
-        <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full items-center">
+        <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} width="100%" crossAxisAlignment={CrossAxisAlignment.center}>
           <IconButton 
             onPressed={states.disabled ? undefined : () => alert("IconButton Tapped!")}
-            icon={<span className="text-lg">🔥</span>}
+            icon={<Text variant="titleMedium">🔥</Text>}
             title="System is fire!"
           />
           <IconButton 
             onPressed={states.disabled ? undefined : () => alert("Like Tapped!")}
-            icon={<span className="text-lg">❤️</span>}
+            icon={<Text variant="titleMedium">❤️</Text>}
             title="Appreciate work"
           />
           
           <FloatingActionButton
             onPressed={states.disabled ? undefined : () => alert("FAB Tapped!")}
             backgroundColor="#10b981"
-            icon={<span className="text-white font-bold text-sm">+</span>}
+            icon={
+              <Text variant="bodyMedium" style={{ color: "white", fontWeight: "bold" }}>
+                +
+              </Text>
+            }
           />
         </Row>
       </Column>
@@ -1169,16 +2094,25 @@ import { GridTile } from "@/components/ui/grid-tile";
 import { OutlinedButton } from "@/components/ui/outlined-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { FloatingActionButton } from "@/components/ui/floating-action-button";
+import { Text } from "@/components/ui/text";
 
 // ElevatedButton
 <ElevatedButton 
   onPressed={${states.disabled ? "undefined" : "() => {}"}} 
   backgroundColor="#8b5cf6"
-  child={<span>Elevated Button</span>}
+  child={
+    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+      Elevated Button
+    </Text>
+  }
 />
 
 // FloatingActionButton
-<FloatingActionButton onPressed={() => {}} backgroundColor="#10b981" icon={<span>+</span>} />`
+<FloatingActionButton 
+  onPressed={() => {}} 
+  backgroundColor="#10b981" 
+  icon={<Text style={{ color: "white" }}>+</Text>} 
+/>`
   },
   {
     id: "dropdownbutton",
@@ -1192,28 +2126,35 @@ import { FloatingActionButton } from "@/components/ui/floating-action-button";
     renderPreview: (states) => {
       const [val, setVal] = React.useState("apple");
       return (
-        <div className="w-80 p-5 bg-card border border-border rounded-xl shadow-md">
-          <label className="text-xs font-semibold text-muted-foreground block mb-2">SELECT FAVORITE FRUIT:</label>
-          <DropdownButton
-            value={val}
-            onChanged={(newVal) => setVal(newVal)}
-            filled={states.filled}
-            preferUp={states.preferUp}
-            borderRadius={8}
-            items={[
-              <DropdownMenuItem key="a" value="apple" child={<span>🍎 Red Crisp Apple</span>} />,
-              <DropdownMenuItem key="b" value="banana" child={<span>🍌 Creamy Ripe Banana</span>} />,
-              <DropdownMenuItem key="o" value="orange" child={<span>🍊 Juicy Sweet Orange</span>} />,
-              <DropdownMenuItem key="g" value="grape" child={<span>🍇 Purple Table Grape</span>} />
-            ]}
-          />
-          <div className="mt-4 text-xs font-mono text-center text-primary font-bold">
-            Selected value: {val.toUpperCase()}
-          </div>
-        </div>
+        <Container width={320} padding={20} borderRadius={12} border={{ top: { color: "hsl(var(--border))", width: 1 }, bottom: { color: "hsl(var(--border))", width: 1 }, left: { color: "hsl(var(--border))", width: 1 }, right: { color: "hsl(var(--border))", width: 1 } }}>
+          <Column gap={8}>
+            <Text variant="bodySmall" style={{ fontWeight: 600, color: "hsl(var(--muted-foreground))" }}>
+              SELECT FAVORITE FRUIT:
+            </Text>
+            <DropdownButton
+              value={val}
+              onChanged={(newVal) => setVal(newVal)}
+              filled={states.filled}
+              preferUp={states.preferUp}
+              borderRadius={8}
+              items={[
+                <DropdownMenuItem key="a" value="apple" child={<Text variant="bodySmall">🍎 Red Crisp Apple</Text>} />,
+                <DropdownMenuItem key="b" value="banana" child={<Text variant="bodySmall">🍌 Creamy Ripe Banana</Text>} />,
+                <DropdownMenuItem key="o" value="orange" child={<Text variant="bodySmall">🍊 Juicy Sweet Orange</Text>} />,
+                <DropdownMenuItem key="g" value="grape" child={<Text variant="bodySmall">🍇 Purple Table Grape</Text>} />
+              ]}
+            />
+            <Container padding={{ top: 16 }}>
+              <Text variant="bodySmall" style={{ fontFamily: "monospace", textAlign: "center", color: "hsl(var(--primary))", fontWeight: "bold" }}>
+                Selected value: {val.toUpperCase()}
+              </Text>
+            </Container>
+          </Column>
+        </Container>
       );
     },
     generateCode: (states) => `import { DropdownButton, DropdownMenuItem } from "@/components/ui/dropdown-button";
+import { Text } from "@/components/ui/text";
 
 const [fruit, setFruit] = useState("apple");
 
@@ -1223,8 +2164,8 @@ const [fruit, setFruit] = useState("apple");
   filled={${states.filled}}
   preferUp={${states.preferUp}}
   items={[
-    <DropdownMenuItem key="1" value="apple" child={<span>🍎 Apple</span>} />,
-    <DropdownMenuItem key="2" value="banana" child={<span>🍌 Banana</span>} />
+    <DropdownMenuItem key="1" value="apple" child={<Text>🍎 Apple</Text>} />,
+    <DropdownMenuItem key="2" value="banana" child={<Text>🍌 Banana</Text>} />
   ]}
 />`
   },
@@ -1237,15 +2178,27 @@ const [fruit, setFruit] = useState("apple");
     renderPreview: () => {
       const [gestureLog, setGestureLog] = React.useState("No gestured action yet");
       return (
-        <Column className="w-80 gap-5 p-5 border border-border bg-card rounded-xl shadow-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">Ripple & Gesture bounds</span>
+        <Column width={320} gap={20} padding={20}>
+          <Text variant="bodySmall" style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", color: "hsl(var(--muted-foreground))" }}>
+            Ripple & Gesture bounds
+          </Text>
           
           {/* InkWell */}
           <InkWell 
             onTap={() => setGestureLog("InkWell Tap (Material Ripple!)")}
-            className="w-full h-16 border border-primary/25 bg-primary/5 flex items-center justify-center cursor-pointer transition-all hover:bg-primary/10 rounded-xl"
           >
-            <span className="text-xs font-bold text-primary">InkWell (Ripple Splash!)</span>
+            <Container
+              width="100%"
+              height={64}
+              border={{ top: { color: "hsl(var(--primary) / 0.25)", width: 1 }, bottom: { color: "hsl(var(--primary) / 0.25)", width: 1 }, left: { color: "hsl(var(--primary) / 0.25)", width: 1 }, right: { color: "hsl(var(--primary) / 0.25)", width: 1 } }}
+              color="hsl(var(--primary) / 0.05)"
+              borderRadius={12}
+              alignment="center"
+            >
+              <Text variant="bodySmall" style={{ fontWeight: "bold", color: "hsl(var(--primary))" }}>
+                InkWell (Ripple Splash!)
+              </Text>
+            </Container>
           </InkWell>
 
           {/* GestureDetector */}
@@ -1254,24 +2207,43 @@ const [fruit, setFruit] = useState("apple");
             onDoubleTap={() => setGestureLog("GestureDetector: Double Tap 🚀")}
             onLongPress={() => setGestureLog("GestureDetector: Long Press 🔒")}
           >
-            <div className="w-full h-16 border border-border bg-accent/25 rounded-xl flex flex-col items-center justify-center cursor-pointer select-none text-xs font-semibold hover:border-foreground/45 transition">
-              <span>GestureDetector Box</span>
-              <span className="text-[10px] text-muted-foreground mt-0.5">(Tap, DoubleTap, LongPress)</span>
-            </div>
+            <Container
+              width="100%"
+              height={64}
+              border={{ top: { color: "hsl(var(--border))", width: 1 }, bottom: { color: "hsl(var(--border))", width: 1 }, left: { color: "hsl(var(--border))", width: 1 }, right: { color: "hsl(var(--border))", width: 1 } }}
+              color="hsl(var(--accent) / 0.25)"
+              borderRadius={12}
+              alignment="center"
+            >
+              <Column crossAxisAlignment={CrossAxisAlignment.center} gap={4}>
+                <Text variant="bodySmall" style={{ fontWeight: 600 }}>
+                  GestureDetector Box
+                </Text>
+                <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))", fontSize: "10px" }}>
+                  (Tap, DoubleTap, LongPress)
+                </Text>
+              </Column>
+            </Container>
           </GestureDetector>
 
-          <div className="p-2.5 bg-black/45 rounded-lg text-[10px] font-mono text-center text-emerald-400 border border-border/80">
-            LOG: {gestureLog}
-          </div>
+          <Container padding={10} color="rgba(0, 0, 0, 0.45)" borderRadius={8} border={{ top: { color: "hsl(var(--border) / 0.8)", width: 1 }, bottom: { color: "hsl(var(--border) / 0.8)", width: 1 }, left: { color: "hsl(var(--border) / 0.8)", width: 1 }, right: { color: "hsl(var(--border) / 0.8)", width: 1 } }}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", textAlign: "center", color: "#10b981", fontSize: "10px" }}>
+              LOG: {gestureLog}
+            </Text>
+          </Container>
         </Column>
       );
     },
     generateCode: () => `import { InkWell } from "@/components/ui/ink-well";
 import { GestureDetector } from "@/components/ui/gesture-detector";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
 // InkWell
-<InkWell onTap={() => console.log("Tapped!")} className="rounded-xl">
-  <div>Ripple Box</div>
+<InkWell onTap={() => console.log("Tapped!")}>
+  <Container borderRadius={12}>
+    <Text>Ripple Box</Text>
+  </Container>
 </InkWell>
 
 // GestureDetector
@@ -1280,7 +2252,9 @@ import { GestureDetector } from "@/components/ui/gesture-detector";
   onDoubleTap={() => {}}
   onLongPress={() => {}}
 >
-  <div>Gesture Target</div>
+  <Container>
+    <Text>Gesture Target</Text>
+  </Container>
 </GestureDetector>`
   },
 
@@ -1296,20 +2270,20 @@ import { GestureDetector } from "@/components/ui/gesture-detector";
       { name: "filled", label: "Filled background input", type: "toggle", defaultValue: false }
     ],
     renderPreview: (states) => (
-      <div className="w-80 p-5 bg-card border border-border rounded-xl shadow-md">
+      <Container width={320} padding={20} borderRadius={12} border={{ top: { color: "hsl(var(--border))", width: 1 }, bottom: { color: "hsl(var(--border))", width: 1 }, left: { color: "hsl(var(--border))", width: 1 }, right: { color: "hsl(var(--border))", width: 1 } }}>
         <TextField
           label={states.label}
           hintText="Enter your valid email address..."
           errorText={states.error || undefined}
           filled={states.filled}
           borderRadius={8}
-          prefixIcon={<span className="text-xs px-2 text-muted-foreground">✉️</span>}
-          suffixIcon={<span className="text-xs px-2 text-primary cursor-pointer font-bold">Verify</span>}
-          className="text-xs"
+          prefixIcon={<Text variant="bodySmall" style={{ paddingLeft: "8px", paddingRight: "8px", color: "hsl(var(--muted-foreground))" }}>✉️</Text>}
+          suffixIcon={<Text variant="bodySmall" style={{ paddingLeft: "8px", paddingRight: "8px", color: "hsl(var(--primary))", fontWeight: "bold" }}>Verify</Text>}
         />
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { TextField } from "@/components/ui/text-field";
+import { Text } from "@/components/ui/text";
 
 <TextField
   label="${states.label}"
@@ -1317,7 +2291,7 @@ import { GestureDetector } from "@/components/ui/gesture-detector";
   errorText={${states.error ? `"${states.error}"` : "undefined"}}
   filled={${states.filled}}
   borderRadius={8}
-  prefixIcon={<span>✉️</span>}
+  prefixIcon={<Text>✉️</Text>}
 />`
   },
   {
@@ -1332,32 +2306,39 @@ import { GestureDetector } from "@/components/ui/gesture-detector";
       const [cb1, setCb1] = React.useState(true);
       const [cb2, setCb2] = React.useState(false);
       return (
-        <div className="w-80 bg-card rounded-xl border border-border shadow-md divide-y divide-border overflow-hidden">
-          <CheckboxListTile
-            title="Enable Cloud Backups"
-            subtitle="Sync records on save triggers"
-            value={cb1}
-            onChanged={setCb1}
-            dense={states.dense}
-            activeColor="#a78bfa"
-          />
-          <CheckboxListTile
-            title="Biometric Fingerprint Lock"
-            subtitle="Enforces security login auth"
-            value={cb2}
-            onChanged={setCb2}
-            dense={states.dense}
-            activeColor="#f472b6"
-          />
-          <div className="p-4 flex items-center justify-between text-xs bg-accent/25">
-            <span className="text-muted-foreground flex items-center gap-2">
-              <Checkbox value={cb1} onChanged={setCb1} /> Standard Checkbox
-            </span>
-            <span className="font-mono font-bold text-primary">
-              C1: {cb1 ? "YES" : "NO"} | C2: {cb2 ? "YES" : "NO"}
-            </span>
-          </div>
-        </div>
+        <Container width={320} borderRadius={12} border={{ top: { color: "hsl(var(--border))", width: 1 }, bottom: { color: "hsl(var(--border))", width: 1 }, left: { color: "hsl(var(--border))", width: 1 }, right: { color: "hsl(var(--border))", width: 1 } }}>
+          <Column gap={0}>
+            <CheckboxListTile
+              title="Enable Cloud Backups"
+              subtitle="Sync records on save triggers"
+              value={cb1}
+              onChanged={setCb1}
+              dense={states.dense}
+              activeColor="#a78bfa"
+            />
+            <CheckboxListTile
+              title="Biometric Fingerprint Lock"
+              subtitle="Enforces security login auth"
+              value={cb2}
+              onChanged={setCb2}
+              dense={states.dense}
+              activeColor="#f472b6"
+            />
+            <Container padding={16} color="hsl(var(--accent) / 0.25)">
+              <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} crossAxisAlignment={CrossAxisAlignment.center}>
+                <Row gap={8} crossAxisAlignment={CrossAxisAlignment.center}>
+                  <Checkbox value={cb1} onChanged={setCb1} />
+                  <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>
+                    Standard Checkbox
+                  </Text>
+                </Row>
+                <Text variant="bodySmall" style={{ fontFamily: "monospace", fontWeight: "bold", color: "hsl(var(--primary))" }}>
+                  C1: {cb1 ? "YES" : "NO"} | C2: {cb2 ? "YES" : "NO"}
+                </Text>
+              </Row>
+            </Container>
+          </Column>
+        </Container>
       );
     },
     generateCode: (states) => `import { CheckboxListTile } from "@/components/ui/checkbox-list-tile";
@@ -1386,18 +2367,24 @@ import { Checkbox } from "@/components/ui/checkbox";
     renderPreview: (states) => {
       const [sw, setSw] = React.useState(true);
       return (
-        <div className="w-80 p-5 bg-card border border-border rounded-xl shadow-md flex justify-between items-center">
-          <Column className="gap-0.5">
-            <span className="text-xs font-bold text-foreground">Sandbox Live reload</span>
-            <span className="text-[10px] text-muted-foreground">Enables hot refresh signals</span>
-          </Column>
-          
-          <Switch 
-            value={sw} 
-            onChanged={setSw}
-            activeColor={states.activeColor} 
-          />
-        </div>
+        <Container width={320} padding={20} borderRadius={12} border={{ top: { color: "hsl(var(--border))", width: 1 }, bottom: { color: "hsl(var(--border))", width: 1 }, left: { color: "hsl(var(--border))", width: 1 }, right: { color: "hsl(var(--border))", width: 1 } }}>
+          <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} crossAxisAlignment={CrossAxisAlignment.center}>
+            <Column gap={2}>
+              <Text variant="bodySmall" style={{ fontWeight: "bold", color: "hsl(var(--foreground))" }}>
+                Sandbox Live reload
+              </Text>
+              <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))", fontSize: "10px" }}>
+                Enables hot refresh signals
+              </Text>
+            </Column>
+            
+            <Switch 
+              value={sw} 
+              onChanged={setSw}
+              activeColor={states.activeColor} 
+            />
+          </Row>
+        </Container>
       );
     },
     generateCode: (states) => `import { Switch } from "@/components/ui/switch";
@@ -1421,20 +2408,28 @@ import { Checkbox } from "@/components/ui/checkbox";
     renderPreview: (states) => {
       const [val, setVal] = React.useState(60);
       return (
-        <div className="w-80 p-5 bg-card border border-border rounded-xl shadow-md space-y-3">
-          <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} className="w-full text-xs font-mono text-muted-foreground">
-            <span>Dynamic Slider</span>
-            <span className="text-primary font-bold">{Math.round(val)}</span>
-          </Row>
-          <Slider 
-            value={val} 
-            onChanged={setVal} 
-            min={states.min} 
-            max={states.max}
-            activeColor={states.activeColor}
-          />
-          <div className="text-[10px] text-center text-muted-foreground font-mono">Range: [{states.min} - {states.max}]</div>
-        </div>
+        <Container width={320} padding={20} borderRadius={12} border={{ top: { color: "hsl(var(--border))", width: 1 }, bottom: { color: "hsl(var(--border))", width: 1 }, left: { color: "hsl(var(--border))", width: 1 }, right: { color: "hsl(var(--border))", width: 1 } }}>
+          <Column gap={12}>
+            <Row mainAxisAlignment={MainAxisAlignment.spaceBetween} width="100%">
+              <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+                Dynamic Slider
+              </Text>
+              <Text variant="bodySmall" style={{ color: "hsl(var(--primary))", fontWeight: "bold", fontFamily: "monospace" }}>
+                {Math.round(val)}
+              </Text>
+            </Row>
+            <Slider 
+              value={val} 
+              onChanged={setVal} 
+              min={states.min} 
+              max={states.max}
+              activeColor={states.activeColor}
+            />
+            <Text variant="bodySmall" style={{ textAlign: "center", color: "hsl(var(--muted-foreground))", fontFamily: "monospace", fontSize: "10px" }}>
+              Range: [{states.min} - {states.max}]
+            </Text>
+          </Column>
+        </Container>
       );
     },
     generateCode: (states) => `import { Slider } from "@/components/ui/slider";
@@ -1459,41 +2454,117 @@ import { Checkbox } from "@/components/ui/checkbox";
       { name: "badgeColor", label: "Badge color swatch", type: "color", defaultValue: "#ef4444" }
     ],
     renderPreview: (states) => (
-      <div className="w-85 p-5 border border-border bg-card rounded-xl shadow flex items-center justify-center gap-6">
-        {/* Count Overlap Badge */}
-        <div className="relative">
-          <div className="w-12 h-12 bg-accent/40 border border-border rounded-xl flex items-center justify-center text-xl shadow-inner">
-            ✉️
-          </div>
-          <BadgeCount 
-            count={states.badgeText} 
-            color={states.badgeColor} 
-            className="absolute -top-2 -right-2 font-mono text-[9px] shadow-md border-2 border-card"
-          />
-        </div>
+      <Container 
+        width={340} 
+        padding={20}
+        border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+        backgroundColor="hsl(var(--card))"
+        borderRadius={12}
+        elevation={1}
+      >
+        <Row mainAxisAlignment={MainAxisAlignment.center} crossAxisAlignment={CrossAxisAlignment.center} gap={24}>
+          {/* Count Overlap Badge */}
+          <Container width={48} height={48} alignment="center">
+            <Container 
+              width={48} 
+              height={48} 
+              backgroundColor="hsl(var(--accent) / 0.4)"
+              border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+              borderRadius={12}
+              alignment="center"
+              elevation={0}
+              style={{ position: "relative" }}
+            >
+              <Text variant="headlineMedium">✉️</Text>
+              <BadgeCount 
+                count={states.badgeText} 
+                style={{ 
+                  position: "absolute", 
+                  top: -8, 
+                  right: -8,
+                  fontFamily: "monospace",
+                  fontSize: 9,
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  border: "2px solid hsl(var(--card))",
+                  backgroundColor: states.badgeColor
+                }}
+              />
+            </Container>
+          </Container>
 
-        {/* Inline Badge */}
-        <Row className="gap-2.5 items-center">
-          <Badge color={states.badgeColor} className="text-white text-[10px] font-bold tracking-wide uppercase px-2.5 py-0.5 rounded-full">
-            {states.badgeText}
-          </Badge>
-          <span className="text-xs text-muted-foreground font-medium">Standard badge status</span>
+          {/* Inline Badge */}
+          <Row gap={10} crossAxisAlignment={CrossAxisAlignment.center}>
+            <Badge 
+              style={{ 
+                backgroundColor: states.badgeColor,
+                color: "white",
+                fontSize: 10,
+                fontWeight: "bold",
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 2,
+                paddingBottom: 2,
+                borderRadius: 9999
+              }}
+            >
+              {states.badgeText}
+            </Badge>
+            <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))", fontWeight: 500 }}>
+              Standard badge status
+            </Text>
+          </Row>
         </Row>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Badge } from "@/components/ui/badge";
 import { BadgeCount } from "@/components/ui/badge-count";
+import { Container } from "@/components/ui/container";
+import { Row } from "@/components/ui/row";
+import { Text } from "@/components/ui/text";
 
 // BadgeCount Notification Overlay
-<div className="relative">
-  <div className="mailbox">✉️</div>
-  <BadgeCount count="${states.badgeText}" color="${states.badgeColor}" />
-</div>
+<Container width={48} height={48} alignment="center">
+  <Container 
+    width={48} 
+    height={48} 
+    backgroundColor="hsl(var(--accent) / 0.4)"
+    border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+    borderRadius={12}
+    alignment="center"
+    style={{ position: "relative" }}
+  >
+    <Text variant="headlineMedium">✉️</Text>
+    <BadgeCount 
+      count="${states.badgeText}" 
+      style={{ 
+        position: "absolute", 
+        top: -8, 
+        right: -8,
+        backgroundColor: "${states.badgeColor}"
+      }}
+    />
+  </Container>
+</Container>
 
 // Inline Badge Label
-<Badge color="${states.badgeColor}">
-  ${states.badgeText}
-</Badge>`
+<Row gap={10} crossAxisAlignment={CrossAxisAlignment.center}>
+  <Badge 
+    style={{ 
+      backgroundColor: "${states.badgeColor}",
+      color: "white",
+      fontSize: 10,
+      fontWeight: "bold",
+      textTransform: "uppercase"
+    }}
+  >
+    ${states.badgeText}
+  </Badge>
+  <Text variant="bodySmall" style={{ color: "hsl(var(--muted-foreground))" }}>
+    Standard badge status
+  </Text>
+</Row>`
   },
   {
     id: "chip",
@@ -1506,25 +2577,39 @@ import { BadgeCount } from "@/components/ui/badge-count";
       { name: "showDelete", label: "Show Delete Action Icon", type: "toggle", defaultValue: true }
     ],
     renderPreview: (states) => (
-      <div className="p-4 border border-dashed border-border/80 rounded-xl bg-card/25">
+      <Container 
+        padding={16}
+        border={Border.all({ color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" })}
+        borderRadius={12}
+        backgroundColor="hsl(var(--card) / 0.25)"
+      >
         <Chip
           label={states.label}
           selected={states.selected}
           onDeleted={states.showDelete ? () => alert("Delete chip tapped!") : undefined}
           avatar={<CircularAvatar initials={states.label[0]} radius={10} backgroundColor="#a78bfa" />}
-          className="shadow transition"
+          elevation={1}
         />
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Chip } from "@/components/ui/chip";
 import { CircularAvatar } from "@/components/ui/circular-avatar";
+import { Container } from "@/components/ui/container";
 
-<Chip
-  label="${states.label}"
-  selected={${states.selected}}
-  onDeleted={${states.showDelete ? "() => {}" : "undefined"}}
-  avatar={<CircularAvatar initials="${states.label[0]}" radius={10} />}
-/>`
+<Container 
+  padding={16}
+  border={Border.all({ color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" })}
+  borderRadius={12}
+  backgroundColor="hsl(var(--card) / 0.25)"
+>
+  <Chip
+    label="${states.label}"
+    selected={${states.selected}}
+    onDeleted={${states.showDelete ? "() => {}" : "undefined"}}
+    avatar={<CircularAvatar initials="${states.label[0]}" radius={10} backgroundColor="#a78bfa" />}
+    elevation={1}
+  />
+</Container>`
   },
   {
     id: "circularavatar",
@@ -1537,25 +2622,56 @@ import { CircularAvatar } from "@/components/ui/circular-avatar";
       { name: "image", label: "Custom profile image link", type: "text", defaultValue: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" }
     ],
     renderPreview: (states) => (
-      <div className="w-80 p-5 bg-card border border-border rounded-xl shadow flex flex-col items-center gap-4">
-        <CircularAvatar
-          radius={states.radius}
-          initials={states.text}
-          backgroundImage={states.image || undefined}
-          backgroundColor="#3b82f6"
-          className="shadow-lg border-2 border-primary/20"
-        />
-        <span className="text-[10px] font-mono text-muted-foreground">Radius specified: {states.radius}px</span>
-      </div>
+      <Card
+        width={320} 
+        padding={20}
+        color="hsl(var(--card))"
+        borderRadius={12}
+        elevation={1}
+      >
+        <Column crossAxisAlignment={CrossAxisAlignment.center} gap={16}>
+          <CircularAvatar
+            radius={states.radius}
+            initials={states.text}
+            backgroundImage={states.image || undefined}
+            backgroundColor="#3b82f6"
+            ringColor="hsl(var(--primary) / 0.2)"
+            ringWidth={2}
+            style={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
+          />
+          <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+            Radius specified: {states.radius}px
+          </Text>
+        </Column>
+      </Card>
     ),
     generateCode: (states) => `import { CircularAvatar } from "@/components/ui/circular-avatar";
+import { Card } from "@/components/ui/card";
+import { Column } from "@/components/ui/column";
+import { Text } from "@/components/ui/text";
+import { CrossAxisAlignment } from "@/components/ui/types";
 
-<CircularAvatar
-  radius={${states.radius}}
-  initials="${states.text}"
-  backgroundImage="${states.image}"
-  backgroundColor="#3b82f6"
-/>`
+<Card
+  width={320} 
+  padding={20}
+  color="hsl(var(--card))"
+  borderRadius={12}
+  elevation={1}
+>
+  <Column crossAxisAlignment={CrossAxisAlignment.center} gap={16}>
+    <CircularAvatar
+      radius={${states.radius}}
+      initials="${states.text}"
+      backgroundImage="${states.image}"
+      backgroundColor="#3b82f6"
+      ringColor="hsl(var(--primary) / 0.2)"
+      ringWidth={2}
+    />
+    <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+      Radius specified: ${states.radius}px
+    </Text>
+  </Column>
+</Container>`
   },
 
   // ─── 8. PROGRESS & INDICATORS ──────────────────────────────────────────────
@@ -1570,47 +2686,82 @@ import { CircularAvatar } from "@/components/ui/circular-avatar";
       { name: "strokeWidth", label: "Circular Stroke Width", type: "range", defaultValue: 4, min: 2, max: 8 }
     ],
     renderPreview: (states) => (
-      <Column className="w-80 gap-6 p-5 border border-border rounded-xl bg-card shadow-md">
-        <Row mainAxisAlignment={MainAxisAlignment.spaceAround} className="w-full items-center">
+      <Column 
+        width={320} 
+        gap={24} 
+        padding={20}
+        border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+        borderRadius={12}
+        backgroundColor="hsl(var(--card))"
+        elevation={2}
+      >
+        <Row mainAxisAlignment={MainAxisAlignment.spaceAround} crossAxisAlignment={CrossAxisAlignment.center}>
           <CircularProgressIndicator
             size={48}
             strokeWidth={states.strokeWidth}
             color="#ec4899"
           />
-          <div className="space-y-1 text-center">
-            <span className="text-xs font-mono text-muted-foreground block">Circular Progress</span>
-            <span className="text-xs font-bold font-mono text-pink-500">SPINNING...</span>
-          </div>
+          <Column gap={4} crossAxisAlignment={CrossAxisAlignment.center}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+              Circular Progress
+            </Text>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", fontWeight: "bold", color: "#ec4899" }}>
+              SPINNING...
+            </Text>
+          </Column>
         </Row>
 
-        <div className="space-y-2 border-t border-border/80 pt-4">
-          <span className="text-xs font-mono text-muted-foreground block">Linear Progress Bar:</span>
-          <ProgressBar 
-            value={states.indeterminate ? undefined : states.value / 100} 
-            color="#3b82f6"
-            backgroundColor="hsl(var(--accent))"
-            minHeight={6}
-            borderRadius={999}
-          />
-        </div>
+        <Container 
+          padding={{ top: 16 }} 
+          border={{ top: { color: "hsl(var(--border) / 0.8)", width: 1 } }}
+        >
+          <Column gap={8}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+              Linear Progress Bar:
+            </Text>
+            <ProgressBar 
+              value={states.indeterminate ? undefined : states.value / 100} 
+              color="#3b82f6"
+              backgroundColor="hsl(var(--accent))"
+              minHeight={6}
+              borderRadius={999}
+            />
+          </Column>
+        </Container>
       </Column>
     ),
     generateCode: (states) => `import { CircularProgressIndicator } from "@/components/ui/circular-progress-indicator";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { Column } from "@/components/ui/column";
+import { Row } from "@/components/ui/row";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
 // Circular Loader
-<CircularProgressIndicator
-  size={48}
-  strokeWidth={${states.strokeWidth}}
-  color="#ec4899"
-/>
+<Row mainAxisAlignment={MainAxisAlignment.spaceAround}>
+  <CircularProgressIndicator
+    size={48}
+    strokeWidth={${states.strokeWidth}}
+    color="#ec4899"
+  />
+  <Column gap={4}>
+    <Text variant="bodySmall">Circular Progress</Text>
+    <Text variant="bodySmall" style={{ fontWeight: "bold", color: "#ec4899" }}>
+      SPINNING...
+    </Text>
+  </Column>
+</Row>
 
 // Linear Progress Bar
-<ProgressBar
-  value={${states.indeterminate ? "undefined" : states.value / 100}}
-  color="#3b82f6"
-  minHeight={6}
-/>`
+<Column gap={8}>
+  <Text variant="bodySmall">Linear Progress Bar:</Text>
+  <ProgressBar
+    value={${states.indeterminate ? "undefined" : states.value / 100}}
+    color="#3b82f6"
+    minHeight={6}
+    borderRadius={999}
+  />
+</Column>`
   },
   {
     id: "skeleton",
@@ -1621,40 +2772,60 @@ import { ProgressBar } from "@/components/ui/progress-bar";
       { name: "active", label: "Animate Pulsing glow", type: "toggle", defaultValue: true }
     ],
     renderPreview: (states) => (
-      <div className="w-80 p-5 bg-card border border-border rounded-xl shadow-md">
-        <Row className="gap-3.5 items-center w-full">
+      <Card
+        width={320} 
+        padding={20}
+        color="hsl(var(--card))"
+        borderRadius={12}
+        elevation={2}
+      >
+        <Row gap={14} crossAxisAlignment={CrossAxisAlignment.center}>
           <Skeleton 
             width={48} 
             height={48} 
             borderRadius={9999} 
-            className={states.active ? "animate-pulse" : ""} 
+            isActive={states.active}
           />
-          <Column className="flex-1 gap-2">
+          <Column gap={8} style={{ flex: 1 }}>
             <Skeleton 
               width="80%" 
               height={12} 
-              className={states.active ? "animate-pulse" : ""} 
+              isActive={states.active}
             />
             <Skeleton 
               width="50%" 
               height={8} 
-              className={states.active ? "animate-pulse" : ""} 
+              isActive={states.active}
             />
           </Column>
         </Row>
-      </div>
+      </Card>
     ),
     generateCode: (states) => `import { Skeleton } from "@/components/ui/skeleton";
 import { Row } from "@/components/ui/row";
 import { Column } from "@/components/ui/column";
+import { Card } from "@/components/ui/card";
 
-<Row className="gap-4">
-  <Skeleton width={48} height={48} borderRadius={9999} />
-  <Column className="flex-1 gap-2">
-    <Skeleton width="80%" height={12} />
-    <Skeleton width="50%" height={8} />
-  </Column>
-</Row>`
+<Card
+  width={320} 
+  padding={20}
+  color="hsl(var(--card))"
+  borderRadius={12}
+  elevation={2}
+>
+  <Row gap={14} crossAxisAlignment={CrossAxisAlignment.center}>
+    <Skeleton 
+      width={48} 
+      height={48} 
+      borderRadius={9999} 
+      isActive={${states.active}}
+    />
+    <Column gap={8} style={{ flex: 1 }}>
+      <Skeleton width="80%" height={12} isActive={${states.active}} />
+      <Skeleton width="50%" height={8} isActive={${states.active}} />
+    </Column>
+  </Row>
+</Container>`
   },
 
   // ─── 9. OVERLAYS & DIALOGS ─────────────────────────────────────────────────
@@ -1667,18 +2838,53 @@ import { Column } from "@/components/ui/column";
       { name: "message", label: "Tooltip message tip text", type: "text", defaultValue: "Tapping triggers system save functions instantly!" }
     ],
     renderPreview: (states) => (
-      <div className="w-80 h-32 border border-border bg-card rounded-xl shadow flex items-center justify-center">
+      <Container 
+        width={320} 
+        height={128} 
+        border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+        backgroundColor="hsl(var(--card))"
+        borderRadius={12}
+        elevation={1}
+        alignment="center"
+      >
         <Tooltip message={states.message} side="top">
-          <button className="px-5 py-2.5 text-xs font-bold rounded-lg bg-primary text-primary-foreground shadow hover:bg-primary/95 transition">
-            Hover Mouse Cursor Here
-          </button>
+          <Container
+            padding={{ horizontal: 20, vertical: 10 }}
+            backgroundColor="hsl(var(--primary))"
+            borderRadius={8}
+            elevation={1}
+            style={{ cursor: "pointer" }}
+          >
+            <Text 
+              variant="bodySmall" 
+              style={{ 
+                color: "hsl(var(--primary-foreground))", 
+                fontWeight: "bold" 
+              }}
+            >
+              Hover Mouse Cursor Here
+            </Text>
+          </Container>
         </Tooltip>
-      </div>
+      </Container>
     ),
     generateCode: (states) => `import { Tooltip } from "@/components/ui/tooltip";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
 <Tooltip message="${states.message}" side="top">
-  <button>Hover Mouse Cursor</button>
+  <Container
+    padding={{ horizontal: 20, vertical: 10 }}
+    backgroundColor="hsl(var(--primary))"
+    borderRadius={8}
+  >
+    <Text 
+      variant="bodySmall" 
+      style={{ color: "hsl(var(--primary-foreground))", fontWeight: "bold" }}
+    >
+      Hover Mouse Cursor Here
+    </Text>
+  </Container>
 </Tooltip>`
   },
   {
@@ -1690,63 +2896,140 @@ import { Column } from "@/components/ui/column";
     renderPreview: () => {
       const [show, setShow] = React.useState(false);
       return (
-        <div className="w-80 h-36 border border-dashed border-border/80 rounded-xl bg-card/10 flex items-center justify-center">
-          <button 
+        <Container 
+          width={320} 
+          height={144} 
+          border={Border.all({ color: "hsl(var(--border) / 0.8)", width: 1, style: "dashed" })}
+          borderRadius={12}
+          backgroundColor="hsl(var(--card) / 0.1)"
+          alignment="center"
+        >
+          <Container
+            padding={{ horizontal: 20, vertical: 10 }}
+            backgroundColor="#f43f5e"
+            borderRadius={8}
+            elevation={1}
+            style={{ cursor: "pointer" }}
             onClick={() => setShow(true)}
-            className="px-5 py-2.5 bg-rose-500 text-white font-bold rounded-lg text-xs shadow hover:bg-rose-600 transition"
           >
-            Launch System Alert Dialog
-          </button>
+            <Text 
+              variant="bodySmall" 
+              style={{ color: "white", fontWeight: "bold" }}
+            >
+              Launch System Alert Dialog
+            </Text>
+          </Container>
 
           {show && (
-            <div className="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-5 animate-in fade-in duration-200">
+            <Container 
+              style={{ 
+                position: "absolute", 
+                inset: 0, 
+                backgroundColor: "rgba(0,0,0,0.6)", 
+                zIndex: 50,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 20
+              }}
+            >
               <AlertDialog
                 isOpen={show}
                 onClose={() => setShow(false)}
                 title={
-                  <Row className="gap-2 items-center text-rose-500">
+                  <Row gap={8} crossAxisAlignment={CrossAxisAlignment.center} style={{ color: "#f43f5e" }}>
                     <AlertTriangle size={18} />
-                    <span className="font-outfit font-bold">Destructive Action Alert</span>
+                    <Text variant="titleMedium" style={{ fontFamily: "Outfit", fontWeight: "bold" }}>
+                      Destructive Action Alert
+                    </Text>
                   </Row>
                 }
                 content={
-                  <Text variant="bodyMedium" className="text-muted-foreground leading-relaxed mt-2.5">
+                  <Text 
+                    variant="bodyMedium" 
+                    style={{ 
+                      color: "hsl(var(--muted-foreground))", 
+                      lineHeight: 1.6,
+                      marginTop: 10
+                    }}
+                  >
                     Are you absolutely sure you want to completely drop these records tables? This operation is permanent.
                   </Text>
                 }
                 actions={[
-                  <button 
+                  <Container 
                     key="c" 
+                    padding={{ horizontal: 14, vertical: 6 }}
+                    border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+                    borderRadius={6}
+                    style={{ cursor: "pointer" }}
                     onClick={() => setShow(false)}
-                    className="px-3.5 py-1.5 border border-border text-xs font-semibold rounded hover:bg-accent"
                   >
-                    Cancel Action
-                  </button>,
-                  <button 
+                    <Text variant="bodySmall" style={{ fontWeight: 600 }}>
+                      Cancel Action
+                    </Text>
+                  </Container>,
+                  <Container 
                     key="o" 
+                    padding={{ horizontal: 16, vertical: 6 }}
+                    backgroundColor="#f43f5e"
+                    borderRadius={6}
+                    elevation={1}
+                    style={{ cursor: "pointer" }}
                     onClick={() => { setShow(false); alert("Action Verified!"); }}
-                    className="px-4 py-1.5 bg-rose-500 text-white text-xs font-bold rounded hover:bg-rose-600 shadow"
                   >
-                    Verify Delete
-                  </button>
+                    <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+                      Verify Delete
+                    </Text>
+                  </Container>
                 ]}
               />
-            </div>
+            </Container>
           )}
-        </div>
+        </Container>
       );
     },
     generateCode: () => `import { AlertDialog } from "@/components/ui/dialog";
+import { Container } from "@/components/ui/container";
+import { Row } from "@/components/ui/row";
+import { Text } from "@/components/ui/text";
 
 // Call AlertDialog under portals or state gates:
 <AlertDialog
   isOpen={show}
   onClose={close}
-  title={<span>Verify Action</span>}
-  content={<span>Are you sure you want to drop these tables?</span>}
+  title={
+    <Row gap={8}>
+      <AlertTriangle size={18} />
+      <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+        Verify Action
+      </Text>
+    </Row>
+  }
+  content={
+    <Text variant="bodyMedium" style={{ color: "hsl(var(--muted-foreground))" }}>
+      Are you sure you want to drop these tables?
+    </Text>
+  }
   actions={[
-    <button onClick={close}>Cancel</button>,
-    <button onClick={confirm}>Proceed</button>
+    <Container 
+      padding={{ horizontal: 14, vertical: 6 }}
+      border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+      borderRadius={6}
+      onClick={close}
+    >
+      <Text variant="bodySmall">Cancel</Text>
+    </Container>,
+    <Container 
+      padding={{ horizontal: 16, vertical: 6 }}
+      backgroundColor="#f43f5e"
+      borderRadius={6}
+      onClick={confirm}
+    >
+      <Text variant="bodySmall" style={{ color: "white", fontWeight: "bold" }}>
+        Proceed
+      </Text>
+    </Container>
   ]}
 />`
   },
@@ -1757,13 +3040,44 @@ import { Column } from "@/components/ui/column";
     category: "overlay",
     controls: [],
     renderPreview: () => (
-      <div className="w-80 p-5 bg-card border border-border rounded-xl shadow-md text-center">
-        <OverlayProvider />
-        <span className="text-xs font-semibold text-primary block mb-2">Portal Overlay System Active</span>
-        <div className="p-3.5 bg-accent/40 rounded-lg border border-border text-[11px] text-muted-foreground leading-relaxed">
-          Standard overlay context provider powering portal menus, alerts, and custom float lists outside normal DOM hierarchies.
-        </div>
-      </div>
+      <Container 
+        width={320} 
+        padding={{ all: 20 }} 
+        backgroundColor="hsl(var(--card))"
+        border={{ all: { color: "hsl(var(--border))", width: 1 } }}
+        borderRadius={12}
+        elevation={2}
+      >
+        <Column crossAxisAlignment={CrossAxisAlignment.center} gap={8}>
+          <OverlayProvider />
+          <Text 
+            variant="bodySmall" 
+            style={{ 
+              color: "hsl(var(--primary))", 
+              fontWeight: 600 
+            }}
+          >
+            Portal Overlay System Active
+          </Text>
+          <Container 
+            padding={14}
+            backgroundColor="hsl(var(--accent) / 0.4)"
+            borderRadius={8}
+            border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+          >
+            <Text 
+              variant="bodySmall" 
+              style={{ 
+                color: "hsl(var(--muted-foreground))", 
+                lineHeight: 1.6,
+                fontSize: 11
+              }}
+            >
+              Standard overlay context provider powering portal menus, alerts, and custom float lists outside normal DOM hierarchies.
+            </Text>
+          </Container>
+        </Column>
+      </Container>
     ),
     generateCode: () => `import { OverlayProvider } from "@/components/ui/overlay-provider";
 
@@ -1782,42 +3096,79 @@ import { Column } from "@/components/ui/column";
       { name: "imageFit", label: "Image BoxFit Fit", type: "select", defaultValue: "cover", options: ["cover", "contain", "fill", "none"] }
     ],
     renderPreview: (states) => (
-      <Column className="w-80 gap-4 p-5 border border-border bg-card rounded-xl shadow-md">
+      <Column 
+        width={320} 
+        gap={16} 
+        padding={{ all: 20 }} 
+        border={{ all: { color: "hsl(var(--border))", width: 1 } }}
+        backgroundColor="hsl(var(--card))"
+        borderRadius={12}
+        elevation={2}
+      >
         {/* Dynamic Text */}
-        <div className="space-y-1">
-          <span className="text-[10px] font-mono text-muted-foreground block">Typography Widget:</span>
-          <Text variant={states.variant} className="text-primary font-bold">
+        <Column gap={4}>
+          <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))", fontSize: 10 }}>
+            Typography Widget:
+          </Text>
+          <Text variant={states.variant} style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>
             Typography Variant: {states.variant}
           </Text>
-        </div>
+        </Column>
 
         {/* Image fit */}
-        <div className="space-y-2 border-t border-border/80 pt-3">
-          <span className="text-[10px] font-mono text-muted-foreground block">Image Fit ({states.imageFit}):</span>
-          <div className="w-full h-24 rounded-lg overflow-hidden border border-border bg-accent/25">
-            <Image 
-              src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80" 
-              alt="Unsplash Showcase"
-              fit={states.imageFit}
-              className="w-full h-full"
-            />
-          </div>
-        </div>
+        <Container 
+          padding={{ top: 12 }} 
+          border={{ top: { color: "hsl(var(--border) / 0.8)", width: 1 } }}
+        >
+          <Column gap={8}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))", fontSize: 10 }}>
+              Image Fit ({states.imageFit}):
+            </Text>
+            <Container 
+              height={96} 
+              borderRadius={8}
+              border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+              backgroundColor="hsl(var(--accent) / 0.25)"
+              style={{ overflow: "hidden" }}
+            >
+              <Image 
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80" 
+                alt="Unsplash Showcase"
+                fit={states.imageFit}
+                style={{ width: "100%", height: "100%" }}
+              />
+            </Container>
+          </Column>
+        </Container>
       </Column>
     ),
     generateCode: (states) => `import { Text } from "@/components/ui/text";
 import { Image } from "@/components/ui/image";
+import { Column } from "@/components/ui/column";
+import { Container } from "@/components/ui/container";
 
 // Text Styling
-<Text variant="${states.variant}" className="text-primary">
-  Styled Text Block
-</Text>
+<Column gap={4}>
+  <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))" }}>
+    Typography Widget:
+  </Text>
+  <Text variant="${states.variant}" style={{ color: "hsl(var(--primary))", fontWeight: "bold" }}>
+    Typography Variant: ${states.variant}
+  </Text>
+</Column>
 
 // Image Fits
-<Image 
-  src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe"
-  fit="${states.imageFit}" 
-/>`
+<Container 
+  height={96} 
+  borderRadius={8}
+  style={{ overflow: "hidden" }}
+>
+  <Image 
+    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe"
+    fit="${states.imageFit}" 
+    style={{ width: "100%", height: "100%" }}
+  />
+</Container>`
   },
   {
     id: "dividers",
@@ -1828,47 +3179,101 @@ import { Image } from "@/components/ui/image";
       { name: "thickness", label: "Divider Thickness (px)", type: "range", defaultValue: 2, min: 1, max: 8 }
     ],
     renderPreview: (states) => (
-      <Column className="w-80 gap-4 p-5 border border-border bg-card rounded-xl shadow-md justify-center">
-        <div>
-          <span className="text-[10px] font-mono text-muted-foreground block mb-2">Horizontal Divider (t={states.thickness}px):</span>
-          <div className="p-2 bg-accent/25 rounded">
-            <span>Upper Content Block</span>
-            <Divider thickness={states.thickness} color="#8b5cf6" className="my-2" />
-            <span>Lower Content Block</span>
-          </div>
-        </div>
+      <Column 
+        width={320} 
+        gap={16} 
+        padding={{ all: 20 }} 
+        border={{ all: { color: "hsl(var(--border))", width: 1 } }}
+        backgroundColor="hsl(var(--card))"
+        borderRadius={12}
+        elevation={2}
+        mainAxisAlignment={MainAxisAlignment.center}
+      >
+        <Column gap={8}>
+          <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))", fontSize: 10 }}>
+            Horizontal Divider (t={states.thickness}px):
+          </Text>
+          <Container 
+            padding={{ all: 8 }} 
+            backgroundColor="hsl(var(--accent) / 0.25)"
+            borderRadius={6}
+          >
+            <Column gap={8}>
+              <Text variant="bodyMedium">Upper Content Block</Text>
+              <Divider thickness={states.thickness} color="#8b5cf6" />
+              <Text variant="bodyMedium">Lower Content Block</Text>
+            </Column>
+          </Container>
+        </Column>
 
-        <div>
-          <span className="text-[10px] font-mono text-muted-foreground block mb-2">Dashed Separator:</span>
-          <div className="p-2 bg-accent/25 rounded">
-            <span>Dashed Segment A</span>
-            <Separator orientation="horizontal" color="#e2e8f0" className="my-2" />
-            <span>Dashed Segment B</span>
-          </div>
-        </div>
+        <Column gap={8}>
+          <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))", fontSize: 10 }}>
+            Dashed Separator:
+          </Text>
+          <Container 
+            padding={{ all: 8 }} 
+            backgroundColor="hsl(var(--accent) / 0.25)"
+            borderRadius={6}
+          >
+            <Column gap={8}>
+              <Text variant="bodyMedium">Dashed Segment A</Text>
+              <Separator orientation="horizontal" style={{ backgroundColor: "#e2e8f0" }} />
+              <Text variant="bodyMedium">Dashed Segment B</Text>
+            </Column>
+          </Container>
+        </Column>
 
-        <div className="h-20 bg-accent/25 rounded p-2">
-          <span className="text-[10px] font-mono text-muted-foreground block mb-1">VerticalDivider:</span>
-          <Row className="h-10 items-center justify-around">
-            <span className="text-xs">Col A</span>
-            <VerticalDivider thickness={states.thickness} color="#ec4899" className="mx-2" />
-            <span className="text-xs">Col B</span>
-          </Row>
-        </div>
+        <Container 
+          height={80} 
+          backgroundColor="hsl(var(--accent) / 0.25)"
+          borderRadius={6}
+          padding={8}
+        >
+          <Column gap={4}>
+            <Text variant="bodySmall" style={{ fontFamily: "monospace", color: "hsl(var(--muted-foreground))", fontSize: 10 }}>
+              VerticalDivider:
+            </Text>
+            <Row 
+              height={40} 
+              crossAxisAlignment={CrossAxisAlignment.center} 
+              mainAxisAlignment={MainAxisAlignment.spaceAround}
+            >
+              <Text variant="bodySmall">Col A</Text>
+              <VerticalDivider thickness={states.thickness} color="#ec4899" />
+              <Text variant="bodySmall">Col B</Text>
+            </Row>
+          </Column>
+        </Container>
       </Column>
     ),
     generateCode: (states) => `import { Divider } from "@/components/ui/divider";
 import { Separator } from "@/components/ui/separator";
 import { VerticalDivider } from "@/components/ui/vertical-divider";
+import { Column } from "@/components/ui/column";
+import { Row } from "@/components/ui/row";
+import { Container } from "@/components/ui/container";
+import { Text } from "@/components/ui/text";
 
 // Horizontal Divider
-<Divider thickness={${states.thickness}} color="#8b5cf6" />
+<Column gap={8}>
+  <Text variant="bodyMedium">Upper Content Block</Text>
+  <Divider thickness={${states.thickness}} color="#8b5cf6" />
+  <Text variant="bodyMedium">Lower Content Block</Text>
+</Column>
 
 // Dashed Separator
-<Separator orientation="horizontal" />
+<Column gap={8}>
+  <Text variant="bodyMedium">Dashed Segment A</Text>
+  <Separator orientation="horizontal" />
+  <Text variant="bodyMedium">Dashed Segment B</Text>
+</Column>
 
 // Vertical Divider
-<VerticalDivider thickness={${states.thickness}} color="#ec4899" />`
+<Row height={40} mainAxisAlignment={MainAxisAlignment.spaceAround}>
+  <Text variant="bodySmall">Col A</Text>
+  <VerticalDivider thickness={${states.thickness}} color="#ec4899" />
+  <Text variant="bodySmall">Col B</Text>
+</Row>`
   },
   {
     id: "colors-palette",
@@ -1888,33 +3293,91 @@ import { VerticalDivider } from "@/components/ui/vertical-divider";
         { name: "Colors.amber", color: Colors.amber }
       ];
       return (
-        <Column className="w-80 gap-3 p-5 border border-border bg-card rounded-xl shadow-md">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">Flutter Color Tokens</span>
-          <div className="grid grid-cols-4 gap-2 pt-1">
-            {colorSamples.map((samp, i) => {
-              const hexVal = samp.color.toHex();
-              return (
-                <div 
-                  key={i} 
-                  title={`Copy ${samp.name} (${hexVal})`}
-                  onClick={() => {
-                    navigator.clipboard.writeText(hexVal);
-                    alert(`Copied ${samp.name} hex code: ${hexVal}`);
-                  }}
-                  className="group cursor-pointer flex flex-col items-center gap-1 hover:scale-110 transition-transform"
-                >
-                  <div 
-                    className="w-10 h-10 rounded-full border border-border shadow-md group-hover:ring-2 ring-primary/40"
-                    style={{ backgroundColor: hexVal }}
-                  />
-                  <span className="text-[8px] font-semibold text-muted-foreground truncate max-w-full text-center">{samp.name.split(".")[1]}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="text-[9px] text-center text-muted-foreground/80 mt-2 font-mono">
+        <Column 
+          width={320} 
+          gap={12} 
+          padding={20}
+          border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+          backgroundColor="hsl(var(--card))"
+          borderRadius={12}
+          elevation={2}
+        >
+          <Text 
+            variant="bodySmall" 
+            style={{ 
+              fontWeight: "bold", 
+              textTransform: "uppercase", 
+              letterSpacing: "0.1em", 
+              color: "hsl(var(--muted-foreground))" 
+            }}
+          >
+            Flutter Color Tokens
+          </Text>
+          <Container padding={{ top: 4 }}>
+            <Row 
+              gap={8} 
+              style={{ 
+                display: "grid", 
+                gridTemplateColumns: "repeat(4, 1fr)" 
+              }}
+            >
+              {colorSamples.map((samp, i) => {
+                const hexVal = samp.color.toHex();
+                return (
+                  <Column 
+                    key={i} 
+                    gap={4}
+                    crossAxisAlignment={CrossAxisAlignment.center}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(hexVal);
+                      alert(`Copied ${samp.name} hex code: ${hexVal}`);
+                    }}
+                  >
+                    <Container 
+                      width={40} 
+                      height={40} 
+                      borderRadius={9999}
+                      border={Border.all({ color: "hsl(var(--border))", width: 1 })}
+                      elevation={2}
+                      style={{ 
+                        backgroundColor: hexVal,
+                        transition: "transform 0.2s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                    />
+                    <Text 
+                      variant="bodySmall" 
+                      style={{ 
+                        fontSize: 8, 
+                        fontWeight: 600, 
+                        color: "hsl(var(--muted-foreground))",
+                        textAlign: "center",
+                        maxWidth: "100%",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}
+                    >
+                      {samp.name.split(".")[1]}
+                    </Text>
+                  </Column>
+                );
+              })}
+            </Row>
+          </Container>
+          <Text 
+            variant="bodySmall" 
+            style={{ 
+              fontSize: 9, 
+              textAlign: "center", 
+              color: "hsl(var(--muted-foreground) / 0.8)",
+              fontFamily: "monospace",
+              marginTop: 8
+            }}
+          >
             Click color circles to copy hex code values instantly!
-          </div>
+          </Text>
         </Column>
       );
     },
